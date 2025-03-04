@@ -21,7 +21,7 @@ const LoadingEffect = () => {
     const circles = generateCircles(30);
 
     return (
-        <div className={`fixed inset-0 flex flex-col items-center justify-center ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
+        <div className={`relative min-h-screen w-full flex flex-col items-center justify-center ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
             {/* Background circles spread across the screen */}
             {circles.map((circle) => (
                 <motion.div
