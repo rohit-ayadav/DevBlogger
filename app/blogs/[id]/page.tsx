@@ -86,15 +86,27 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 
     if (!response.success || !response.data) {
         return {
-            title: 'Error | Blog Post',
-            description: 'Unable to load blog post',
+            title: 'Blog Post Not Found - DevBlogger',
+            description: 'The blog post you are looking for does not exist',
+            openGraph: {
+                title: 'Blog Post Not Found - DevBlogger',
+                description: 'The blog post you are looking for does not exist',
+                images: ['/default-thumbnail.png'],
+                url: 'https://www.devblogger.in',
+            },
+            twitter: {
+                card: 'summary_large_image',
+                title: 'Blog Post Not Found - DevBlogger',
+                description: 'The blog post you are looking for does not exist',
+                images: ['/default-thumbnail.png'],
+            },
         };
     }
 
     const postData = response.data;
     const title = postData?.title || 'DevBlogger Blog Post';
     const thumbnailUrl = postData?.thumbnail || '/default-thumbnail.png';
-    const description = postData?.content.replace(/<[^>]*>?/gm, '').substring(0, 150);
+    const description = postData?.content.replace(/<[^>]*>?/gm, '').substring(0, 140);
     const url = `https://www.devblogger.in/blogs/${response.data.slug}`;
 
     return {

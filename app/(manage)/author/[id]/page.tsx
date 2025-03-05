@@ -4,10 +4,9 @@ import Blog from "@/models/blogs.models";
 import User from "@/models/users.models";
 import { Metadata } from "next";
 import { ErrorMessage } from "@/app/blogs/[id]/ErrorMessage";
-import AuthorPage from "@/app/profile/id-omponent/Profile";
-import { Author } from "@/app/profile/id-omponent/Profile";
 import { isValidObjectId } from "mongoose";
 import serializeDocument from "@/utils/date-formatter";
+import AuthorPage, { Author } from "@/app/(settings)/profile/id-omponent/Profile";
 
 async function getPostData(id: string) {
     try {

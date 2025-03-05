@@ -4,6 +4,7 @@ import AuthorDashboard from "./Dashboard";
 import { useEffect, useState } from "react";
 import { BlogPostType, UserType } from "@/types/blogs-types";
 import LoadingEffect from "@/lib/LoadingEffect";
+import { ErrorMessage } from "@/app/blogs/[id]/ErrorMessage";
 
 const PersonalDashboard = () => {
     const [user, setUser] = useState<UserType | null>(null);
@@ -31,8 +32,8 @@ const PersonalDashboard = () => {
     }, []);
 
     if (loading) return <LoadingEffect />;
-    if (error) return <div>Error: {error}</div>;
-    if (!user) return <div>Error: User data not found</div>;
+    if (error) return <div><ErrorMessage message={error} /></div>;
+    if (!user) return <ErrorMessage message="User not found" />;
     return <AuthorDashboard user={user} blogs={blogs} monthlyStats={monthlyStats} />;
 }
 

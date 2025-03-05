@@ -2,8 +2,8 @@
 
 import { connectDB } from "@/utils/db";
 import User from "@/models/users.models";
-import { ProfileFormData } from "@/app/profile/component/types";
 import { revalidatePath } from "next/cache";
+import { ProfileFormData } from "@/app/(settings)/profile/component/types";
 
 export async function saveEdit(data: ProfileFormData) {
     try {

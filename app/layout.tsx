@@ -7,7 +7,7 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import Script from "next/script";
 import { Toaster as Toast } from "react-hot-toast";
 import SessionWrapper from "@/app/_component/sessionWrapper";
-import Footer from "./footer/page";
+import Footer from "./(legel-and-footer)/footer/page";
 import { Navbar } from "./_component/navigation/navbar/navbarComponent";
 declare global {
   interface Window {
@@ -32,7 +32,7 @@ const geistMono = localFont({
 export async function generateMetadata({
   title = "DevBlogger - The Ultimate Blogging Platform for Developers",
   description = "Write, publish & grow your tech blog with DevBlogger. 🚀 A feature-rich, customizable blogging platform built for developers using Next.js & TypeScript.",
- slug = "",
+  slug = "",
   imageUrl = "/default-thumbnail.png",
   canonicalUrl = "https://www.devblogger.in",
 }: {

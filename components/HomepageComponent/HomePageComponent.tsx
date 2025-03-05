@@ -18,7 +18,7 @@ import Newsletter from '@/app/_component/newsletter';
 import FeaturedAuthors from './FeaturedAuthors';
 import CategoryBrowser from './CategoryBrowser';
 import { NewsletterSection } from './NewsletterSection';
-import RecentActivityFeed from '@/app/author/RecentActivityFeed';
+import RecentActivityFeed from '@/app/(manage)/author/RecentActivityFeed';
 import ContentToolsSection from './ContentToolsSection';
 import PostCard from '@/app/_component/PostCard';
 

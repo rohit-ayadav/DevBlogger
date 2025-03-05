@@ -134,9 +134,6 @@ function AuthorDashboard({ user, blogs, monthlyStats }: AuthorDashboardProps) {
                             <BlogPost
                                 blogs={blogs}
                                 monthlyStats={monthlyStats}
-                                sortedBlogs={sortedBlogs}
-                                sortBlogs={sortBlogs}
-                                setSortBlogs={setSortBlogs}
                             />
                         </div>
                     </TabsContent>

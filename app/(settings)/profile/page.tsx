@@ -4,8 +4,8 @@ import User from "@/models/users.models";
 import { Metadata } from "next";
 import { getSessionAtHome } from "@/auth";
 import UserProfile from "./component/UserProfile";
-import { ErrorMessage } from "../blogs/[id]/ErrorMessage";
 import serializeDocument from "@/utils/date-formatter";
+import { ErrorMessage } from "@/app/blogs/[id]/ErrorMessage";
 
 async function getPostData() {
     try {

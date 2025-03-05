@@ -17,7 +17,10 @@ export async function fetchAuthorData() {
             User.findOne({ email: session.user.email }).lean() as unknown as UserType,
             Blog.find({ createdBy: session.user.email }).lean() as unknown as BlogPostType[]
         ]);
-        const monthlyStats = await MonthlyStats.find({ blog: { $in: blogs.map(blog => blog._id) } }).lean();
+        if (!user) return { error: "Kindly Login again to access the dashboard." };
+        let monthlyStats: any[] = [];
+        if (blogs.length !== 0)
+            monthlyStats = await MonthlyStats.find({ blog: { $in: blogs.map(blog => blog._id) } }).lean();
 
         return {
             user: serializeDocument(user),
@@ -29,7 +32,7 @@ export async function fetchAuthorData() {
                 likes: stat.likes || 0,
             }))
         };
-    } catch (error) {
-        return { error: "Something went wrong. Please try again." };
+    } catch (error: any) {
+        return { error: (error as Error).message };
     }
 }

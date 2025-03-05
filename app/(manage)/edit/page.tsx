@@ -1,10 +1,10 @@
 import { getSessionAtHome } from '@/auth';
 import Blog from '@/models/blogs.models';
 import { connectDB } from '@/utils/db';
-import { ErrorMessage } from '../blogs/[id]/ErrorMessage';
 import Link from 'next/link';
 import { Pencil, Trash2 } from 'lucide-react';
 import { BlogPostType } from '@/types/blogs-types';
+import { ErrorMessage } from '@/app/blogs/[id]/ErrorMessage';
 
 export const dynamic = "force-dynamic";
 
