@@ -22,7 +22,26 @@ type QueryParams = {
     category: string;
     sortBy: string;
     search?: string;
+    author?: string;
+    readingTime?: string;
+    dateRange?: string;
 };
+
+const READINGTIME = [
+    { value: "all", label: "Any Length" },
+    { value: "under5", label: "Under 5 minutes" },
+    { value: "5to10", label: "5-10 minutes" },
+    { value: "10to20", label: "10-20 minutes" },
+    { value: "over20", label: "Over 20 minutes" }
+];
+
+const dateRange = [
+    { value: "all", label: "All Time" },
+    { value: "lastWeek", label: "Last Week" },
+    { value: "lastMonth", label: "Last Month" },
+    { value: "last3Months", label: "Last 3 Months" },
+    { value: "lastYear", label: "Last Year" }
+];
 
 await connectDB();
 
@@ -32,7 +51,10 @@ const validateQueryParams = (searchParams: URLSearchParams): QueryParams => {
     const category = searchParams.get("category") || "";
     const sortBy = searchParams.get("sortBy") || "createdAt";
     const search = searchParams.get("search") || "";
-    return { page, limit, category, sortBy, search };
+    const author = searchParams.get("author") || "";
+    const readingTime = searchParams.get("readingTime") || "";
+    const dateRange = searchParams.get("dateRange") || "";
+    return { page, limit, category, sortBy, search, author, readingTime, dateRange };
 }
 function clamp(num: number, min: number, max: number): number {
     // it will ensure that the number is within the range of min and max
@@ -56,6 +78,35 @@ const buildQuery = (params: QueryParams): mongoose.FilterQuery<typeof Blog> => {
             { author: { $regex: params.search, $options: "i" } },
         ];
     }
+
+    // If dateRange is provided, add it to the query
+    if (params.dateRange && params.dateRange !== "all") {
+        const date = new Date();
+        switch (params.dateRange) {
+            case "lastWeek":
+                date.setDate(date.getDate() - 7);
+                break;
+            case "lastMonth":
+                date.setMonth(date.getMonth() - 1);
+                break;
+            case "last3Months":
+                date.setMonth(date.getMonth() - 3);
+                break;
+            case "lastYear":
+                date.setFullYear(date.getFullYear() - 1);
+                break;
+        }
+        query.createdAt = { $gte: date };
+    }
+
+    // If readingTime is provided, add it to the query, use 200 words per minute as average reading speed without html tags
+    if (params.readingTime && params.readingTime !== "all") {
+        const wordsPerMinute = 200;
+        const time = parseInt(params.readingTime.split("to")[1], 10);
+        const words = time * wordsPerMinute;
+        query.readingTime = { $lte: words };
+    }
+
     return query;
 }
 
@@ -92,6 +143,15 @@ export async function GET(request: NextRequest) {
     const sortOption = getSortOptions(params.sortBy);
 
     try {
+        if (params.author && params.author !== "all") {
+            const user = await User.findOne({ username: params.author }).lean().exec();
+            if (!user) {
+                return NextResponse.json({ message: "Author not found" }, { status: 404 });
+            }
+            if (user && !Array.isArray(user)) {
+                query.createdBy = user.email;
+            }
+        }
         const [totalBlogs, blogs, totalBlogsData] = await Promise.all([
             Blog.countDocuments(query),
             Blog.find(query)

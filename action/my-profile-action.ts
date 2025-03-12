@@ -4,6 +4,7 @@ import { connectDB } from "@/utils/db";
 import User from "@/models/users.models";
 import { revalidatePath } from "next/cache";
 import { ProfileFormData } from "@/app/(settings)/profile/component/types";
+import Blog from "@/models/blogs.models";
 
 export async function saveEdit(data: ProfileFormData) {
     try {
@@ -49,5 +50,25 @@ export async function saveEdit(data: ProfileFormData) {
         return { success: true, message: "Profile updated successfully" };
     } catch (error) {
         return { success: false, message: (error as Error).message };
+    }
+}
+
+export async function getAuthorName() {
+    try {
+        await connectDB();
+        // find those users who have published at least one blog
+        const users = await User.find({}).select("name username email").lean().exec();
+        const posts = await Blog.find({}).select("createdBy").lean().exec();
+        const authorIds = [...new Set(posts.map(post => post.createdBy))];
+        const authors = users.filter(user => authorIds.includes(user.email));
+        // map in the format value: label
+        const authorName = authors.map(user => ({
+            value: user.username,
+            label: user.name
+        }))
+        // console.log(`Author Name: ${JSON.stringify(authorName)}`);
+        return authorName;
+    } catch (error) {
+        return [];
     }
 }

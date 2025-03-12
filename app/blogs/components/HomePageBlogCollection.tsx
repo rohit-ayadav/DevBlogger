@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Search, RefreshCcw, Loader2, X, Filter, ChevronDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { CATEGORIES, stateType } from '@/types/blogs-types';
+import { CATEGORIES, PUBLISHEDDATE, READINGTIME, SORTBYFILTER, stateType } from '@/types/blogs-types';
 import { BlogPostType } from '@/types/blogs-types';
 import { Toaster } from '@/components/ui/toaster';
 import DashboardGrid from '@/app/_component/dashboard/dashboardGrid';
@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { EmptyState, LoadingState, NoMorePosts, themeClasses } from '../themeClass';
 import { useTheme } from '@/context/ThemeContext';
 import FilterPanel from './FilterPanel';
+import { getAuthorName } from '@/action/my-profile-action';
 interface HomePageBlogCollectionProps {
     state: stateType;
     handleRetry: () => void;
@@ -21,9 +22,14 @@ interface HomePageBlogCollectionProps {
 const HomePageBlogCollection = ({ state, handleRetry, setState, searchLoading }: HomePageBlogCollectionProps) => {
     const { isDarkMode } = useTheme();
     const [isFilterOpen, setIsFilterOpen] = React.useState(false);
+    const [authorName, setAuthorName] = React.useState<{ value: string; label: string }[]>([]);
 
     // Debounce search input to reduce API calls
     const [searchInput, setSearchInput] = React.useState(state.searchTerm);
+
+    useEffect(() => {
+        getAuthorName().then(data => setAuthorName(data));
+    }, []);
 
     React.useEffect(() => {
         const timer = setTimeout(() => {
@@ -44,9 +50,12 @@ const HomePageBlogCollection = ({ state, handleRetry, setState, searchLoading }:
             category: 'all',
             sortBy: 'newest',
             searchTerm: '',
-            author: 'all', // Added author filter
+            author: 'all',
+            dateRange: '',
+            readingTime: '',
             page: 1
         }));
+        setIsFilterOpen(false);
     };
 
     // Theme based styles using isDarkMode
@@ -164,7 +173,7 @@ const HomePageBlogCollection = ({ state, handleRetry, setState, searchLoading }:
                     </div>
 
                     {/* Active Filters Display with isDarkMode-based theming */}
-                    {(state.category !== 'all' || state.sortBy !== 'newest' || state.author !== 'all' || state.searchTerm) && (
+                    {(state.category !== 'all' || state.sortBy !== 'newest' || state.author !== 'all' || state.searchTerm || state.dateRange || state.readingTime) && (
                         <div className="flex flex-wrap gap-2 max-w-3xl mx-auto">
                             {state.category !== 'all' && (
                                 <div className={`inline-flex items-center gap-1 text-xs py-1 px-2 rounded-full border ${themeStyles.filterBadge.bg} ${themeStyles.filterBadge.border} ${themeStyles.filterBadge.text}`}>
@@ -180,7 +189,7 @@ const HomePageBlogCollection = ({ state, handleRetry, setState, searchLoading }:
                             )}
                             {state.author !== 'all' && (
                                 <div className={`inline-flex items-center gap-1 text-xs py-1 px-2 rounded-full border ${themeStyles.filterBadge.bg} ${themeStyles.filterBadge.border} ${themeStyles.filterBadge.text}`}>
-                                    <span>Author: {state.author}</span>
+                                    <span>Author: {authorName.find(c => c.value === state.author)?.label}</span>
                                     <button
                                         onClick={() => setState(prev => ({ ...prev, author: 'all', page: 1 }))}
                                         aria-label="Remove author filter"
@@ -192,7 +201,7 @@ const HomePageBlogCollection = ({ state, handleRetry, setState, searchLoading }:
                             )}
                             {state.sortBy !== 'newest' && (
                                 <div className={`inline-flex items-center gap-1 text-xs py-1 px-2 rounded-full border ${themeStyles.filterBadge.bg} ${themeStyles.filterBadge.border} ${themeStyles.filterBadge.text}`}>
-                                    <span>Sort: {state.sortBy.replace(/([A-Z])/g, ' $1').toLowerCase()}</span>
+                                    <span>Sort by {SORTBYFILTER.find(c => c.value === state.sortBy)?.label}</span>
                                     <button
                                         onClick={() => setState(prev => ({ ...prev, sortBy: 'newest', page: 1 }))}
                                         aria-label="Remove sort filter"
@@ -211,6 +220,30 @@ const HomePageBlogCollection = ({ state, handleRetry, setState, searchLoading }:
                                             setState(prev => ({ ...prev, searchTerm: '', page: 1 }));
                                         }}
                                         aria-label="Remove search filter"
+                                        className={`ml-1 rounded-full p-0.5 transition-colors ${themeStyles.filterBadge.buttonBg}`}
+                                    >
+                                        <X className={`h-3 w-3 ${themeStyles.icon.color}`} />
+                                    </button>
+                                </div>
+                            )}
+                            {(state.dateRange && state.dateRange !== 'all') && (
+                                <div className={`inline-flex items-center gap-1 text-xs py-1 px-2 rounded-full border ${themeStyles.filterBadge.bg} ${themeStyles.filterBadge.border} ${themeStyles.filterBadge.text}`}>
+                                    <span>Published Date: {PUBLISHEDDATE.find(c => c.value === state.dateRange)?.label}</span>
+                                    <button
+                                        onClick={() => setState(prev => ({ ...prev, dateRange: '', page: 1 }))}
+                                        aria-label="Remove date filter"
+                                        className={`ml-1 rounded-full p-0.5 transition-colors ${themeStyles.filterBadge.buttonBg}`}
+                                    >
+                                        <X className={`h-3 w-3 ${themeStyles.icon.color}`} />
+                                    </button>
+                                </div>
+                            )}
+                            {(state.readingTime && state.readingTime !== 'all') && (
+                                <div className={`inline-flex items-center gap-1 text-xs py-1 px-2 rounded-full border ${themeStyles.filterBadge.bg} ${themeStyles.filterBadge.border} ${themeStyles.filterBadge.text}`}>
+                                    <span>Reading Time: {READINGTIME.find(c => c.value === state.readingTime)?.label}</span>
+                                    <button
+                                        onClick={() => setState(prev => ({ ...prev, readingTime: '', page: 1 }))}
+                                        aria-label="Remove reading time filter"
                                         className={`ml-1 rounded-full p-0.5 transition-colors ${themeStyles.filterBadge.buttonBg}`}
                                     >
                                         <X className={`h-3 w-3 ${themeStyles.icon.color}`} />
@@ -257,9 +290,11 @@ const HomePageBlogCollection = ({ state, handleRetry, setState, searchLoading }:
                     </div>
 
                     {/* States */}
-                    {state.loadingMore && <LoadingState message="Loading more posts..." />}
-                    {!state.loadingMore && !state.loading && !state.metadata.hasMore && state.posts.length > 0 && (
+                    {/* {state.loadingMore && <LoadingState message="Loading more posts..." />} */}
+                    {!state.loadingMore && !state.loading && !state.metadata.hasMore && state.posts.length > 0 ? (
                         <NoMorePosts />
+                    ) : (
+                        <LoadingState message="Loading posts..." />
                     )}
                     {state.posts.length === 0 && !state.loading && (
                         <EmptyState
@@ -276,6 +311,7 @@ const HomePageBlogCollection = ({ state, handleRetry, setState, searchLoading }:
                     state={state}
                     setState={setState}
                     onClearFilters={handleClearAllFilters}
+                    authorName={authorName}
                 />
             </div>
         </TooltipProvider>

@@ -80,6 +80,29 @@ const CATEGORIES = [
   { value: "Others", label: "Others" }
 ];
 
+const READINGTIME = [
+  { value: "all", label: "Any Length" },
+  { value: "under5", label: "Under 5 minutes" },
+  { value: "5to10", label: "5-10 minutes" },
+  { value: "10to20", label: "10-20 minutes" },
+  { value: "over20", label: "Over 20 minutes" }
+];
+
+const PUBLISHEDDATE = [
+  { value: "all", label: "All Time" },
+  { value: "lastWeek", label: "Last Week" },
+  { value: "lastMonth", label: "Last Month" },
+  { value: "last3Months", label: "Last 3 Months" },
+  { value: "lastYear", label: "Last Year" }
+];
+
+const SORTBYFILTER = [
+  { value: "newest", label: "Newest" },
+  { value: "trending", label: "Trending" },
+  { value: "oldest", label: "Oldest" },
+  { value: "mostViews", label: "Most Views" },
+  { value: "mostLikes", label: "Most Likes" }
+];
 interface TOCItem {
   level: number;
   text: string;
@@ -144,6 +167,8 @@ export interface stateType {
   page: number;
   limit: number;
   author: string;
+  readingTime: string;
+  dateRange: string;
   stats: StatsType;
   metadata: {
     currentPage: number;
@@ -157,4 +182,4 @@ export interface stateType {
 }
 
 export type { BlogPostType, UserType, StatsType, Author, TOCItem, ThemeClasses, BlogState };
-export { CATEGORIES };
+export { CATEGORIES, READINGTIME, PUBLISHEDDATE, SORTBYFILTER };

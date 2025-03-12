@@ -38,6 +38,8 @@ const BlogCollectionComponent = () => {
         sortBy: sortBy,
         category: category,
         author: author,
+        readingTime: 'all',
+        dateRange: 'all',
         page: 1,
         limit: 9,
         stats: {
@@ -83,7 +85,7 @@ const BlogCollectionComponent = () => {
     const fetchPosts = async () => {
         try {
             setState(prev => ({ ...prev, loading: true, error: null }));
-            const res = await fetch(`/api/blogs?page=${state.page}&limit=${state.limit}&sortBy=${state.sortBy}&search=${state.searchTerm}&category=${state.category}`);
+            const res = await fetch(`/api/blogs?page=${state.page}&limit=${state.limit}&sortBy=${state.sortBy}&search=${state.searchTerm}&category=${state.category}&author=${state.author}&readingTime=${state.readingTime}&dateRange=${state.dateRange}`);
             const data: PostsData = await res.json();
 
             setState(prev => ({
@@ -113,7 +115,7 @@ const BlogCollectionComponent = () => {
         if (state.initialized) {
             fetchPosts();
         }
-    }, [state.page, state.category, state.sortBy, state.initialized]);
+    }, [state.page, state.category, state.sortBy, state.initialized, state.readingTime, state.author, state.dateRange]);
 
     const handleRetry = useCallback(() => {
         setState(prev => ({
@@ -130,13 +132,12 @@ const BlogCollectionComponent = () => {
             <HomePageBlogCollection state={state} handleRetry={handleRetry} setState={setState} searchLoading={searchLoading} />
             <div
                 ref={ref}
-                className={`text-center mt-80 py-8 
+                className={`text-center mt-0 py-8 mb-0
                 ${state.metadata.hasMore ? 'block' : 'hidden'} 
                 ${state.loadingMore ? 'hidden' : 'block'}
                 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}
             >
             </div>
-
         </>
     );
 }

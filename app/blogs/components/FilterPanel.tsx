@@ -3,7 +3,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from '@/com
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { CATEGORIES, stateType, UserType } from '@/types/blogs-types';
+import { CATEGORIES, PUBLISHEDDATE, READINGTIME, SORTBYFILTER, stateType, UserType } from '@/types/blogs-types';
 import { X, Check, Calendar, Clock, SortAsc, Tag, User } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 import { Badge } from '@/components/ui/badge';
@@ -16,9 +16,10 @@ interface FilterPanelProps {
     state: stateType;
     setState: React.Dispatch<React.SetStateAction<stateType>>;
     onClearFilters: () => void;
+    authorName: { value: string; label: string; }[];
 }
 
-const FilterPanel = ({ isOpen, onClose, state, setState, onClearFilters }: FilterPanelProps) => {
+const FilterPanel = ({ isOpen, onClose, state, setState, onClearFilters, authorName }: FilterPanelProps) => {
     const { isDarkMode } = useTheme();
     const [activeFiltersCount, setActiveFiltersCount] = useState(0);
 
@@ -28,17 +29,11 @@ const FilterPanel = ({ isOpen, onClose, state, setState, onClearFilters }: Filte
         if (state.category !== 'all') count++;
         if (state.author && state.author !== 'all') count++;
         if (state.sortBy !== 'newest') count++;
-        // Add other filter counts as needed
+        if (state.dateRange && state.dateRange !== 'all') count++;
+        if (state.readingTime !== 'all') count++;
 
         setActiveFiltersCount(count);
     }, [state.category, state.author, state.sortBy]);
-
-    const authorOptions = React.useMemo(() => {
-        return [
-            { value: 'all', label: 'All Authors' },
-            { value: 'rohit.ayadav', label: 'Rohit Kumar Yadav' },
-        ];
-    }, [state.users]);
 
     const handleApplyFilters = () => {
         onClose();
@@ -126,7 +121,7 @@ const FilterPanel = ({ isOpen, onClose, state, setState, onClearFilters }: Filte
                             <div className="flex items-center gap-2">
                                 <SheetTitle className={cn(
                                     "text-lg font-semibold",
-                                    isDarkMode && theme.text // Ensure title is visible in dark mode
+                                    isDarkMode && theme.text
                                 )}>Filters</SheetTitle>
                                 {activeFiltersCount > 0 && (
                                     <Badge variant={isDarkMode ? "outline" : "secondary"} className={cn(
@@ -175,13 +170,14 @@ const FilterPanel = ({ isOpen, onClose, state, setState, onClearFilters }: Filte
                                         <SelectValue placeholder="Select category" />
                                     </SelectTrigger>
                                     <SelectContent className={cn(
+                                        "max-h-60 overflow-y-auto", // Ensures scrollability
                                         isDarkMode ? theme.select.content : lightModeStyles.select.content
                                     )}>
                                         <SelectGroup>
                                             <SelectLabel className={isDarkMode ? theme.muted : undefined}>Categories</SelectLabel>
                                             {CATEGORIES.map((cat) => (
                                                 <SelectItem
-                                                    key={cat.value}
+                                                    key={cat.label}
                                                     value={cat.value}
                                                     className={cn(
                                                         "flex items-center gap-1",
@@ -205,7 +201,7 @@ const FilterPanel = ({ isOpen, onClose, state, setState, onClearFilters }: Filte
                             {/* Author Filter */}
                             <FilterSection title="Author" icon={<User className="h-4 w-4" />}>
                                 <Select
-                                    value={state.author || 'all'}
+                                    value={state.author}
                                     onValueChange={(value) => {
                                         setState(prev => ({
                                             ...prev,
@@ -218,29 +214,53 @@ const FilterPanel = ({ isOpen, onClose, state, setState, onClearFilters }: Filte
                                         "w-full",
                                         isDarkMode ? theme.select.trigger : lightModeStyles.select.trigger
                                     )}>
-                                        <SelectValue placeholder="Select author" />
+                                        <SelectValue placeholder="Select Author" />
                                     </SelectTrigger>
                                     <SelectContent className={cn(
+                                        "max-h-60 overflow-y-auto", // Ensures scrollability
                                         isDarkMode ? theme.select.content : lightModeStyles.select.content
                                     )}>
                                         <SelectGroup>
                                             <SelectLabel className={isDarkMode ? theme.muted : undefined}>Authors</SelectLabel>
-                                            {authorOptions.map((author) => (
-                                                <SelectItem
-                                                    key={author.value}
-                                                    value={author.value}
-                                                    className={cn(
-                                                        "flex items-center gap-1",
-                                                        state.author === author.value && "font-medium",
-                                                        isDarkMode ? theme.select.item : lightModeStyles.select.item
-                                                    )}
-                                                >
-                                                    {state.author === author.value && (
-                                                        <Check className="h-3 w-3 mr-1 inline-block" />
-                                                    )}
-                                                    {author.label}
-                                                </SelectItem>
-                                            ))}
+
+                                            {/* "All Authors" Option */}
+                                            <SelectItem
+                                                key="all"
+                                                value="all"
+                                                className={cn(
+                                                    "flex items-center gap-1",
+                                                    state.author === "all" && "font-medium",
+                                                    isDarkMode ? theme.select.item : lightModeStyles.select.item
+                                                )}
+                                            >
+                                                {state.author === "all" && (
+                                                    <Check className="h-3 w-3 mr-1 inline-block" />
+                                                )}
+                                                All Authors
+                                            </SelectItem>
+
+                                            {/* Dynamic Author List */}
+                                            {authorName?.length > 0 ? (
+                                                authorName.map((author) => (
+                                                    <SelectItem
+                                                        key={author.label}
+                                                        value={author.value}
+                                                        className={cn(
+                                                            "flex items-center gap-1",
+                                                            state.author === author.value && "font-medium",
+                                                            isDarkMode ? theme.select.item : lightModeStyles.select.item
+                                                        )}
+                                                    >
+                                                        {state.author === author.value && (
+                                                            <Check className="h-3 w-3 mr-1 inline-block" />
+                                                        )}
+                                                        {author.label}
+                                                    </SelectItem>
+                                                ))
+                                            ) : (
+                                                // No authors available
+                                                <SelectItem value='all' disabled>No authors available</SelectItem>
+                                            )}
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
@@ -271,13 +291,7 @@ const FilterPanel = ({ isOpen, onClose, state, setState, onClearFilters }: Filte
                                     )}>
                                         <SelectGroup>
                                             <SelectLabel className={isDarkMode ? theme.muted : undefined}>Sort Options</SelectLabel>
-                                            {[
-                                                { value: "newest", label: "Newest" },
-                                                { value: "trending", label: "Trending" },
-                                                { value: "oldest", label: "Oldest" },
-                                                { value: "mostViews", label: "Most Views" },
-                                                { value: "mostLikes", label: "Most Likes" }
-                                            ].map((option) => (
+                                            {SORTBYFILTER.map((option) => (
                                                 <SelectItem
                                                     key={option.value}
                                                     value={option.value}
@@ -301,9 +315,13 @@ const FilterPanel = ({ isOpen, onClose, state, setState, onClearFilters }: Filte
                             {/* Date Range Filter */}
                             <FilterSection title="Published Date" icon={<Calendar className="h-4 w-4" />}>
                                 <Select
-                                    value="all"
+                                    value={state.dateRange}
                                     onValueChange={(value) => {
-                                        // Future implementation
+                                        setState(prev => ({
+                                            ...prev,
+                                            dateRange: value,
+                                            page: 1
+                                        }));
                                     }}
                                 >
                                     <SelectTrigger className={cn(
@@ -315,13 +333,7 @@ const FilterPanel = ({ isOpen, onClose, state, setState, onClearFilters }: Filte
                                     <SelectContent className={cn(
                                         isDarkMode ? theme.select.content : lightModeStyles.select.content
                                     )}>
-                                        {[
-                                            { value: "all", label: "All Time" },
-                                            { value: "lastWeek", label: "Last Week" },
-                                            { value: "lastMonth", label: "Last Month" },
-                                            { value: "last3Months", label: "Last 3 Months" },
-                                            { value: "lastYear", label: "Last Year" }
-                                        ].map((option) => (
+                                        {PUBLISHEDDATE.map((option) => (
                                             <SelectItem
                                                 key={option.value}
                                                 value={option.value}
@@ -341,9 +353,13 @@ const FilterPanel = ({ isOpen, onClose, state, setState, onClearFilters }: Filte
                             {/* Reading Time Filter */}
                             <FilterSection title="Reading Time" icon={<Clock className="h-4 w-4" />}>
                                 <Select
-                                    value="all"
+                                    value={state.readingTime}
                                     onValueChange={(value) => {
-                                        // Future implementation
+                                        setState(prev => ({
+                                            ...prev,
+                                            readingTime: value,
+                                            page: 1
+                                        }));
                                     }}
                                 >
                                     <SelectTrigger className={cn(
@@ -355,13 +371,7 @@ const FilterPanel = ({ isOpen, onClose, state, setState, onClearFilters }: Filte
                                     <SelectContent className={cn(
                                         isDarkMode ? theme.select.content : lightModeStyles.select.content
                                     )}>
-                                        {[
-                                            { value: "all", label: "Any Length" },
-                                            { value: "under5", label: "Under 5 minutes" },
-                                            { value: "5to10", label: "5-10 minutes" },
-                                            { value: "10to20", label: "10-20 minutes" },
-                                            { value: "over20", label: "Over 20 minutes" }
-                                        ].map((option) => (
+                                        {READINGTIME.map((option) => (
                                             <SelectItem
                                                 key={option.value}
                                                 value={option.value}
