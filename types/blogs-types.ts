@@ -143,6 +143,7 @@ export interface stateType {
   category: string;
   page: number;
   limit: number;
+  author: string;
   stats: StatsType;
   metadata: {
     currentPage: number;

@@ -6,6 +6,7 @@ import { useInView } from '@react-spring/web';
 import HomePageBlogCollection from './components/HomePageBlogCollection';
 import { useSearchParams } from 'next/navigation';
 import LoadingEffect from '@/lib/LoadingEffect';
+import { useTheme } from '@/context/ThemeContext';
 interface PostsData {
     success: boolean;
     data: BlogPostType[];
@@ -24,6 +25,7 @@ const BlogCollectionComponent = () => {
     const searchParams = useSearchParams();
     const searchTerm = searchParams.get('search') || '';
     const category = searchParams.get('category') || 'all';
+    const author = searchParams.get('author') || 'all';
     const sortBy = searchParams.get('sortBy') || 'newest';
 
     const [state, setState] = useState<stateType>({
@@ -35,6 +37,7 @@ const BlogCollectionComponent = () => {
         searchTerm: searchTerm,
         sortBy: sortBy,
         category: category,
+        author: author,
         page: 1,
         limit: 9,
         stats: {
@@ -54,6 +57,7 @@ const BlogCollectionComponent = () => {
         initialized: false
     });
     const [searchLoading, setSearchLoading] = useState(false);
+    const { isDarkMode } = useTheme();
 
     useEffect(() => {
         setSearchLoading(true);
@@ -124,7 +128,15 @@ const BlogCollectionComponent = () => {
     return (
         <>
             <HomePageBlogCollection state={state} handleRetry={handleRetry} setState={setState} searchLoading={searchLoading} />
-            <div ref={ref} className='h-8' />
+            <div
+                ref={ref}
+                className={`text-center mt-80 py-8 
+                ${state.metadata.hasMore ? 'block' : 'hidden'} 
+                ${state.loadingMore ? 'hidden' : 'block'}
+                ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}
+            >
+            </div>
+
         </>
     );
 }

@@ -1,8 +1,7 @@
 import React from 'react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Search, RefreshCcw, Loader2, X, Filter } from 'lucide-react';
+import { Search, RefreshCcw, Loader2, X, Filter, ChevronDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CATEGORIES, stateType } from '@/types/blogs-types';
 import { BlogPostType } from '@/types/blogs-types';
 import { Toaster } from '@/components/ui/toaster';
@@ -11,8 +10,7 @@ import BlogPostGrid from '@/app/_component/BlogPostGrid';
 import { Button } from '@/components/ui/button';
 import { EmptyState, LoadingState, NoMorePosts, themeClasses } from '../themeClass';
 import { useTheme } from '@/context/ThemeContext';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-
+import FilterPanel from './FilterPanel';
 interface HomePageBlogCollectionProps {
     state: stateType;
     handleRetry: () => void;
@@ -39,6 +37,50 @@ const HomePageBlogCollection = ({ state, handleRetry, setState, searchLoading }:
         return () => clearTimeout(timer);
     }, [searchInput, setState]);
 
+    const handleClearAllFilters = () => {
+        setSearchInput('');
+        setState(prev => ({
+            ...prev,
+            category: 'all',
+            sortBy: 'newest',
+            searchTerm: '',
+            author: 'all', // Added author filter
+            page: 1
+        }));
+    };
+
+    // Theme based styles using isDarkMode
+    const themeStyles = {
+        layout: isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-900',
+        input: {
+            bg: isDarkMode ? 'bg-gray-800' : 'bg-white',
+            border: isDarkMode ? 'border-gray-700' : 'border-gray-200',
+            text: isDarkMode ? 'text-gray-100' : 'text-gray-900',
+            placeholder: isDarkMode ? 'placeholder-gray-500' : 'placeholder-gray-400'
+        },
+        button: {
+            bg: isDarkMode ? 'bg-gray-800' : 'bg-white',
+            bgHover: isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100',
+            border: isDarkMode ? 'border-gray-700' : 'border-gray-200',
+            text: isDarkMode ? 'text-gray-300' : 'text-gray-700',
+            textHover: isDarkMode ? 'hover:text-gray-100' : 'hover:text-gray-900'
+        },
+        icon: {
+            color: isDarkMode ? 'text-gray-400' : 'text-gray-600',
+            hover: isDarkMode ? 'hover:text-gray-300' : 'hover:text-gray-800'
+        },
+        filterBadge: {
+            bg: isDarkMode ? 'bg-gray-800' : 'bg-gray-100',
+            border: isDarkMode ? 'border-gray-700' : 'border-gray-200',
+            text: isDarkMode ? 'text-gray-200' : 'text-gray-800',
+            buttonBg: isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-200'
+        },
+        clearButton: {
+            text: isDarkMode ? 'text-gray-400' : 'text-gray-600',
+            hover: isDarkMode ? 'hover:bg-gray-800 hover:text-gray-200' : 'hover:bg-gray-100 hover:text-gray-900'
+        }
+    };
+
     if (state.error) {
         return (
             <div className="flex flex-col justify-center items-center min-h-[50vh] px-4">
@@ -56,17 +98,18 @@ const HomePageBlogCollection = ({ state, handleRetry, setState, searchLoading }:
 
     return (
         <TooltipProvider>
-            <div className={`${themeClasses(isDarkMode).layout} transition-colors duration-200 px-4 sm:px-6 lg:px-8`}>
+            <div className={`${themeClasses(isDarkMode).layout} transition-colors duration-200 px-2 sm:px-4 lg:px-6`}>
                 <Toaster />
 
-                <div className="max-w-7xl mx-auto space-y-6">
+                <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
                     {/* Search and Filter Controls */}
-                    <div className="pt-4 pb-2 sticky top-0 z-10 bg-inherit backdrop-blur-sm">
+                    <div className="pt-3 sm:pt-4 pb-2 sticky top-0 z-20 bg-inherit backdrop-blur-lg">
                         <div className="flex items-center gap-2 max-w-3xl mx-auto">
                             {/* Search Input - Takes most space */}
                             <div className="relative flex-grow">
                                 <Search
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4"
+                                    className={`absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 h-4 w-4 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'
+                                        }`}
                                     aria-hidden="true"
                                 />
                                 <Input
@@ -74,7 +117,7 @@ const HomePageBlogCollection = ({ state, handleRetry, setState, searchLoading }:
                                     placeholder="Search posts..."
                                     value={searchInput}
                                     onChange={(e) => setSearchInput(e.target.value)}
-                                    className="pl-10 pr-8 w-full"
+                                    className={`pl-8 sm:pl-10 pr-8 w-full h-10 ${themeStyles.input.bg} ${themeStyles.input.border} ${themeStyles.input.text} ${themeStyles.input.placeholder}`}
                                     aria-label="Search blog posts"
                                 />
                                 {searchInput && (
@@ -89,154 +132,78 @@ const HomePageBlogCollection = ({ state, handleRetry, setState, searchLoading }:
                                         {searchLoading ? (
                                             <Loader2 className="h-4 w-4 animate-spin" />
                                         ) : (
-                                            <X className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                                            <X className={`h-4 w-4 ${themeStyles.icon.color} ${themeStyles.icon.hover}`} />
                                         )}
                                     </button>
                                 )}
                             </div>
 
-                            {/* Mobile Filter Button */}
-                            <div className="md:hidden">
-                                <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
-                                    <SheetTrigger asChild>
-                                        <Button variant="outline" size="sm" className="gap-2">
-                                            <Filter className="h-4 w-4" />
-                                            <span className="sr-only sm:not-sr-only">Filters</span>
-                                        </Button>
-                                    </SheetTrigger>
-                                    <SheetContent side="right" className="w-[280px] py-8">
-                                        <div className="space-y-6">
-                                            <div className="space-y-2">
-                                                <h3 className="text-sm font-medium">Category</h3>
-                                                <Select
-                                                    value={state.category}
-                                                    onValueChange={(value) => {
-                                                        setState(prev => ({
-                                                            ...prev,
-                                                            category: value,
-                                                            page: 1
-                                                        }));
-                                                    }}
-                                                >
-                                                    <SelectTrigger className="w-full">
-                                                        <SelectValue placeholder="Category" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        {CATEGORIES.map((cat) => (
-                                                            <SelectItem key={cat.value} value={cat.value}>
-                                                                {cat.label}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
-                                            </div>
-                                            <div className="space-y-2">
-                                                <h3 className="text-sm font-medium">Sort By</h3>
-                                                <Select
-                                                    value={state.sortBy}
-                                                    onValueChange={(value) => {
-                                                        setState(prev => ({
-                                                            ...prev,
-                                                            sortBy: value,
-                                                            page: 1
-                                                        }));
-                                                    }}
-                                                >
-                                                    <SelectTrigger className="w-full">
-                                                        <SelectValue placeholder="Sort by" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectItem value="newest">Newest</SelectItem>
-                                                        <SelectItem value="trending">Trending</SelectItem>
-                                                        <SelectItem value="oldest">Oldest</SelectItem>
-                                                        <SelectItem value="mostViews">Most Views</SelectItem>
-                                                        <SelectItem value="mostLikes">Most Likes</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
-                                            </div>
-                                            <Button
-                                                onClick={() => setIsFilterOpen(false)}
-                                                className="w-full mt-4"
-                                            >
-                                                Apply Filters
-                                            </Button>
-                                        </div>
-                                    </SheetContent>
-                                </Sheet>
-                            </div>
+                            {/* Filter Button - Mobile View (Icon Only) */}
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className={`h-10 sm:hidden flex items-center justify-center p-0 w-10 ${themeStyles.button.bg} ${themeStyles.button.border} ${themeStyles.button.bgHover}`}
+                                onClick={() => setIsFilterOpen(true)}
+                                aria-label="Open filters"
+                            >
+                                <Filter className={`h-4 w-4 ${themeStyles.icon.color}`} />
+                            </Button>
 
-                            {/* Desktop Filters - Hidden on Mobile */}
-                            <div className="hidden md:flex md:items-center md:gap-2">
-                                <Select
-                                    value={state.category}
-                                    onValueChange={(value) => setState(prev => ({
-                                        ...prev,
-                                        category: value,
-                                        page: 1
-                                    }))}
-                                >
-                                    <SelectTrigger className="w-[130px]">
-                                        <SelectValue placeholder="Category" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {CATEGORIES.map((cat) => (
-                                            <SelectItem key={cat.value} value={cat.value}>
-                                                {cat.label}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-
-                                <Select
-                                    value={state.sortBy}
-                                    onValueChange={(value) => setState(prev => ({
-                                        ...prev,
-                                        sortBy: value,
-                                        page: 1
-                                    }))}
-                                >
-                                    <SelectTrigger className="w-[130px]">
-                                        <SelectValue placeholder="Sort by" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="newest">Newest</SelectItem>
-                                        <SelectItem value="trending">Trending</SelectItem>
-                                        <SelectItem value="oldest">Oldest</SelectItem>
-                                        <SelectItem value="mostViews">Most Views</SelectItem>
-                                        <SelectItem value="mostLikes">Most Likes</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
+                            {/* Filter Button - Desktop View (With Text) */}
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className={`h-10 gap-2 px-4 hidden sm:flex ${themeStyles.button.bg} ${themeStyles.button.border} ${themeStyles.button.bgHover}`}
+                                onClick={() => setIsFilterOpen(true)}
+                            >
+                                <Filter className={`h-4 w-4 ${themeStyles.icon.color}`} />
+                                <span className={`text-sm ${themeStyles.button.text}`}>Filters</span>
+                                <ChevronDown className={`h-3 w-3 ml-1 ${themeStyles.icon.color}`} />
+                            </Button>
                         </div>
                     </div>
 
-                    {/* Active Filters Display */}
-                    {(state.category !== 'all' || state.sortBy !== 'newest' || state.searchTerm) && (
+                    {/* Active Filters Display with isDarkMode-based theming */}
+                    {(state.category !== 'all' || state.sortBy !== 'newest' || state.author !== 'all' || state.searchTerm) && (
                         <div className="flex flex-wrap gap-2 max-w-3xl mx-auto">
                             {state.category !== 'all' && (
-                                <div className="inline-flex items-center gap-1 text-xs py-1 px-2 rounded-full bg-gray-100 dark:bg-gray-800">
+                                <div className={`inline-flex items-center gap-1 text-xs py-1 px-2 rounded-full border ${themeStyles.filterBadge.bg} ${themeStyles.filterBadge.border} ${themeStyles.filterBadge.text}`}>
                                     <span>Category: {CATEGORIES.find(c => c.value === state.category)?.label}</span>
                                     <button
                                         onClick={() => setState(prev => ({ ...prev, category: 'all', page: 1 }))}
                                         aria-label="Remove category filter"
+                                        className={`ml-1 rounded-full p-0.5 transition-colors ${themeStyles.filterBadge.buttonBg}`}
                                     >
-                                        <X className="h-3 w-3" />
+                                        <X className={`h-3 w-3 ${themeStyles.icon.color}`} />
+                                    </button>
+                                </div>
+                            )}
+                            {state.author !== 'all' && (
+                                <div className={`inline-flex items-center gap-1 text-xs py-1 px-2 rounded-full border ${themeStyles.filterBadge.bg} ${themeStyles.filterBadge.border} ${themeStyles.filterBadge.text}`}>
+                                    <span>Author: {state.author}</span>
+                                    <button
+                                        onClick={() => setState(prev => ({ ...prev, author: 'all', page: 1 }))}
+                                        aria-label="Remove author filter"
+                                        className={`ml-1 rounded-full p-0.5 transition-colors ${themeStyles.filterBadge.buttonBg}`}
+                                    >
+                                        <X className={`h-3 w-3 ${themeStyles.icon.color}`} />
                                     </button>
                                 </div>
                             )}
                             {state.sortBy !== 'newest' && (
-                                <div className="inline-flex items-center gap-1 text-xs py-1 px-2 rounded-full bg-gray-100 dark:bg-gray-800">
+                                <div className={`inline-flex items-center gap-1 text-xs py-1 px-2 rounded-full border ${themeStyles.filterBadge.bg} ${themeStyles.filterBadge.border} ${themeStyles.filterBadge.text}`}>
                                     <span>Sort: {state.sortBy.replace(/([A-Z])/g, ' $1').toLowerCase()}</span>
                                     <button
                                         onClick={() => setState(prev => ({ ...prev, sortBy: 'newest', page: 1 }))}
                                         aria-label="Remove sort filter"
+                                        className={`ml-1 rounded-full p-0.5 transition-colors ${themeStyles.filterBadge.buttonBg}`}
                                     >
-                                        <X className="h-3 w-3" />
+                                        <X className={`h-3 w-3 ${themeStyles.icon.color}`} />
                                     </button>
                                 </div>
                             )}
                             {state.searchTerm && (
-                                <div className="inline-flex items-center gap-1 text-xs py-1 px-2 rounded-full bg-gray-100 dark:bg-gray-800">
+                                <div className={`inline-flex items-center gap-1 text-xs py-1 px-2 rounded-full border ${themeStyles.filterBadge.bg} ${themeStyles.filterBadge.border} ${themeStyles.filterBadge.text}`}>
                                     <span>Search: {state.searchTerm}</span>
                                     <button
                                         onClick={() => {
@@ -244,26 +211,18 @@ const HomePageBlogCollection = ({ state, handleRetry, setState, searchLoading }:
                                             setState(prev => ({ ...prev, searchTerm: '', page: 1 }));
                                         }}
                                         aria-label="Remove search filter"
+                                        className={`ml-1 rounded-full p-0.5 transition-colors ${themeStyles.filterBadge.buttonBg}`}
                                     >
-                                        <X className="h-3 w-3" />
+                                        <X className={`h-3 w-3 ${themeStyles.icon.color}`} />
                                     </button>
                                 </div>
                             )}
-                            {(state.category !== 'all' || state.sortBy !== 'newest' || state.searchTerm) && (
+                            {(state.category !== 'all' || state.sortBy !== 'newest' || state.author !== 'all' || state.searchTerm) && (
                                 <Button
                                     variant="ghost"
                                     size="sm"
-                                    className="text-xs"
-                                    onClick={() => {
-                                        setSearchInput('');
-                                        setState(prev => ({
-                                            ...prev,
-                                            category: 'all',
-                                            sortBy: 'newest',
-                                            searchTerm: '',
-                                            page: 1
-                                        }));
-                                    }}
+                                    className={`text-xs h-6 px-2 ${themeStyles.clearButton.text} ${themeStyles.clearButton.hover}`}
+                                    onClick={handleClearAllFilters}
                                 >
                                     Clear all filters
                                 </Button>
@@ -273,7 +232,7 @@ const HomePageBlogCollection = ({ state, handleRetry, setState, searchLoading }:
 
                     {/* Stats Section */}
                     {!(state.posts.length === 0 && !state.loading) && !state.loadingMore && (
-                        <div className="mb-6">
+                        <div className="mb-4 sm:mb-6">
                             <DashboardGrid
                                 totalBlogs={state.stats.totalBlogs}
                                 totalViews={state.stats.totalViews}
@@ -303,10 +262,21 @@ const HomePageBlogCollection = ({ state, handleRetry, setState, searchLoading }:
                         <NoMorePosts />
                     )}
                     {state.posts.length === 0 && !state.loading && (
-                        // <EmptyState searchTerm={state.searchTerm} hasFilters={state.category !== 'all'} />
-                        <EmptyState title='No posts found' message='Try changing your search query or filters.' />
+                        <EmptyState
+                            title='No posts found'
+                            message='Try changing your search query or filters.'
+                        />
                     )}
                 </div>
+
+                {/* Filter Panel Component */}
+                <FilterPanel
+                    isOpen={isFilterOpen}
+                    onClose={() => setIsFilterOpen(false)}
+                    state={state}
+                    setState={setState}
+                    onClearFilters={handleClearAllFilters}
+                />
             </div>
         </TooltipProvider>
     );
