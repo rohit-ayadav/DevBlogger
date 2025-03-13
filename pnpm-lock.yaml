@@ -191,6 +191,9 @@ importers:
       nodemailer:
         specifier: ^6.9.16
         version: 6.9.16
+      prism-themes:
+        specifier: ^1.9.0
+        version: 1.9.0
       prismjs:
         specifier: ^1.29.0
         version: 1.29.0
@@ -3534,6 +3537,9 @@ packages:
 
   pretty-format@3.8.0:
     resolution: {integrity: sha512-WuxUnVtlWL1OfZFQFuqvnvs6MiAGk9UNsBostyBOB0Is9wb5uRESevA6rnl/rkksXaGX3GzZhPup5d6Vp1nFew==, tarball: https://registry.npmjs.org/pretty-format/-/pretty-format-3.8.0.tgz}
+
+  prism-themes@1.9.0:
+    resolution: {integrity: sha512-tX2AYsehKDw1EORwBps+WhBFKc2kxfoFpQAjxBndbZKr4fRmMkv47XN0BghC/K1qwodB1otbe4oF23vUTFDokw==, tarball: https://registry.npmjs.org/prism-themes/-/prism-themes-1.9.0.tgz}
 
   prismjs@1.27.0:
     resolution: {integrity: sha512-t13BGPUlFDR7wRB5kQDG4jjl7XeuH6jbJGt11JHPL96qwsEHNX2+68tFXqc1/k+/jALsbSWJKUOT/hcYAZ5LkA==, tarball: https://registry.npmjs.org/prismjs/-/prismjs-1.27.0.tgz}
@@ -7947,6 +7953,8 @@ snapshots:
   preact@10.24.3: {}
 
   pretty-format@3.8.0: {}
+
+  prism-themes@1.9.0: {}
 
   prismjs@1.27.0: {}
 

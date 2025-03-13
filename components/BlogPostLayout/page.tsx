@@ -17,18 +17,8 @@ interface BlogPostLayoutProps {
   author: Author;
 }
 
-const BlogPostLayout: React.FC<BlogPostLayoutProps> = ({
-  children,
-  post,
-  isLoading,
-  author,
-  id,
-}) => {
-  const { relatedPosts, authorPosts, error, loading } = useBlogPost({
-    email: post.createdBy,
-    category: post.category,
-    id
-  });
+const BlogPostLayout: React.FC<BlogPostLayoutProps> = ({ children, post, isLoading, author, id, }) => {
+  const { relatedPosts, authorPosts, error, loading } = useBlogPost({ email: post.createdBy, category: post.category, id });
   const { isDarkMode, toggleDarkMode } = useTheme();
 
   const handleShare = async () => {
@@ -63,11 +53,7 @@ const BlogPostLayout: React.FC<BlogPostLayoutProps> = ({
         "selection:bg-primary-500 selection:text-white"
       )}
     >
-      <Header
-        post={post}
-        isLoading={isLoading}
-        onShare={handleShare}
-      />
+      <Header post={post} isLoading={isLoading} onShare={handleShare} />
       <main className={cn(
         "container mx-auto px-4 lg:px-8 py-8",
         isDarkMode ? "text-gray-200" : "text-gray-800"
@@ -77,9 +63,7 @@ const BlogPostLayout: React.FC<BlogPostLayoutProps> = ({
             <article
               className={cn(
                 "prose max-w-none",
-                isDarkMode
-                  ? "prose-invert prose-dark"
-                  : "prose-light"
+                isDarkMode ? "prose-invert prose-dark" : "prose-light"
               )}
             >
               {children}
