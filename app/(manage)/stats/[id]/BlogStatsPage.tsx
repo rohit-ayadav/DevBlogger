@@ -40,11 +40,23 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { AuthorCard, StatCard, TIME_PERIODS } from './Card';
+import { ErrorMessage } from '@/app/blogs/[id]/ErrorMessage';
+import { useSession } from 'next-auth/react';
 
 const BlogStatsPage = ({ user, data, monthlyStats }: { user: UserType, data: BlogPostType, monthlyStats: MonthlyStatsType[] }) => {
     const { isDarkMode } = useTheme();
     const [timePeriod, setTimePeriod] = useState('3M');
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const { data: session, status } = useSession();
+    if (status !== 'authenticated' || session?.user?.email !== data.createdBy) {
+        return (
+            <ErrorMessage
+                title="You are not authorized"
+                message="You can see the stats of only the blogs you have created."
+                variant="default"
+            />
+        );
+    }
 
     const filteredStats = useMemo(() => {
         const now = new Date();
