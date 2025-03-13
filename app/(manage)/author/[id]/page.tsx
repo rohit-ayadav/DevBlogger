@@ -7,6 +7,7 @@ import { ErrorMessage } from "@/app/blogs/[id]/ErrorMessage";
 import { isValidObjectId } from "mongoose";
 import serializeDocument from "@/utils/date-formatter";
 import AuthorPage, { Author } from "@/app/(settings)/profile/id-omponent/Profile";
+import ProfileNEW from "@/app/(manage)/author/[id]/ProfileComponent/ProfileNew";
 
 async function getPostData(id: string) {
     try {
@@ -138,5 +139,6 @@ export default async function IndividualProfile({ params }: { params: { id: stri
         return <ErrorMessage message="Author not found" />;
     }
 
-    return <AuthorPage author={response.author} authorPosts={response.data} />;
+    // return <AuthorPage author={response.author} authorPosts={response.data} />;
+    return <ProfileNEW authorPosts={response.data} author={response.author} />;
 }

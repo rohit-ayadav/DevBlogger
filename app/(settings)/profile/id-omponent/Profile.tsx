@@ -263,3 +263,6 @@ const AuthorPage = ({ authorPosts, author }: { authorPosts: BlogPostType[], auth
 
 export default AuthorPage;
 export type { Author };
+
+
+// Will be deleted in next commit
