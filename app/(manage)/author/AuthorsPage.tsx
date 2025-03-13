@@ -1,4 +1,3 @@
-
 "use client";
 import React, { useState } from 'react';
 import { ErrorMessage } from '../../blogs/[id]/ErrorMessage';
@@ -10,9 +9,14 @@ import { GlobeIcon, LinkedinIcon, GithubIcon, TwitterIcon, InstagramIcon, Facebo
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Link from 'next/link';
+import { useTheme } from '@/context/ThemeContext';
+import { cn } from '@/lib/utils';
 
 type SortOption = 'followers' | 'posts' | 'newest' | 'alphabetical';
+
 const AuthorCard = ({ author }: { author: UserType }) => {
+    const { isDarkMode } = useTheme();
+
     const socialIcons = {
         website: <GlobeIcon className="h-4 w-4 sm:h-5 sm:w-5" />,
         linkedin: <LinkedinIcon className="h-4 w-4 sm:h-5 sm:w-5" />,
@@ -23,7 +27,10 @@ const AuthorCard = ({ author }: { author: UserType }) => {
     };
 
     return (
-        <Card className="hover:shadow-lg transition-shadow duration-200 group">
+        <Card className={cn(
+            "hover:shadow-lg transition-shadow duration-200 group",
+            isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white"
+        )}>
             <CardContent className="p-4 sm:p-6">
                 <div className="flex flex-col sm:flex-row sm:items-start sm:space-x-4">
                     <div className="flex justify-center mb-4 sm:mb-0">
@@ -34,26 +41,53 @@ const AuthorCard = ({ author }: { author: UserType }) => {
                                 className="object-cover"
                             />
                             <AvatarFallback
-                                className="text-lg sm:text-xl bg-blue-100 text-blue-900"
+                                className={cn(
+                                    "text-lg sm:text-xl",
+                                    isDarkMode ? "bg-blue-900 text-blue-100" : "bg-blue-100 text-blue-900"
+                                )}
                             >
                                 {author.name.charAt(0).toUpperCase()}
                             </AvatarFallback>
                         </Avatar>
                     </div>
                     <div className="flex-1 text-center sm:text-left">
-                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{author.name}</h2>
-                        <p className="text-sm text-gray-500 mb-2">@{author.username}</p>
+                        <h2 className={cn(
+                            "text-xl sm:text-2xl font-bold group-hover:text-blue-500 transition-colors",
+                            isDarkMode ? "text-gray-100" : "text-gray-900"
+                        )}>
+                            {author.name}
+                        </h2>
+                        <p className={cn(
+                            "text-sm",
+                            isDarkMode ? "text-gray-400" : "text-gray-500"
+                        )}>
+                            @{author.username}
+                        </p>
                         {author.bio && (
-                            <p className="text-sm sm:text-base text-gray-600 mb-3 line-clamp-2">{author.bio}</p>
+                            <p className={cn(
+                                "text-sm sm:text-base mb-3 line-clamp-2",
+                                isDarkMode ? "text-gray-300" : "text-gray-600"
+                            )}>
+                                {author.bio}
+                            </p>
                         )}
-                        <div className="flex justify-center sm:justify-start items-center space-x-4 mb-3">
-                            <span className="text-xs sm:text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                        <div className="flex flex-wrap justify-center sm:justify-start items-center gap-2 mb-3">
+                            <span className={cn(
+                                "text-xs sm:text-sm px-2 py-1 rounded-full",
+                                isDarkMode ? "text-gray-300 bg-gray-700" : "text-gray-500 bg-gray-100"
+                            )}>
                                 {author.noOfBlogs} {author.noOfBlogs === 1 ? 'post' : 'posts'}
                             </span>
-                            <span className="text-xs sm:text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                            <span className={cn(
+                                "text-xs sm:text-sm px-2 py-1 rounded-full",
+                                isDarkMode ? "text-gray-300 bg-gray-700" : "text-gray-500 bg-gray-100"
+                            )}>
                                 {author.follower} {author.follower === 1 ? 'follower' : 'followers'}
                             </span>
-                            <span className="text-xs sm:text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                            <span className={cn(
+                                "text-xs sm:text-sm px-2 py-1 rounded-full",
+                                isDarkMode ? "text-gray-300 bg-gray-700" : "text-gray-500 bg-gray-100"
+                            )}>
                                 {author.following} following
                             </span>
                         </div>
@@ -65,7 +99,12 @@ const AuthorCard = ({ author }: { author: UserType }) => {
                                         href={url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="text-gray-600 hover:text-blue-600 transition-colors p-2 hover:bg-gray-100 rounded-full"
+                                        className={cn(
+                                            "transition-colors p-2 rounded-full",
+                                            isDarkMode
+                                                ? "text-gray-300 hover:text-blue-400 hover:bg-gray-700"
+                                                : "text-gray-600 hover:text-blue-600 hover:bg-gray-100"
+                                        )}
                                     >
                                         {socialIcons[platform as keyof typeof socialIcons]}
                                     </a>
@@ -89,15 +128,20 @@ const FilterSection = ({
     setSearchQuery,
     sortBy,
     setSortBy,
-    totalResults
+    totalResults,
+    isDarkMode
 }: {
     searchQuery: string;
     setSearchQuery: (query: string) => void;
     sortBy: SortOption;
     setSortBy: (option: SortOption) => void;
     totalResults: number;
+    isDarkMode: boolean;
 }) => (
-    <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
+    <div className={cn(
+        "p-4 rounded-lg shadow-sm mb-6",
+        isDarkMode ? "bg-gray-800" : "bg-white"
+    )}>
         <div className="flex flex-col sm:flex-row gap-4 items-center">
             <div className="relative flex-1 w-full">
                 <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -106,31 +150,40 @@ const FilterSection = ({
                     placeholder="Search authors..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 w-full"
+                    className={cn(
+                        "pl-10 w-full",
+                        isDarkMode ? "bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-400" : ""
+                    )}
                 />
             </div>
             <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
-                <SelectTrigger className="w-full sm:w-48">
+                <SelectTrigger className={cn(
+                    "w-full sm:w-48",
+                    isDarkMode ? "bg-gray-700 border-gray-600 text-gray-200" : "bg-white border-gray-300 text-gray-900"
+                )}>
                     <SelectValue placeholder="Sort by..." />
                 </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="followers">Most Followers</SelectItem>
-                    <SelectItem value="posts">Most Posts</SelectItem>
-                    <SelectItem value="newest">Newest Authors</SelectItem>
-                    <SelectItem value="alphabetical">Alphabetical</SelectItem>
+                <SelectContent className={isDarkMode ? "bg-gray-700 border-gray-600 text-gray-200" : "bg-white border-gray-300 text-gray-900"}>
+                    <SelectItem className={isDarkMode ? "hover:bg-gray-600" : "hover:bg-gray-100"} value="followers">Most Followers</SelectItem>
+                    <SelectItem className={isDarkMode ? "hover:bg-gray-600" : "hover:bg-gray-100"} value="posts">Most Posts</SelectItem>
+                    <SelectItem className={isDarkMode ? "hover:bg-gray-600" : "hover:bg-gray-100"} value="newest">Newest Authors</SelectItem>
+                    <SelectItem className={isDarkMode ? "hover:bg-gray-600" : "hover:bg-gray-100"} value="alphabetical">Alphabetical</SelectItem>
                 </SelectContent>
             </Select>
         </div>
-        <div className="mt-2 text-sm text-gray-500">
+        <div className={cn(
+            "mt-2 text-sm",
+            isDarkMode ? "text-gray-400" : "text-gray-500"
+        )}>
             Found {totalResults} author{totalResults === 1 ? '' : 's'}
         </div>
     </div>
 );
 
 const AuthorsPage = ({ success, authors, totalAuthors, message }: { success: boolean, authors: UserType[], totalAuthors: number, message: string }) => {
-    // const { success, authors: initialAuthors, totalAuthors, message } = await getAuthorData();
     const [searchQuery, setSearchQuery] = useState('');
     const [sortBy, setSortBy] = useState<SortOption>('alphabetical');
+    const { isDarkMode } = useTheme();
 
     if (!success) {
         return <ErrorMessage message={message || "An error occurred while fetching data. Please try again later."} />;
@@ -162,11 +215,22 @@ const AuthorsPage = ({ success, authors, totalAuthors, message }: { success: boo
     });
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className={cn(
+            "min-h-screen",
+            isDarkMode ? "bg-gray-900" : "bg-gray-50"
+        )}>
             <div className="container mx-auto px-4 py-6 sm:py-8">
                 <div className="mb-6 sm:mb-8">
-                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Our Authors</h1>
-                    <p className="text-sm sm:text-base text-gray-600 mt-2">
+                    <h1 className={cn(
+                        "text-2xl sm:text-3xl font-bold",
+                        isDarkMode ? "text-gray-100" : "text-gray-900"
+                    )}>
+                        Our Authors
+                    </h1>
+                    <p className={cn(
+                        "text-sm sm:text-base mt-2",
+                        isDarkMode ? "text-gray-300" : "text-gray-600"
+                    )}>
                         Discover {totalAuthors} talented writer{totalAuthors === 1 ? '' : 's'} sharing their knowledge
                     </p>
                 </div>
@@ -177,9 +241,10 @@ const AuthorsPage = ({ success, authors, totalAuthors, message }: { success: boo
                     sortBy={sortBy}
                     setSortBy={setSortBy}
                     totalResults={filteredAuthors.length}
+                    isDarkMode={isDarkMode}
                 />
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                     {sortedAuthors.map(author => (
                         <AuthorCard key={author._id} author={author} />
                     ))}
@@ -187,7 +252,9 @@ const AuthorsPage = ({ success, authors, totalAuthors, message }: { success: boo
 
                 {filteredAuthors.length === 0 && (
                     <div className="text-center py-8">
-                        <p className="text-gray-500">No authors found matching your search criteria.</p>
+                        <p className={isDarkMode ? "text-gray-400" : "text-gray-500"}>
+                            No authors found matching your search criteria.
+                        </p>
                     </div>
                 )}
             </div>

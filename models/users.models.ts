@@ -109,22 +109,6 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-// Delete reset password token after password reset
-userSchema.pre("save", async function (next) {
-  if (this.isModified("password")) {
-    this.resetPasswordToken = "";
-  }
-  // if provider is not credentials, then set email verified to true
-  if (this.isModified("provider") && this.provider !== "credentials") {
-    this.isEmailVerified = true
-  }
-  next(); // move to the next middleware
-});
-
-// Add TTL index for resetPasswordToken
-userSchema.index({ resetPasswordToken: 1 }, { expireAfterSeconds: 600 }); // Delete token after 10 minutes
-userSchema.index({ resetPasswordTokenDate: 1 }, { expireAfterSeconds: 600 }); // Delete token date after 10 minutes
-
 userSchema.pre("save", async function (next) {
   this.updatedAt = new Date();
 

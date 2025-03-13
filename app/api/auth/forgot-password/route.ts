@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
 
     const { email, username } = await req.json();
 
-    if (!email && !username) {
+    if (!email || !username) {
         return NextResponse.json({
             error: "Email or username is required"
         }, { status: 400 });

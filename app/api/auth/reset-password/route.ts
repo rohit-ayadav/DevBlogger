@@ -16,7 +16,6 @@ export async function POST(req: NextRequest) {
         }, { status: 400 });
     }
 
-
     if (!process.env.CRYPTO_SECRET) {
         throw new Error("CRYPTO_SECRET is not defined");
     }
@@ -26,15 +25,25 @@ export async function POST(req: NextRequest) {
 
     const user = await User.findOne({ email: decryptedEmail });
 
-    if (decryptedEmail !== user.email) {
+    if (!user) {
         return NextResponse.json({
-            error: "Invalid email"
+            error: "Invalid request"
         }, { status: 400 });
     }
 
-    if (!user) {
+    if (decryptedEmail !== user.email) {
         return NextResponse.json({
-            error: "User not found"
+            error: "You are not authorized to reset the password"
+        }, { status: 400 });
+    }
+    // Check if the token is valid or not expired
+    const isTokenExpired = Date.now() > user.resetPasswordExpires;
+    if (isTokenExpired) {
+        user.resetPasswordToken = "";
+        user.resetPasswordExpires = 0;
+        await user.save();
+        return NextResponse.json({
+            error: "Token has expired. Please request a new password reset link"
         }, { status: 400 });
     }
 
@@ -46,6 +55,9 @@ export async function POST(req: NextRequest) {
 
     user.password = newPassword;
     user.resetPasswordToken = "";
+    user.resetPasswordExpires = 0;
+    user.isEmailVerified = true;
+    user.updatedAt = new Date();
     await user.save();
 
     sendEmail({
