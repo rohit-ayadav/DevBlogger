@@ -37,6 +37,7 @@ export async function saveEdit(data: ProfileFormData) {
         user.name = data.name;
         user.username = data.username;
         user.bio = data.bio;
+        user.image = data.image;
         user.website = data.website;
         user.socialLinks = data.socialLinks;
         await user.save();

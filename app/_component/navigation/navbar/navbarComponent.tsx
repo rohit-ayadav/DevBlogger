@@ -4,6 +4,8 @@ import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { Menu, X, Code, Terminal, Settings, Edit3, Layout, Users, User, Search, Bell, Sun, Moon, CodeXml } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
+import isValidUrl from '@/utils/validURL';
+import { CldImage } from 'next-cloudinary';
 const SearchHeader = React.lazy(() => import('@/app/search/SearchHeader'));
 
 const NavLink = ({ href, children, icon: Icon, setIsMobileMenuOpen }: any) => (
@@ -70,7 +72,7 @@ export const Navbar = () => {
               DevBlogger
             </span>
           </Link>
-          
+
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-1 flex-1 justify-center max-w-2xl mx-8">
             {navLinks.map((link) => (
@@ -181,11 +183,27 @@ export const Navbar = () => {
           {session?.user ? (
             <div className="pt-4 border-t border-gray-200 dark:border-gray-800">
               <div className="flex items-center space-x-3 px-3 py-2">
-                <img
+                {session.user.image && isValidUrl(session.user.image) ? (
+                  <img
+                    src={session.user.image}
+                    alt="Profile"
+                    className="w-10 h-10 rounded-full border-2 border-indigo-500"
+                  />
+                ) : (
+                  <CldImage
+                    src={`/profile-pictures/${session.user.image}`}
+                    alt="Profile"
+                    width={40}
+                    height={40}
+                    className="w-10 h-10 rounded-full border-2 border-indigo-500"
+                  />
+                )}
+
+                {/* <img
                   src={session.user.image || "/api/placeholder/32/32"}
                   alt="Profile"
                   className="w-10 h-10 rounded-full border-2 border-indigo-500"
-                />
+                /> */}
                 <div>
                   <h3 className="font-medium text-gray-900 dark:text-white">
                     {session.user.name}

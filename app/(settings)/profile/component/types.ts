@@ -20,6 +20,7 @@ export interface UserType {
 export interface ProfileFormData {
     name: string;
     username: string;
+    image: string;
     email: string;
     bio: string;
     website?: string;

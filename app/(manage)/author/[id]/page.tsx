@@ -74,6 +74,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     return {
         title: `${authorName} - Expert Dev Blogs & Coding Tutorials | DevBlogger`,
         description,
+        keywords: "developer blogs, programming articles, web development, coding tutorials",
         openGraph: {
             title: `🔥 ${authorName}’s Best Coding Blogs & Developer Tips | DevBlogger`,
             description,

@@ -1,38 +1,23 @@
 "use client";
-import React, { useState, useMemo } from 'react';
-import { Moon, Sun, Mail, Globe, ArrowLeft, Search, Twitter, X, Share2, Eye, Heart, BookOpen, User, Settings } from 'lucide-react';
-import { SiFacebook, SiLinkedin, SiGithub, SiInstagram } from 'react-icons/si';
+import React, { useState } from 'react';
+import { Globe, Search, Eye, Heart, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { TabsList, TabsTrigger, Tabs, TabsContent } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import Newsletter from '@/app/_component/newsletter';
 import { ErrorBoundary } from 'react-error-boundary';
-import { useTheme } from '@/context/ThemeContext';
-import { PostCard } from '../../../../(settings)/profile/id-omponent/PostCard';
-import { AuthorStats } from '../../../../(settings)/profile/id-omponent/AuthorStats';
-import { ErrorFallback } from '../../../../(settings)/profile/id-omponent/ErrorFallback';
-import { BlogPostType, CATEGORIES, SORTBYFILTER } from '@/types/blogs-types';
-import { formatDate } from '@/utils/date-formatter';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import {
-    Sheet,
-    SheetContent,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger
-} from '@/components/ui/sheet';
+import { ErrorFallback } from '@/app/(settings)/profile/id-omponent/ErrorFallback';
+import { BlogPostType } from '@/types/blogs-types';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import Header from './Header';
 import useProfile from './useProfile';
 import { AuthorInfo } from './AuthorInfo';
 import Posts from './Posts';
 import StatsAuthorPage from './Stats';
 import ShareCTA from './ShareCTA';
+import { CldImage } from 'next-cloudinary';
 
 interface Author {
     _id: string;
@@ -60,7 +45,6 @@ const ProfileNEW = ({ authorPosts, author }: { authorPosts: BlogPostType[], auth
     const {
         isDarkMode,
         toggleDarkMode,
-        router,
         searchTerm,
         setSearchTerm,
         selectedCategory,
@@ -77,6 +61,73 @@ const ProfileNEW = ({ authorPosts, author }: { authorPosts: BlogPostType[], auth
         copyProfileLink,
     } = useProfile({ authorPosts, author });
 
+    const [imageError, setImageError] = useState(false);
+
+    const isValidUrl = (string: string) => {
+        try {
+            new URL(string);
+            return true;
+        } catch (_) {
+            return false;
+        }
+    };
+
+    React.useEffect(() => {
+        setImageError(false);
+    }, [author.image]);
+
+    const renderAvatarContent = () => {
+        if (imageError || !author.image) {
+            return (
+                <>
+                    <AvatarImage
+                        src="/default-thumbnail.jpg"
+                        alt={author.name}
+                        onError={() => setImageError(true)}
+                    />
+                    <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white text-4xl">
+                        {author.name.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                </>
+            );
+        }
+
+        // If image is a valid URL
+        if (isValidUrl(author.image)) {
+            return (
+                <>
+                    <AvatarImage
+                        src={author.image}
+                        alt={author.name}
+                        onError={() => setImageError(true)}
+                    />
+                    <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white text-4xl">
+                        {author.name.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                </>
+            );
+        }
+
+        // If image is a Cloudinary public ID
+        return (
+            <>
+                <div className="w-full h-full rounded-full overflow-hidden">
+                    <CldImage
+                        src={`/profile-pictures/${author.image}`}
+                        width={160}
+                        height={160}
+                        alt={author.name}
+                        className="w-full h-full object-cover"
+                        onError={() => setImageError(true)}
+                    />
+                </div>
+                <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white text-4xl">
+                    {author.name.charAt(0).toUpperCase()}
+                </AvatarFallback>
+            </>
+        );
+    };
+
     return (
         <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => window.location.reload()}>
             <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
@@ -92,17 +143,13 @@ const ProfileNEW = ({ authorPosts, author }: { authorPosts: BlogPostType[], auth
                                     src='/coverprofile.avif'
                                     alt="Profile Cover"
                                     className="w-full h-full object-cover opacity-30"
-                                    loading="lazy"
                                 />
                             </div>
 
                             <div className="container relative px-4 mx-auto">
                                 <div className="flex flex-col sm:flex-row items-center sm:items-end -mt-16 sm:-mt-24">
                                     <Avatar className="w-32 h-32 sm:w-40 sm:h-40 ring-4 ring-white dark:ring-gray-900 bg-white dark:bg-gray-800 shadow-lg">
-                                        <AvatarImage src={author.image} alt={author.name} />
-                                        <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white text-4xl">
-                                            {author.name.charAt(0).toUpperCase()}
-                                        </AvatarFallback>
+                                        {renderAvatarContent()}
                                     </Avatar>
 
                                     <div className="mt-4 sm:mt-0 sm:ml-6 text-center sm:text-left">
@@ -136,20 +183,6 @@ const ProfileNEW = ({ authorPosts, author }: { authorPosts: BlogPostType[], auth
                         <Tabs defaultValue="posts" className="w-full" onValueChange={setActiveTab}>
                             <div className="border-b border-gray-200 dark:border-gray-700">
                                 <div className="flex justify-between items-center">
-                                    {/* <TabsList className="h-10 bg-transparent">
-                                        <TabsTrigger
-                                            value="posts"
-                                            className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 dark:data-[state=active]:border-blue-400 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 h-10 px-4"
-                                        >
-                                            Posts
-                                        </TabsTrigger>
-                                        <TabsTrigger
-                                            value="stats"
-                                            className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 dark:data-[state=active]:border-blue-400 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 h-10 px-4"
-                                        >
-                                            Stats
-                                        </TabsTrigger>
-                                    </TabsList> */}
                                     <TabsList className="grid grid-cols-2 gap-4">
                                         <TabsTrigger value="posts" className="flex items-center justify-center">
                                             <BookOpen className="w-4 h-4 mr-2" /> Posts
