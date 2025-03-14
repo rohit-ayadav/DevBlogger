@@ -11,6 +11,7 @@ import { SettingsTab } from "./SettingsTab";
 import { BlogPostType, UserType } from "@/types/blogs-types";
 import { ErrorFallback } from "../id-omponent/ErrorFallback";
 import toast from "react-hot-toast";
+import changePassword from "@/action/changePassword";
 
 interface UserProfileProps {
     userData: UserType;
@@ -31,21 +32,6 @@ export default function UserProfile({ userData }: UserProfileProps) {
             document.documentElement.classList.remove('dark');
         }
     }, [isDarkMode]);
-
-    const changePassword = async (oldPassword: string, newPassword: string) => {
-        if (!session?.user?.email) throw new Error('Login again to change password');
-        if (!oldPassword || !newPassword) throw new Error('Please enter old and new password');
-
-        const response = await fetch(`/api/user/password`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ oldPassword, newPassword }),
-        });
-
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.message || 'Failed to change password');
-        return data.message;
-    };
 
     const manageLinkedAccounts = () => {
         toast.error('We are working on this feature. Please check back later.');

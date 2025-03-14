@@ -9,7 +9,6 @@ import { UserType } from '@/types/blogs-types';
 import { Facebook, Instagram, Linkedin, Twitter } from 'react-feather';
 import { sendEmailVerification } from '@/action/email/sendEmailVerification';
 import { Toaster } from '@/components/ui/toaster';
-
 interface CustomInputProps {
     label: string;
     value: string;

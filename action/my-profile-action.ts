@@ -5,6 +5,7 @@ import User from "@/models/users.models";
 import { revalidatePath } from "next/cache";
 import { ProfileFormData } from "@/app/(settings)/profile/component/types";
 import Blog from "@/models/blogs.models";
+import { isValidUrl } from "@/lib/common-function";
 
 export async function saveEdit(data: ProfileFormData) {
     try {
@@ -33,6 +34,22 @@ export async function saveEdit(data: ProfileFormData) {
         if (!user.isEmailVerified) {
             throw new Error("Please verify your email first to update profile");
         }
+        // check if website or socialLinks are valid or not
+        if (data.website && !isValidUrl(data.website)) {
+            throw new Error("Website URL is not valid");
+        }
+        if (data.socialLinks) {
+            for (const link of (Array.isArray(data.socialLinks) ? data.socialLinks : [])) {
+                if (link && !isValidUrl(link)) {
+                    throw new Error(`Social link ${link} is not valid`);
+                }
+                // if not start with https:// or http:// or www then throw error
+                if (link && !/^https?:\/\/|^www\./.test(link)) {
+                    throw new Error(`Social link ${link} is not valid`);
+                }
+            }
+        }
+
         // Update user data
         user.name = data.name;
         user.username = data.username;
