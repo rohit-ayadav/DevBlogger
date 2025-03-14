@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { signOut, useSession } from "next-auth/react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { User, BookOpen, Settings } from "lucide-react";
+import { User, BookOpen, Settings, ExternalLink, LayoutDashboard } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
 import { ProfileCard } from "./ProfileCard";
@@ -12,10 +12,47 @@ import { BlogPostType, UserType } from "@/types/blogs-types";
 import { ErrorFallback } from "../id-omponent/ErrorFallback";
 import toast from "react-hot-toast";
 import changePassword from "@/action/changePassword";
+import Link from "next/link";
 
 interface UserProfileProps {
     userData: UserType;
 }
+
+const ProfileCTA = ({ username, isDarkMode }: { username: string, isDarkMode: boolean }) => {
+    const router = useRouter();
+
+    return (
+        <div className={`mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+            <div
+                onClick={() => router.push('/dashboard')}
+                className={`flex items-center justify-between p-4 rounded-lg cursor-pointer ${isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-gray-100 hover:bg-gray-200'
+                    } transition-colors duration-200`}
+            >
+                <div>
+                    <h3 className="font-semibold text-lg">Manage Your Blogs</h3>
+                    <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                        Edit, publish and track your blog posts
+                    </p>
+                </div>
+                <LayoutDashboard className={`w-6 h-6 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
+            </div>
+
+            <div
+                onClick={() => router.push(`/author/${username}`)}
+                className={`flex items-center justify-between p-4 rounded-lg cursor-pointer ${isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-gray-100 hover:bg-gray-200'
+                    } transition-colors duration-200`}
+            >
+                <div>
+                    <h3 className="font-semibold text-lg">Public Profile</h3>
+                    <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                        View and share your public profile
+                    </p>
+                </div>
+                <ExternalLink className={`w-6 h-6 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
+            </div>
+        </div>
+    );
+};
 
 export default function UserProfile({ userData }: UserProfileProps) {
     const { isDarkMode, toggleDarkMode } = useTheme();
@@ -61,8 +98,8 @@ export default function UserProfile({ userData }: UserProfileProps) {
                             <TabsTrigger
                                 value="profile"
                                 className={`flex items-center justify-center ${isDarkMode
-                                        ? 'data-[state=active]:bg-gray-700 data-[state=active]:text-white data-[state=inactive]:text-gray-400'
-                                        : 'data-[state=active]:bg-white'
+                                    ? 'data-[state=active]:bg-gray-700 data-[state=active]:text-white data-[state=inactive]:text-gray-400'
+                                    : 'data-[state=active]:bg-white'
                                     }`}
                             >
                                 <User className="w-4 h-4 mr-2" /> Profile
@@ -70,8 +107,8 @@ export default function UserProfile({ userData }: UserProfileProps) {
                             <TabsTrigger
                                 value="settings"
                                 className={`flex items-center justify-center ${isDarkMode
-                                        ? 'data-[state=active]:bg-gray-700 data-[state=active]:text-white data-[state=inactive]:text-gray-400'
-                                        : 'data-[state=active]:bg-white'
+                                    ? 'data-[state=active]:bg-gray-700 data-[state=active]:text-white data-[state=inactive]:text-gray-400'
+                                    : 'data-[state=active]:bg-white'
                                     }`}
                             >
                                 <Settings className="w-4 h-4 mr-2" /> Settings
@@ -102,6 +139,7 @@ export default function UserProfile({ userData }: UserProfileProps) {
                             />
                         </TabsContent>
                     </Tabs>
+                    <ProfileCTA username={userData.username} isDarkMode={isDarkMode} />
                 </div>
             </div>
         </div>

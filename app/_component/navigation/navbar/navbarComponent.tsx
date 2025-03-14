@@ -191,7 +191,7 @@ export const Navbar = () => {
                   />
                 ) : (
                   <CldImage
-                    src={`/profile-pictures/${session.user.image}`}
+                    src={`${session.user.image}`}
                     alt="Profile"
                     width={40}
                     height={40}

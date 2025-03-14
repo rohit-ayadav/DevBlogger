@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { getSession } from "next-auth/react";
+import React from "react";
 
 export const useDarkMode = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -30,6 +31,14 @@ export const useDarkMode = () => {
 
     checkSession();
   }, []);
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
 
   const toggleDarkMode = async () => {
     const newTheme = isDarkMode ? "light" : "dark";
