@@ -8,6 +8,7 @@ import { isValidObjectId } from "mongoose";
 import serializeDocument from "@/utils/date-formatter";
 import AuthorPage, { Author } from "@/app/(settings)/profile/id-omponent/Profile";
 import ProfileNEW from "@/app/(manage)/author/[id]/ProfileComponent/ProfileNew";
+import { isValidUrl } from "@/lib/common-function";
 
 async function getPostData(id: string) {
     try {
@@ -68,7 +69,13 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     const authorName = formatAuthorName(author.name);
     const description = `${author.name}'s expert blogs on web development, JavaScript, React and modern tech. Quality coding insights on DevBlogger.`;
     const url = `https://www.devblogger.in/author/${author.username}`;
-    const thumbnail = author.image || "/default-profile.jpg";
+    let thumbnail
+    if (isValidUrl(author.image))
+        thumbnail = author.image;
+    else if (author.image && !isValidUrl(author.image))
+        thumbnail = `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/w_300,h_300,c_fill,g_auto/${author.image}`;
+    else thumbnail = "/default-profile.jpg";
+
     const lastUpdated = new Date(author?.updatedAt ?? new Date()).toISOString();
 
     return {
@@ -81,7 +88,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
             url,
             siteName: "DevBlogger",
             type: "profile",
-            images: [{ url: thumbnail, width: 1200, height: 630 }],
+            images: [thumbnail],
             locale: "en_US"
         },
         twitter: {
