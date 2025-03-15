@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useTheme } from '@/context/ThemeContext';
 import { BlogPostType, UserType } from '@/types/blogs-types';
+import UserAvatar from './UserAvatar';
 
 interface BlogPostCardProps {
     post: BlogPostType;
@@ -197,17 +198,7 @@ export const PostCard = ({ post, user, showActions = false, author }: BlogPostCa
                     </p>
 
                     <div className="mt-auto pt-2 flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            <Avatar className="h-5 w-5 sm:h-6 sm:w-6">
-                                <AvatarImage src={author?.image || user?.image} alt={author?.name || user?.name || 'User'} />
-                                <AvatarFallback className="bg-blue-100 text-blue-900 text-xs">
-                                    {(author?.name || user?.name || 'A').charAt(0).toUpperCase()}
-                                </AvatarFallback>
-                            </Avatar>
-                            <span className={`text-xs truncate max-w-[100px] sm:max-w-[150px] ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                                {author?.name || user?.name || 'Anonymous'}
-                            </span>
-                        </div>
+                        <UserAvatar user={user} isDarkMode={isDarkMode} />
 
                         <div className="flex items-center gap-2">
                             <TooltipProvider>
@@ -264,43 +255,6 @@ export const PostCard = ({ post, user, showActions = false, author }: BlogPostCa
                 </CardFooter>
             )}
         </Card>
-    );
-};
-
-// Grid component to display posts in a responsive grid
-export const BlogGrid = ({
-    posts,
-    user,
-    authors,
-    showActions = false
-}: {
-    posts: BlogPostType[];
-    user?: UserType;
-    authors?: Record<string, UserType>;
-    showActions?: boolean;
-}) => {
-    const { isDarkMode } = useTheme();
-
-    return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-            {posts.map((post) => (
-                <PostCard
-                    key={post._id}
-                    post={post}
-                    user={user}
-                    author={authors?.[post.createdBy]}
-                    showActions={showActions}
-                />
-            ))}
-
-            {posts.length === 0 && (
-                <div className={`col-span-full py-12 text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                    <UserCircle className={`h-12 w-12 mx-auto ${isDarkMode ? 'text-gray-700' : 'text-gray-300'} mb-4`} />
-                    <h3 className={`text-lg font-medium ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>No posts available</h3>
-                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} mt-2`}>Check back later for new content</p>
-                </div>
-            )}
-        </div>
     );
 };
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BlogPostCard, SkeletonCard } from './BlogPostCard';
+import { SkeletonCard } from './Skeleton';
 import { BlogPostType, UserType } from '@/types/blogs-types';
 import PostCard from './PostCard';
 interface BlogPostGridProps {

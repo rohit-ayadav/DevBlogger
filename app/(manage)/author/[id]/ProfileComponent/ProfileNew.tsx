@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Globe, Search, Eye, Heart, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -18,6 +18,7 @@ import Posts from './Posts';
 import StatsAuthorPage from './Stats';
 import ShareCTA from './ShareCTA';
 import { CldImage } from 'next-cloudinary';
+import { isValidUrl } from '@/lib/common-function';
 
 interface Author {
     _id: string;
@@ -63,16 +64,7 @@ const ProfileNEW = ({ authorPosts, author }: { authorPosts: BlogPostType[], auth
 
     const [imageError, setImageError] = useState(false);
 
-    const isValidUrl = (string: string) => {
-        try {
-            new URL(string);
-            return true;
-        } catch (_) {
-            return false;
-        }
-    };
-
-    React.useEffect(() => {
+    useEffect(() => {
         setImageError(false);
     }, [author.image]);
 
@@ -81,7 +73,7 @@ const ProfileNEW = ({ authorPosts, author }: { authorPosts: BlogPostType[], auth
             return (
                 <>
                     <AvatarImage
-                        src="/default-thumbnail.jpg"
+                        src="/default-profile.jpg"
                         alt={author.name}
                         onError={() => setImageError(true)}
                     />
@@ -113,17 +105,18 @@ const ProfileNEW = ({ authorPosts, author }: { authorPosts: BlogPostType[], auth
             <>
                 <div className="w-full h-full rounded-full overflow-hidden">
                     <CldImage
-                        src={`/profile-pictures/${author.image}`}
+                        src={`${author.image}`}
                         width={160}
                         height={160}
                         alt={author.name}
+                        loading='eager'
+                        placeholder="blur"
+                        blurDataURL={author.image}
+                        format="auto"
                         className="w-full h-full object-cover"
                         onError={() => setImageError(true)}
                     />
                 </div>
-                <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white text-4xl">
-                    {author.name.charAt(0).toUpperCase()}
-                </AvatarFallback>
             </>
         );
     };

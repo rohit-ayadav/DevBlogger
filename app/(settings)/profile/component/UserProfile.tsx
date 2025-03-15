@@ -61,15 +61,6 @@ export default function UserProfile({ userData }: UserProfileProps) {
     const [editMode, setEditMode] = useState(false);
     const [activeTab, setActiveTab] = useState("profile");
 
-    // Apply theme classes to the document when the theme changes
-    useEffect(() => {
-        if (isDarkMode) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    }, [isDarkMode]);
-
     const manageLinkedAccounts = () => {
         toast.error('We are working on this feature. Please check back later.');
     };

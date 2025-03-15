@@ -40,31 +40,41 @@ export const ProfileCard = ({ userData, editMode, setEditMode }: ProfileCardProp
     // Get appropriate avatar image based on userData.image
     const getAvatarImage = () => {
         if (!userData?.image) {
-            return (
+            return (<Avatar className="w-24 h-24 md:w-32 md:h-32 transition-all">
+
                 <AvatarImage
                     src="/default-profile.jpg"
                     alt={userData?.name ?? 'User'}
                 />
+                <AvatarFallback className={`${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+                    {userData?.name?.split(' ').map(n => n[0]).join('') ?? 'U'}
+                </AvatarFallback></Avatar>
             );
         }
 
         if (isValidUrl(userData.image)) {
             return (
-                <AvatarImage
-                    src={userData.image}
-                    alt={userData?.name ?? 'User'}
-                />
+                <Avatar className="w-24 h-24 md:w-32 md:h-32 transition-all">
+                    <AvatarImage
+                        src={userData.image}
+                        alt={userData?.name ?? 'User'}
+                    />
+                    <AvatarFallback className={`${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+                        {userData?.name?.split(' ').map(n => n[0]).join('') ?? 'U'}
+                    </AvatarFallback></Avatar>
             );
         } else {
             // It's a Cloudinary public ID
             return (
-                <CldImage
-                    src={`/${userData.image}`}
-                    width={128}
-                    height={128}
-                    alt={userData?.name ?? 'User'}
-                    className="w-full h-full object-cover rounded-full"
-                />
+                <Avatar className="w-24 h-24 md:w-32 md:h-32 transition-all">
+                    <CldImage
+                        src={`/${userData.image}`}
+                        width={128}
+                        height={128}
+                        alt={userData?.name ?? 'User'}
+                        className="w-full h-full object-cover rounded-full"
+                    />
+                </Avatar>
             );
         }
     };
@@ -168,12 +178,7 @@ export const ProfileCard = ({ userData, editMode, setEditMode }: ProfileCardProp
             <CardHeader>
                 <div className="flex flex-col items-center">
                     <div className="relative">
-                        <Avatar className="w-24 h-24 md:w-32 md:h-32 transition-all">
-                            {getAvatarImage()}
-                            <AvatarFallback className={`${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
-                                {userData?.name?.split(' ').map(n => n[0]).join('') ?? 'U'}
-                            </AvatarFallback>
-                        </Avatar>
+                        {getAvatarImage()}
 
                         {editMode && (
                             <div

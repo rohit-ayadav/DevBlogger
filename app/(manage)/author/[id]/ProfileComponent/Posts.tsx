@@ -9,7 +9,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { BookOpen, Eye, Heart } from 'lucide-react';
 import { BlogPostType, UserType } from '@/types/blogs-types';
 import { Author } from './ProfileNew';
-import PostCard from '@/app/_component/PostCard';
+import PostCard from '@/app/_component/Post/PostCard';
 
 const Posts = ({
     posts,

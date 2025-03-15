@@ -1,11 +1,13 @@
 "use client";
-import React, { useState, useEffect, Suspense } from 'react';
-import { signOut, useSession } from 'next-auth/react';
+import React, { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { Menu, X, Code, Terminal, Settings, Edit3, Layout, Users, User, Search, Bell, Sun, Moon, CodeXml } from 'lucide-react';
+import { Menu, X, Code, Terminal, Settings, Edit3, Layout, Users, User, Bell, Sun, Moon, CodeXml } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
-import isValidUrl from '@/utils/validURL';
-import { CldImage } from 'next-cloudinary';
+import ProfileDisplay from './Logo';
+import DesktopNavProfile from './ProfileDesktop';
+import { UserType } from '@/types/blogs-types';
+import { getNavbarData } from '@/action/personalDashboardData';
 const SearchHeader = React.lazy(() => import('@/app/search/SearchHeader'));
 
 const NavLink = ({ href, children, icon: Icon, setIsMobileMenuOpen }: any) => (
@@ -32,6 +34,21 @@ export const Navbar = () => {
   const { isDarkMode, toggleDarkMode } = useTheme();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [user, setUser] = useState<UserType | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (session?.user) {
+        const data = await getNavbarData();
+        if ('user' in data) {
+          setUser(data.user);
+        } else {
+          console.error(data.error);
+        }
+      }
+    };
+    fetchData();
+  }, [session]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -102,34 +119,7 @@ export const Navbar = () => {
               <Bell size={20} />
               <span className="absolute top-1 right-1 w-2 h-2 bg-indigo-600 rounded-full"></span>
             </button>
-
-            {session?.user ? (
-              <div className="relative flex items-center">
-                <Link href="/profile">
-                  <button className="flex items-center space-x-3 px-4 py-2 rounded-lg
-                  bg-gradient-to-r from-indigo-500 to-purple-600 text-white
-                  hover:from-indigo-600 hover:to-purple-700 transition-all duration-300
-                  shadow-md hover:shadow-lg">
-                    <img
-                      src={session.user.image || "/api/placeholder/32/32"}
-                      alt="Profile"
-                      className="w-6 h-6 rounded-full border-2 border-white/50"
-                    />
-                    <span className="font-medium">{session.user.name}</span>
-                  </button>
-                </Link>
-              </div>
-            ) : (
-              <Link
-                href="/login"
-                className="px-6 py-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 
-                  text-white hover:from-indigo-600 hover:to-purple-700 transition-all duration-300
-                  shadow-md hover:shadow-lg font-medium flex items-center gap-2"
-              >
-                <Terminal size={18} />
-                Get Started
-              </Link>
-            )}
+            <DesktopNavProfile user={user} />
           </div>
 
           {/* Mobile View, Night Mode, Notifications*/}
@@ -182,37 +172,7 @@ export const Navbar = () => {
           {/* Profile Section */}
           {session?.user ? (
             <div className="pt-4 border-t border-gray-200 dark:border-gray-800">
-              <div className="flex items-center space-x-3 px-3 py-2">
-                {session.user.image && isValidUrl(session.user.image) ? (
-                  <img
-                    src={session.user.image}
-                    alt="Profile"
-                    className="w-10 h-10 rounded-full border-2 border-indigo-500"
-                  />
-                ) : (
-                  <CldImage
-                    src={`${session.user.image}`}
-                    alt="Profile"
-                    width={40}
-                    height={40}
-                    className="w-10 h-10 rounded-full border-2 border-indigo-500"
-                  />
-                )}
-
-                {/* <img
-                  src={session.user.image || "/api/placeholder/32/32"}
-                  alt="Profile"
-                  className="w-10 h-10 rounded-full border-2 border-indigo-500"
-                /> */}
-                <div>
-                  <h3 className="font-medium text-gray-900 dark:text-white">
-                    {session.user.name}
-                  </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {session.user.email}
-                  </p>
-                </div>
-              </div>
+              <ProfileDisplay user={user} />
               <div className="mt-3 grid grid-cols-2 gap-2">
                 {profileLinks.map((link) => (
                   <NavLink
@@ -253,4 +213,3 @@ export const Navbar = () => {
     </nav>
   );
 };
-

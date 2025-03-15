@@ -36,3 +36,20 @@ export async function fetchAuthorData() {
         return { error: (error as Error).message };
     }
 }
+
+export async function getNavbarData() {
+    try {
+        await connectDB();
+        const session = await getSessionAtHome();
+        if (!session?.user?.email) return { error: "Unauthorized: Please log in." };
+
+        const user = await User.findOne({ email: session.user.email }).lean() as unknown as UserType;
+        if (!user) return { error: "Kindly Login again to access the dashboard." };
+
+        return {
+            user: serializeDocument(user)
+        };
+    } catch (error: any) {
+        return { error: (error as Error).message };
+    }
+}
