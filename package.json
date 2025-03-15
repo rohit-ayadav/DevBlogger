@@ -72,7 +72,7 @@
     "next-themes": "^0.3.0",
     "nodemailer": "^6.9.16",
     "prism-themes": "^1.9.0",
-    "prismjs": "^1.29.0",
+    "prismjs": "^1.30.0",
     "quill": "^2.0.2",
     "quill-image-resize-module": "^3.0.0",
     "quill-markdown": "^1.5.0",
