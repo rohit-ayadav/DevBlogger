@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
             openGraph: {
                 title: "Author Not Found",
                 description: "This author does not exist or has not published any posts. Discover top programming blogs and tech articles on DevBlogger.",
-                images: [{ url: "/default-thumbnail.jpg", width: 1200, height: 630 }]
+                images: [{ url: "/default-profile.jpg", width: 1200, height: 630 }]
             },
             other: {
                 "robots": "noindex, follow",
@@ -68,7 +68,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     const authorName = formatAuthorName(author.name);
     const description = `${author.name}'s expert blogs on web development, JavaScript, React and modern tech. Quality coding insights on DevBlogger.`;
     const url = `https://www.devblogger.in/author/${author.username}`;
-    const thumbnail = author.image || "/default-thumbnail.jpg";
+    const thumbnail = author.image || "/default-profile.jpg";
     const lastUpdated = new Date(author?.updatedAt ?? new Date()).toISOString();
 
     return {
