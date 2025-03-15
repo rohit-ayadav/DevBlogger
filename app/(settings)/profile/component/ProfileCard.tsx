@@ -10,6 +10,8 @@ import { saveEdit } from '@/action/my-profile-action';
 import { CldImage } from 'next-cloudinary';
 import { useTheme } from '@/context/ThemeContext';
 import { useToast } from '@/hooks/use-toast';
+import { cleanMarkdown } from '@/lib/common-function';
+
 interface ProfileCardProps {
     userData: UserType;
     editMode: boolean;
@@ -227,9 +229,11 @@ export const ProfileCard = ({ userData, editMode, setEditMode }: ProfileCardProp
                     </CardDescription>
 
                     {userData?.bio && (
-                        <p className={`mt-2 text-center text-sm max-w-md ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                            {userData.bio}
-                        </p>
+                        <span className={`mt-2 text-center text-sm max-w-md ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                            {/* {userData.bio} */}
+                            {/* {userData.bio.split('\n')[0]} */}
+                            {cleanMarkdown(userData.bio).split("\n")[0]}
+                        </span>
                     )}
 
                     <div className={`mt-4 flex items-center gap-2 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-500'}`}>

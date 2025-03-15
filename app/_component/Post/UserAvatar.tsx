@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { FaUserCircle } from 'react-icons/fa';
 import { CldImage } from 'next-cloudinary';
-import { isValidUrl } from '@/lib/common-function';
+import { cleanMarkdown, isValidUrl } from '@/lib/common-function';
 import { UserType } from '@/types/blogs-types';
 import Link from 'next/link';
+import React from 'react';
 
 
 const UserAvatar = ({
@@ -88,8 +89,12 @@ const UserAvatar = ({
                     text-xs
                     ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}
                 `}>
-                        {user?.bio?.slice(0, 30) || 'No bio available'}
-                        {user?.bio && user.bio.length > 30 ? '...' : ''}
+                        {user?.bio && cleanMarkdown(user?.bio).split("\n")[0].slice(0, 30) || 'No bio available'}
+                        {/* {cleanMarkdown(user?.bio).split("\n")[0].slice(0, 30) || 'No bio available'} */}
+                        {/* {user?.bio?.slice(0, 30) || 'No bio available'} */}
+                        {/* {user?.bio && user.bio.length > 30 ? '...' : ''} */}
+                        {user?.bio && cleanMarkdown(user?.bio).split("\n")[0].length > 30 ? '...' : ''}
+                        {/* {cleanMarkdown(user?.bio).split("\n")[0].length > 30 ? '...' : ''} */}
                     </span>
                 </div>
             </div>

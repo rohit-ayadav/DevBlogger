@@ -6,7 +6,15 @@ import { Twitter } from "react-feather";
 import { SiFacebook, SiGithub, SiInstagram, SiLinkedin } from "react-icons/si";
 import { Author } from "./ProfileNew";
 import { formatDate } from "@/utils/date-formatter";
-import { BlogPostType } from "@/types/blogs-types";
+import ReactMarkdown from 'react-markdown';
+import remarkBreaks from 'remark-breaks'; 
+import remarkGfm from 'remark-gfm';
+import remarkDirective from 'remark-directive';
+import rehypeHighlight from 'rehype-highlight';
+import rehypeRaw from 'rehype-raw';
+import remarkEmoji from 'remark-emoji';
+import 'highlight.js/styles/github-dark.css'; // Theme for syntax highlighting
+
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export const AuthorInfo = ({ author, authorPostsLength, totalStats }: { author: Author; authorPostsLength: number; totalStats: { views: number; likes: number } }) => {
@@ -17,11 +25,51 @@ export const AuthorInfo = ({ author, authorPostsLength, totalStats }: { author: 
             <Card className="border-0 shadow-lg dark:bg-gray-800 dark:border-gray-700">
                 <CardContent className="p-6">
                     <div className="flex flex-col space-y-6">
-                        <div className="prose prose-gray dark:prose-invert max-w-none">
-                            <p className="text-gray-700 dark:text-gray-300 text-lg">
-                                {author.bio || 'No bio available'}
-                            </p>
-                        </div>
+                        {/* <div className="prose prose-gray dark:prose-invert max-w-none">
+                            {author.bio ? (
+                                <ReactMarkdown
+                                    className="text-gray-700 dark:text-gray-300 text-lg"
+                                    remarkPlugins={[remarkBreaks]}  // Enables line breaks on `\n`
+                                >
+                                    {author.bio}
+                                </ReactMarkdown>
+                            ) : (
+                                <p className="text-gray-700 dark:text-gray-300 text-lg">No bio available</p>
+                            )}
+                        </div> */}
+                       
+                        <ReactMarkdown
+                            className="prose prose-gray dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 text-lg"
+                            remarkPlugins={[remarkBreaks, remarkGfm, remarkDirective, remarkEmoji]}
+                            rehypePlugins={[rehypeHighlight, rehypeRaw]}
+                            components={{
+                                h1: ({ node, ...props }) => <h1 className="text-2xl font-bold" {...props} />,
+                                h2: ({ node, ...props }) => <h2 className="text-xl font-semibold" {...props} />,
+                                a: ({ node, ...props }) => <a className="text-blue-500 underline" target="_blank" {...props} />,
+                                code: ({ node, className, children, ...props }) => (
+                                    <code className={`bg-gray-800 text-white px-2 py-1 rounded ${className || ''}`} {...props}>
+                                        {children}
+                                    </code>
+                                ),
+                                div: ({ node, className, children, ...props }) => {
+                                    if (className?.includes("info")) {
+                                        return <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-3">{children}</div>;
+                                    }
+                                    if (className?.includes("warning")) {
+                                        return <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-3">{children}</div>;
+                                    }
+                                    return <div {...props}>{children}</div>;
+                                },
+                                iframe: ({ node, ...props }) => (
+                                    <div className="aspect-w-16 aspect-h-9">
+                                        <iframe {...props} className="w-full h-full rounded-lg"></iframe>
+                                    </div>
+                                )
+                            }}
+                        >
+                            {author.bio}
+                        </ReactMarkdown>
+
 
                         <div className="flex flex-col sm:flex-row gap-4">
                             <div className="flex flex-col gap-2">

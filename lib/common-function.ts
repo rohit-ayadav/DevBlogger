@@ -1,3 +1,11 @@
+import { UserType } from "@/app/(settings)/profile/component/types";
+import strip from "strip-markdown";
+import { remark } from "remark";
+
+export const cleanMarkdown = (markdown: string) => {
+  return remark().use(strip).processSync(markdown).toString();
+};
+
 const isValidSlug = (slug: string) => {
   let processedSlug = slug.toLowerCase();
   processedSlug = processedSlug.replace(/[^a-z0-9-]/g, "");
