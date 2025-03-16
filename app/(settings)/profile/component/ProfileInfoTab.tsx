@@ -317,6 +317,12 @@ export const ProfileInfoTab = ({ userData, editMode, setEditMode, isDarkMode = f
                     ))}
                 </div>
 
+                {/* Last Updated Info  */}
+                <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                    Last updated: {new Date(userData.updatedAt).toLocaleDateString()}
+                </div>
+
+                {/* Buttons */}
                 {editMode && (
                     <div className="flex justify-end space-x-3">
                         <Button
@@ -361,8 +367,32 @@ export const ProfileInfoTab = ({ userData, editMode, setEditMode, isDarkMode = f
                         </Button>
                     </div>
                 )}
+
+                {/* {!editMode && (
+                    <Button
+                        type="button"
+                        variant={isDarkMode ? "secondary" : "outline"}
+                        onClick={() => setEditMode(true)}
+                        className={`px-4 py-2 ${isDarkMode ? 'bg-gray-700 text-gray-200 hover:bg-gray-600 border-gray-600' : ''}`}
+                    >
+                        Edit Profile
+                    </Button>
+                )}
+
+                {!editMode && (
+                    <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                        You can edit your profile information here.
+                    </div>
+                )} */}
+
+                {editMode && (
+                    <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                        Make sure to save your changes before leaving this page.
+                    </div>
+                )}
+
             </form>
-        </Card>
+        </Card >
     );
 };
 
