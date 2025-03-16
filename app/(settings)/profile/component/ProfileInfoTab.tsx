@@ -104,9 +104,11 @@ export const ProfileInfoTab = ({ userData, editMode, setEditMode, isDarkMode = f
         bio: userData?.bio || '',
         website: userData?.website || '',
         socialLinks: {
-            github: userData?.socialLinks?.github || '',
-            linkedin: userData?.socialLinks?.linkedin || '',
-            twitter: userData?.socialLinks?.twitter || ''
+            github: userData?.socialLinks?.github || 'https://github.com/',
+            linkedin: userData?.socialLinks?.linkedin || 'https://linkedin.com/in/',
+            twitter: userData?.socialLinks?.twitter || 'https://x.com/',
+            facebook: userData?.socialLinks?.facebook || 'https://facebook.com/',
+            instagram: userData?.socialLinks?.instagram || 'https://instagram.com/'
         }
     });
     const [errors, setErrors] = useState<{ name?: string; username?: string }>({});
@@ -277,6 +279,7 @@ export const ProfileInfoTab = ({ userData, editMode, setEditMode, isDarkMode = f
                     }
                 />
 
+                {/* User Bio  */}
                 <div className="mb-4">
                     <label className={`block text-sm font-medium mb-1 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>Bio</label>
                     <textarea
@@ -286,6 +289,17 @@ export const ProfileInfoTab = ({ userData, editMode, setEditMode, isDarkMode = f
                         className={`w-full px-3 py-2 rounded-lg border ${isDarkMode ? 'bg-gray-800 text-white border-gray-600 focus:ring-blue-600' : 'bg-white text-gray-900 border-gray-300 focus:ring-blue-500'} focus:outline-none focus:ring-2 min-h-[100px] resize-y transition duration-150 ${isDarkMode && !editMode ? 'disabled:bg-gray-800 disabled:text-gray-400' : 'disabled:bg-gray-50 disabled:text-gray-500'}`}
                     />
                 </div>
+                {/* Website */}
+                <CustomInput
+                    label="Website (portfolio, blog, etc.)"
+                    type="url"
+                    value={formData.website}
+                    onChange={(e) => handleChange('website', e.target.value)}
+                    disabled={!editMode || isSubmitting}
+                    icon={<Globe className="h-4 w-4" />}
+                    isDarkMode={isDarkMode}
+                />
+                {/* Social Links */}
 
                 <div className="space-y-4">
                     <h3 className={`text-lg font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>Social Links</h3>
@@ -293,6 +307,7 @@ export const ProfileInfoTab = ({ userData, editMode, setEditMode, isDarkMode = f
                         <CustomInput
                             key={platform}
                             label={platform.charAt(0).toUpperCase() + platform.slice(1)}
+                            type='url'
                             value={value}
                             onChange={(e) => handleSocialChange(platform, e.target.value)}
                             disabled={!editMode || isSubmitting}
@@ -318,7 +333,9 @@ export const ProfileInfoTab = ({ userData, editMode, setEditMode, isDarkMode = f
                                     socialLinks: {
                                         github: userData?.socialLinks?.github || '',
                                         linkedin: userData?.socialLinks?.linkedin || '',
-                                        twitter: userData?.socialLinks?.twitter || ''
+                                        twitter: userData?.socialLinks?.twitter || '',
+                                        facebook: userData?.socialLinks?.facebook || '',
+                                        instagram: userData?.socialLinks?.instagram || ''
                                     }
                                 });
                                 setEditMode(false);

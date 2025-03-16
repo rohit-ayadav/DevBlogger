@@ -7,7 +7,7 @@ import { SiFacebook, SiGithub, SiInstagram, SiLinkedin } from "react-icons/si";
 import { Author } from "./ProfileNew";
 import { formatDate } from "@/utils/date-formatter";
 import ReactMarkdown from 'react-markdown';
-import remarkBreaks from 'remark-breaks'; 
+import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
 import remarkDirective from 'remark-directive';
 import rehypeHighlight from 'rehype-highlight';
@@ -18,7 +18,6 @@ import 'highlight.js/styles/github-dark.css'; // Theme for syntax highlighting
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export const AuthorInfo = ({ author, authorPostsLength, totalStats }: { author: Author; authorPostsLength: number; totalStats: { views: number; likes: number } }) => {
-
     return (
         <div>
             {/* Author Info Card */}
@@ -37,7 +36,7 @@ export const AuthorInfo = ({ author, authorPostsLength, totalStats }: { author: 
                                 <p className="text-gray-700 dark:text-gray-300 text-lg">No bio available</p>
                             )}
                         </div> */}
-                       
+
                         <ReactMarkdown
                             className="prose prose-gray dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 text-lg"
                             remarkPlugins={[remarkBreaks, remarkGfm, remarkDirective, remarkEmoji]}
@@ -69,7 +68,6 @@ export const AuthorInfo = ({ author, authorPostsLength, totalStats }: { author: 
                         >
                             {author.bio}
                         </ReactMarkdown>
-
 
                         <div className="flex flex-col sm:flex-row gap-4">
                             <div className="flex flex-col gap-2">

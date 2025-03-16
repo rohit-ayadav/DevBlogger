@@ -194,35 +194,37 @@ export const PostCard = ({ post, user, showActions = false, author }: BlogPostCa
                     </h3>
 
                     <p className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} line-clamp-2 sm:line-clamp-3 mb-2 flex-1`}>
-                        {truncateText(post.content, 120)}
+                        {truncateText(post.content, user ? 120 : 250)}
                     </p>
 
-                    <div className="mt-auto pt-2 flex items-center justify-between">
-                        <UserAvatar user={user} isDarkMode={isDarkMode} />
+                    {user && (
+                        <div className="mt-auto pt-2 flex items-center justify-between">
+                            <UserAvatar user={user} isDarkMode={isDarkMode} />
 
-                        <div className="flex items-center gap-2">
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <button
-                                            onClick={(e) => copyLink(e, post.slug)}
-                                            className={`${isDarkMode ? 'text-gray-400 hover:text-blue-400' : 'text-gray-500 hover:text-blue-600'} transition-colors`}
-                                        >
-                                            <Clipboard className="h-4 w-4" />
-                                        </button>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                        <p className="text-xs">Copy link</p>
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
+                            <div className="flex items-center gap-2">
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <button
+                                                onClick={(e) => copyLink(e, post.slug)}
+                                                className={`${isDarkMode ? 'text-gray-400 hover:text-blue-400' : 'text-gray-500 hover:text-blue-600'} transition-colors`}
+                                            >
+                                                <Clipboard className="h-4 w-4" />
+                                            </button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p className="text-xs">Copy link</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
 
-                            <span className={`text-xs ${isDarkMode ? 'text-blue-400' : 'text-blue-600'} flex items-center gap-1 group-hover:gap-2 transition-all`}>
-                                Read more
-                                <ArrowRight className="h-3 w-3" />
-                            </span>
+                                <span className={`text-xs ${isDarkMode ? 'text-blue-400' : 'text-blue-600'} flex items-center gap-1 group-hover:gap-2 transition-all`}>
+                                    Read more
+                                    <ArrowRight className="h-3 w-3" />
+                                </span>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </CardContent>
             </Link>
 
