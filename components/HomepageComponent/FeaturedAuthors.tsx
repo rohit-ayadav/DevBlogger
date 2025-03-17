@@ -5,14 +5,38 @@ import { UserType } from '@/types/blogs-types';
 import { useTheme } from '@/context/ThemeContext';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { cleanMarkdown } from '@/lib/common-function';
+import React, { useEffect } from 'react';
+import { getTrendingAuthors } from '@/action/my-profile-action';
+import { CldImage } from 'next-cloudinary';
+import { isValidUrl } from '@/lib/common-function';
 
-const FeaturedAuthors = ({ users }: { users: UserType[] }) => {
+const FeaturedAuthors = () => {
     const { isDarkMode } = useTheme();
+    const [trendingAuthors, setTrendingAuthors] = React.useState<UserType[]>([]);
+    const [loading, setLoading] = React.useState<boolean>(true);
+    useEffect(() => {
+        const fetchTrendingAuthors = async () => {
+            const authors = await getTrendingAuthors() as UserType[];
+            setTrendingAuthors(authors);
+        };
+        setLoading(true);
+        fetchTrendingAuthors();
+        setLoading(false);
+    }, []);
 
-    // Sort users by number of blogs or followers to determine "trending" authors
-    const trendingAuthors = [...users]
-        .sort((a, b) => (b.follower + b.noOfBlogs) - (a.follower + a.noOfBlogs))
-        .slice(0, 5);
+    if (loading) {
+        return (
+            <section className={`py-16 ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
+                <div className="container mx-auto px-6">
+                    <h2 className="text-3xl font-bold mb-8 text-center">Trending Authors</h2>
+                    <div className="flex justify-center items-center">
+                        <p className="text-lg">Loading...</p>
+                    </div>
+                </div>
+            </section>
+        );
+    }
 
     return (
         <section className={`py-16 ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
@@ -35,11 +59,23 @@ const FeaturedAuthors = ({ users }: { users: UserType[] }) => {
                                     <CardContent className="pt-6 flex flex-col items-center">
                                         <div className="mb-4 w-20 h-20 rounded-full overflow-hidden border-2 border-blue-500">
                                             {author.image ? (
-                                                <img
-                                                    src={author.image}
-                                                    alt={author.name}
-                                                    className="w-full h-full object-cover"
-                                                />
+                                                isValidUrl(author.image) ? (
+                                                    <img
+                                                        src={author.image}
+                                                        alt={author.name}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <CldImage
+                                                        src={author.image}
+                                                        alt={author.name}
+                                                        width={100}
+                                                        height={100}
+                                                        className="w-full h-full object-cover"
+                                                        loading='eager'
+                                                        quality={100}
+                                                    />
+                                                )
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center bg-blue-100 text-blue-600">
                                                     {author.name.charAt(0).toUpperCase()}
@@ -63,7 +99,7 @@ const FeaturedAuthors = ({ users }: { users: UserType[] }) => {
                                             </Badge>
                                         </div>
                                         <p className="text-xs text-center text-gray-500 dark:text-gray-400 line-clamp-2">
-                                            {author.bio || "Tech enthusiast and content creator"}
+                                            {author?.bio && cleanMarkdown(author?.bio).split("\n")[0].slice(0, 30) || "Tech enthusiast and content creator"}
                                         </p>
                                     </CardContent>
                                 </Card>

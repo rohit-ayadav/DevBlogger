@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { ProfileFormData } from "@/app/(settings)/profile/component/types";
 import Blog from "@/models/blogs.models";
 import { isValidUrl } from "@/lib/common-function";
+import { UserType } from "@/types/blogs-types";
 
 export async function saveEdit(data: ProfileFormData) {
     try {
@@ -58,12 +59,18 @@ export async function saveEdit(data: ProfileFormData) {
         user.website = data.website;
         user.socialLinks = data.socialLinks;
         await user.save();
+        const blogs = await Blog.find({ createdBy: user.email });
+        if (blogs) {
+            // update the noOfBlogs field in user model
+            user.noOfBlogs = blogs.length;
+            await user.save();
+        }
+        // revalidate the author page
         revalidatePath(`/author/${user.username}`);
         revalidatePath(`/author/${user._id}`);
         revalidatePath(`/`);
         revalidatePath(`/author`);
         revalidatePath(`/profile`);
-
         console.log("Profile updated successfully");
         return { success: true, message: "Profile updated successfully" };
     } catch (error) {
@@ -86,6 +93,40 @@ export async function getAuthorName() {
         }))
         // console.log(`Author Name: ${JSON.stringify(authorName)}`);
         return authorName;
+    } catch (error) {
+        return [];
+    }
+}
+
+export async function getTrendingAuthors() {
+    try {
+        await connectDB();
+        // find those users who have published at least one blog
+        // Since currently we have not followers and following feature, we are using blogs count as followers
+        const users = await User.find({}).select("name username email follower noOfBlogs image").lean().exec() as unknown as UserType[];
+        const posts = await Blog.find({}).select("createdBy").lean().exec();
+        const authorIds = [...new Set(posts.map(post => post.createdBy))];
+        const authors = users.filter(user => authorIds.includes(user.email));
+        // sort by followers and blogs count
+        authors.sort((a, b) => {
+            if (a.follower === b.follower) {
+                return b.noOfBlogs - a.noOfBlogs;
+            }
+            return b.follower - a.follower;
+        });
+
+        // limit to 5 authors
+        const trendingAuthors = authors.slice(0, 5).map(user => ({
+            name: user.name,
+            username: user.username,
+            email: user.email,
+            follower: user.follower,
+            noOfBlogs: user.noOfBlogs,
+            image: user.image
+        }));
+
+        return trendingAuthors;
+
     } catch (error) {
         return [];
     }

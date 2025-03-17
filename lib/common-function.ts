@@ -1,4 +1,3 @@
-import { UserType } from "@/app/(settings)/profile/component/types";
 import strip from "strip-markdown";
 import { remark } from "remark";
 

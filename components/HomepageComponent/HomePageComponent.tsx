@@ -229,7 +229,7 @@ const HomePage = ({ posts, users, totalLikes, totalViews, totalBlogs, totalUsers
             </section>
 
             {/* Featured Authors Section */}
-            <FeaturedAuthors users={users} />
+            <FeaturedAuthors />
 
             {/* Features Section */}
             <section className={`py-16 ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>

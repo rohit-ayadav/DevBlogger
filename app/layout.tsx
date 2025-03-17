@@ -225,6 +225,11 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
           strategy="afterInteractive"
         />
+        <Script
+          src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
+          id="google-recaptcha"
+          strategy="beforeInteractive"
+        />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}>
         <Toaster position="top-right" reverseOrder={false} />
@@ -233,7 +238,7 @@ export default function RootLayout({
           <SessionWrapper>
             <Navbar />
             <main className="flex-grow min-h-[calc(100vh-100px)]">
-            {/* <main className="flex-grow"> */}
+              {/* <main className="flex-grow"> */}
               {children}
             </main>
             <Footer />
