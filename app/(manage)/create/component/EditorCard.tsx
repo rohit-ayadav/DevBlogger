@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { TitleSection } from './TitleSection';
@@ -17,6 +17,11 @@ interface EditorCardProps {
     handleSubmit: () => void;
     isDarkMode: boolean;
     clearForm: () => void;
+    className?: string;
+    isCompact?: boolean;
+}
+interface EditorMode {
+    editorMode: 'markdown' | 'visual' | 'html';
 }
 
 const EditorCard: React.FC<EditorCardProps> = ({
@@ -25,62 +30,86 @@ const EditorCard: React.FC<EditorCardProps> = ({
     handleSave,
     handleSubmit,
     isDarkMode,
-    clearForm
+    clearForm,
+    className,
+    isCompact = false
 }) => {
-    const getContent = () => state.editorMode === 'markdown'
-        ? state.markdownContent
-        : state.htmlContent;
+    const getContent = useCallback(() =>
+        state.editorMode === 'markdown' ? state.markdownContent : state.htmlContent,
+        [state.editorMode, state.markdownContent, state.htmlContent]
+    );
 
-    const handleContentUpdate = (content: string) => {
+    const handleContentUpdate = useCallback((content: string) => {
         const key = state.editorMode === 'markdown' ? 'markdownContent' : 'htmlContent';
         updateState({ [key]: content });
-    };
+    }, [state.editorMode, updateState]);
+
+    const handleEditorModeToggle = useCallback((editorMode: 'markdown' | 'visual' | 'html') => {
+        updateState({ editorMode });
+    }, [updateState]);
+
+    // Compute dynamic spacing based on screen size and compact mode
+    const sectionSpacing = isCompact ? "space-y-4" : "space-y-6 sm:space-y-8";
+    const padding = isCompact
+        ? "p-3 sm:p-4"
+        : "p-4 sm:p-6 md:p-8";
 
     return (
         <Card className={cn(
             "transition-colors duration-200",
             isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white",
-            "max-w-5xl w-full mx-0 sm:mx-auto"
+            "w-full mx-auto",
+            isCompact ? "max-w-4xl" : "max-w-5xl",
+            className
         )}>
             <CardContent className={cn(
-                "space-y-6 sm:space-y-8 p-4 sm:p-6 md:p-8",
+                sectionSpacing,
+                padding,
                 isDarkMode ? "text-gray-100" : "text-gray-900"
             )}>
-                <div className="space-y-6">
-                    <TitleSection
-                        title={state.title}
-                        setTitle={(title) => updateState({ title })}
-                        content={getContent()}
-                        isDarkMode={isDarkMode}
-                    />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                    <div className="space-y-4 sm:space-y-6">
+                        <TitleSection
+                            title={state.title}
+                            setTitle={(title) => updateState({ title })}
+                            content={getContent()}
+                            isDarkMode={isDarkMode}
+                        />
+                    </div>
 
-                    <ThumbnailSection
-                        thumbnail={state.thumbnail}
-                        setThumbnail={(thumbnail) => updateState({ thumbnail })}
-                        thumbnailCredit={state.thumbnailCredit}
-                        setThumbnailCredit={(thumbnailCredit) => updateState({ thumbnailCredit })}
-                        isDarkMode={isDarkMode}
-                    />
+                    <div className="space-y-4 sm:space-y-6">
+                        <ThumbnailSection
+                            thumbnail={state.thumbnail}
+                            setThumbnail={(thumbnail) => updateState({ thumbnail })}
+                            thumbnailCredit={state.thumbnailCredit}
+                            setThumbnailCredit={(thumbnailCredit) => updateState({ thumbnailCredit })}
+                            isDarkMode={isDarkMode}
+                        />
+                    </div>
                 </div>
 
                 <EditorSection
                     content={getContent()}
                     editorMode={state.editorMode}
-                    setEditorMode={(editorMode) => updateState({ editorMode })}
+                    setEditorMode={handleEditorModeToggle}
                     handleContentChange={handleContentUpdate}
                     isDarkMode={isDarkMode}
                 />
 
-                <div className="border-t border-gray-200 dark:border-gray-700 my-6 sm:my-8" />
+                <div aria-hidden="true" className={cn(
+                    "border-t my-4 sm:my-6",
+                    isDarkMode ? "border-gray-700" : "border-gray-200"
+                )} />
 
                 <div className="space-y-6">
                     <UrlSection
                         customUrl={state.slug}
                         setCustomUrl={(slug: string) => updateState({ slug })}
                         title={state.title}
+                        isDarkMode={isDarkMode}
                     />
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                         <TagsSection
                             tags={state.tags}
                             setTags={(tags) => updateState({ tags })}
@@ -97,7 +126,7 @@ const EditorCard: React.FC<EditorCardProps> = ({
                     </div>
                 </div>
 
-                <div className="mt-8">
+                <div className="mt-4 sm:mt-6">
                     <ActionButtons
                         loading={state.isLoading}
                         handleSave={handleSave}

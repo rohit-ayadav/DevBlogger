@@ -3,19 +3,53 @@ import { cn } from "@/lib/utils";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 
-const PageHeader = ({ isDarkMode, error }: { isDarkMode: boolean; error: string | null }) => (
-    <div className="flex items-center justify-between">
-        <h1 className={cn(
-            "text-3xl font-bold tracking-tight",
-            isDarkMode ? "text-white" : "text-gray-900"
-        )}>Create Blog Post</h1>
-        {error && (
-            <Alert variant="destructive" className={cn(
-                "mt-4",
-                isDarkMode && "bg-red-900 border-red-800"
+interface PageHeaderProps {
+    title?: string;
+    isDarkMode?: boolean;
+    error?: string | null;
+    className?: string;
+    onDismissError?: () => void;
+}
+
+const PageHeader = ({
+    title = "Create Blog Post",
+    isDarkMode = false,
+    error = null,
+    className = "",
+    onDismissError
+}: PageHeaderProps) => (
+    <div className={cn("space-y-4", className)}>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <h1 className={cn(
+                "text-2xl sm:text-3xl font-bold tracking-tight",
+                isDarkMode ? "text-white" : "text-gray-900"
             )}>
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
+                {title}
+            </h1>
+        </div>
+
+        {error && (
+            <Alert
+                variant="destructive"
+                className={cn(
+                    "animate-in fade-in",
+                    isDarkMode && "bg-red-900 border-red-800"
+                )}
+            >
+                <div className="flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription className="text-sm">{error}</AlertDescription>
+                </div>
+
+                {onDismissError && (
+                    <button
+                        onClick={onDismissError}
+                        className="ml-auto text-sm opacity-70 hover:opacity-100"
+                        aria-label="Dismiss error"
+                    >
+                        Dismiss
+                    </button>
+                )}
             </Alert>
         )}
     </div>

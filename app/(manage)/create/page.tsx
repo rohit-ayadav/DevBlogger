@@ -1,5 +1,5 @@
 "use client";
-import React, { Suspense, useEffect } from 'react';
+import React, { Suspense, useCallback, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import { useTheme } from '@/context/ThemeContext';
@@ -13,10 +13,9 @@ import LoadingSpinner from './component/LoadingSpinner';
 import useBlogDraft from '@/hooks/useBlogDraft';
 import LoadingEffect from '@/lib/LoadingEffect';
 
-// Constants
 const DEFAULT_CONTENT = {
-    markdown: ``,
-    html: ``
+    markdown: '',
+    html: ''
 } as const;
 
 const DRAFT_EXPIRY = 86400000; // 24 hours in milliseconds
@@ -26,7 +25,6 @@ const DRAFT_SUCCESS_DURATION = 1000;
 const DRAFT_INFO_DELAY = 3000;
 const DRAFT_INFO_DURATION = 1500;
 
-// Utility functions
 const sanitizer = {
     title: (title: string) => DOMPurify.sanitize(title.slice(0, 250)),
     tags: (tag: string) => DOMPurify.sanitize(tag),
@@ -41,27 +39,30 @@ const sanitizer = {
 };
 
 const validateBlogPost = (state: BlogState): string | null => {
-    if (!state.title) return 'Title is required';
-    if (!state.htmlContent && !state.markdownContent) return 'Content is required';
+    if (!state.title?.trim()) return 'Title is required';
+    if (!state.htmlContent?.trim() && !state.markdownContent?.trim()) return 'Content is required';
     if (!state.category) return 'Category is required';
-    if (state.tags.length < 1) return 'At least one tag is required';
+    if (!state.tags?.length) return 'At least one tag is required';
     return null;
 };
 
-// Main component
 function CreateBlogComponent() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const title = searchParams.get('title') || '';
-    // alert(`title: ${title}`);
     const { isDarkMode } = useTheme();
+
     const [loading, setLoading] = React.useState(false);
 
-    const initialState: BlogState = {
+    const titleFromParams = useMemo(() =>
+        searchParams?.get('title') || '',
+        [] // eslint-disable-line react-hooks/exhaustive-deps
+    );
+
+    const initialState: BlogState = useMemo(() => ({
         isInitializing: true,
         isLoading: false,
         error: null,
-        title: title,
+        title: titleFromParams,
         thumbnail: null,
         thumbnailCredit: null,
         htmlContent: DEFAULT_CONTENT.html,
@@ -72,11 +73,11 @@ function CreateBlogComponent() {
         blogId: '',
         tagAutoGen: false,
         editorMode: 'visual'
-    };
+    }), [titleFromParams]);
 
     const { state, updateState, loadDraft, saveDraft } = useBlogDraft(initialState);
 
-    const clearForm = () => {
+    const clearForm = useCallback(() => {
         localStorage.removeItem(DRAFT_STORAGE_KEY);
         updateState({
             title: '',
@@ -91,8 +92,7 @@ function CreateBlogComponent() {
             tagAutoGen: false,
             editorMode: 'visual'
         });
-    };
-
+    }, [updateState]);
 
     // Load draft on mount
     React.useEffect(() => {
@@ -100,16 +100,42 @@ function CreateBlogComponent() {
         return () => clearTimeout(timeoutId);
     }, [loadDraft]);
 
-    // Auto-save draft
+    // Auto-save draft with debounce
     React.useEffect(() => {
+        if (state.isInitializing) return;
+
+        // Don't save if content is empty default
         if (state.markdownContent === DEFAULT_CONTENT.markdown &&
-            state.htmlContent === DEFAULT_CONTENT.html) return;
+            state.htmlContent === DEFAULT_CONTENT.html &&
+            !state.title) return;
 
         const timeoutId = setTimeout(saveDraft, DRAFT_SAVE_DELAY);
         return () => clearTimeout(timeoutId);
     }, [state, saveDraft]);
 
-    const handleSave = async () => {
+    // Handle dismissing errors
+    const handleDismissError = useCallback(() => {
+        updateState({ error: null });
+    }, [updateState]);
+
+    // Handle saving draft with user notification
+    const handleSaveDraft = useCallback(() => {
+        saveDraft();
+        toast.success('Draft saved successfully', {
+            icon: '📝',
+            duration: DRAFT_SUCCESS_DURATION,
+        });
+
+        setTimeout(() => {
+            toast.success('Drafts are saved locally and will be available for 24 hours', {
+                icon: '🕒',
+                duration: DRAFT_INFO_DURATION,
+            });
+        }, DRAFT_INFO_DELAY);
+    }, [saveDraft]);
+
+    // Handle publishing blog post
+    const handleSave = useCallback(async () => {
         const validationError = validateBlogPost(state);
         if (validationError) {
             toast.error(validationError);
@@ -148,37 +174,23 @@ function CreateBlogComponent() {
             localStorage.removeItem(DRAFT_STORAGE_KEY);
             toast.success('Blog post created successfully');
             clearForm();
-            console.log('Blog post created:', JSON.stringify(data, null, 2));
-            console.log('Blog post data:', data.data.id);
             router.push(`/blogs/${data.id}`);
         } catch (error) {
-            toast.error(error instanceof Error ? error.message : 'An unknown error occurred');
+            const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+            updateState({ error: errorMessage });
+            toast.error(errorMessage);
         } finally {
             updateState({ isLoading: false });
             setLoading(false);
         }
-    };
+    }, [state, updateState, clearForm, router]);
 
-    const handleSaveDraft = () => {
-        saveDraft();
-        toast.success('Draft saved successfully', {
-            icon: '📝',
-            duration: DRAFT_SUCCESS_DURATION,
-        });
-
-        setTimeout(() => {
-            toast.success('Drafts are saved locally and will be available for 24 hours', {
-                icon: '🕒',
-                duration: DRAFT_INFO_DURATION,
-            });
-        }, DRAFT_INFO_DELAY);
-    };
-
+    // Loading state component
     if (state.isInitializing) {
         return (
             <div className={cn(
                 "flex items-center justify-center min-h-[60vh]",
-                isDarkMode ? "bg-gray-900" : "bg-white"
+                isDarkMode ? "bg-gray-900" : "bg-gray-50"
             )}>
                 <LoadingSpinner isDarkMode={isDarkMode} />
             </div>
@@ -187,13 +199,15 @@ function CreateBlogComponent() {
 
     return (
         <div className={cn(
-            "px-4",
-            isDarkMode ? "bg-gray-900" : "bg-white"
+            "w-full px-4 py-6 md:py-8",
+            isDarkMode ? "bg-gray-900" : "bg-gray-50"
         )}>
-            <div className="max-w-3xl mx-auto py-8 space-y-6">
+            <div className="max-w-6xl mx-auto space-y-6">
                 <PageHeader
                     isDarkMode={isDarkMode}
                     error={state.error}
+                    onDismissError={handleDismissError}
+                    title={state.blogId ? "Edit Blog Post" : "Create Blog Post"}
                 />
 
                 <EditorCard
@@ -204,17 +218,32 @@ function CreateBlogComponent() {
                     isDarkMode={isDarkMode}
                     clearForm={clearForm}
                 />
+
+                <div className="text-center py-4">
+                    <p className={cn(
+                        "text-sm",
+                        isDarkMode ? "text-gray-400" : "text-gray-500"
+                    )}>
+                        Need help writing? Check out our <a
+                            href="/guides/how-to-write"
+                            className={cn(
+                                "font-medium hover:underline",
+                                isDarkMode ? "text-blue-400" : "text-blue-600"
+                            )}
+                        >
+                            writing guide
+                        </a>.
+                    </p>
+                </div>
             </div>
         </div>
     );
 }
 
-const CreateBlog = () => {
-    return (
-        <Suspense fallback={<LoadingEffect />}>
-            <CreateBlogComponent />
-        </Suspense>
-    )
-}
+const CreateBlog = () => (
+    <Suspense fallback={<LoadingEffect />}>
+        <CreateBlogComponent />
+    </Suspense>
+);
 
 export default CreateBlog;
