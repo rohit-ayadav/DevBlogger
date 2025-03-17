@@ -99,7 +99,8 @@ export const PostCard = ({ post, user, showActions = false, author }: BlogPostCa
         e.stopPropagation();
 
         const formattedDate = formatDate(post.createdAt);
-        const text = `Read this amazing blog post titled "${post.title}" by ${author?.name || user?.name || 'Anonymous'} on ${formattedDate}\n\nRead more at ${window.location.origin}/blogs/${slug}`;
+        // const text = `Read this amazing blog post titled "${post.title}" by ${author?.name || user?.name || 'Anonymous'} on ${formattedDate}\n\nRead more at ${window.location.origin}/blogs/${slug}`;
+        const text = `${post.title}\nRead here: ${window.location.origin}/blogs/${slug}`;
         if (navigator.clipboard) {
             navigator.clipboard.writeText(text);
             toast.success('Link copied to clipboard');
