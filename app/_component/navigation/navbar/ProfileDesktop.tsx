@@ -18,18 +18,18 @@ const DesktopNavProfile = ({ user }: { user: UserType | null }) => {
     }, [user]);
 
     // Loading state - matched dimensions and styling with actual button
-    if (!user) {
-        return (
-            <div className="relative flex items-center">
-                <div className="flex items-center space-x-3 px-4 py-2 rounded-lg 
-                     bg-gradient-to-r from-indigo-500/30 to-purple-600/30 
-                     shadow-md">
-                    <div className="w-8 h-8 rounded-full border-2 border-white/50 animate-pulse bg-white/20"></div>
-                    <div className="h-5 w-24 bg-white/20 animate-pulse rounded"></div>
-                </div>
-            </div>
-        );
-    }
+    // if (!user) {
+    //     return (
+    //         <div className="relative flex items-center">
+    //             <div className="flex items-center space-x-3 px-4 py-2 rounded-lg 
+    //                  bg-gradient-to-r from-indigo-500/30 to-purple-600/30 
+    //                  shadow-md">
+    //                 <div className="w-8 h-8 rounded-full border-2 border-white/50 animate-pulse bg-white/20"></div>
+    //                 <div className="h-5 w-24 bg-white/20 animate-pulse rounded"></div>
+    //             </div>
+    //         </div>
+    //     );
+    // }
 
     // Render profile or login button
     return (
