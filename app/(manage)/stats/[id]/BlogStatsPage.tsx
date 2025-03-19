@@ -1,47 +1,19 @@
 "use client";
 import React, { useMemo, useState } from 'react';
-import {
-    LineChart, Line, AreaChart, Area, BarChart, Bar,
-    XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
-} from 'recharts';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-    TrendingUp, Users, ThumbsUp, Clock, AlertCircle,
-    Calendar, Eye, Share2, ArrowUpRight, Edit, Trash2,
-    ExternalLink, Download, Filter, UserCircle
-} from 'lucide-react';
+import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Card, CardHeader, CardTitle } from '@/components/ui/card';
+import { Users, ThumbsUp, Calendar, Eye, Edit, Trash2, ExternalLink, Download, Filter } from 'lucide-react';
 import { formatDate } from '@/utils/date-formatter';
 import { BlogPostType, MonthlyStatsType, UserType } from '@/types/blogs-types';
 import { useTheme } from '@/context/ThemeContext';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "@/components/ui/select";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, } from "@/components/ui/alert-dialog";
 import { AuthorCard, StatCard, TIME_PERIODS } from './Card';
 import { ErrorMessage } from '@/app/blogs/[id]/ErrorMessage';
 import { useSession } from 'next-auth/react';
+import BlogDetails from './BlogDetails';
 
 const BlogStatsPage = ({ user, data, monthlyStats }: { user: UserType, data: BlogPostType, monthlyStats: MonthlyStatsType[] }) => {
     const { isDarkMode } = useTheme();
@@ -104,7 +76,33 @@ const BlogStatsPage = ({ user, data, monthlyStats }: { user: UserType, data: Blo
         a.click();
     };
 
-    if (status !== 'authenticated' || session?.user?.email !== data.createdBy) {
+    if (status === 'loading') {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <p className="text-gray-500 dark:text-gray-400">Loading...</p>
+            </div>
+        );
+    }
+
+    if (status === 'unauthenticated') {
+        return (
+            <ErrorMessage
+                title="You are not authorized"
+                message="Please log in to view this page."
+                variant="default"
+            />
+        );
+    }
+    if (status === 'authenticated' && !session?.user) {
+        return (
+            <ErrorMessage
+                title="Session expired"
+                message="Please log in again to view this page."
+                variant="default"
+            />
+        );
+    }
+    if (status === 'authenticated' && session?.user?.email !== data.createdBy) {
         return (
             <ErrorMessage
                 title="You are not authorized"
@@ -113,6 +111,16 @@ const BlogStatsPage = ({ user, data, monthlyStats }: { user: UserType, data: Blo
             />
         );
     }
+    if (!monthlyStats || monthlyStats.length === 0) {
+        return (
+            <ErrorMessage
+                title="No stats available"
+                message="No stats available for this blog."
+                variant="default"
+            />
+        );
+    }
+
     if (!data) {
         return (
             <ErrorMessage
@@ -303,42 +311,7 @@ const BlogStatsPage = ({ user, data, monthlyStats }: { user: UserType, data: Blo
             </div>
 
             {/* Blog Details */}
-            <Card>
-                <CardHeader>
-                    <CardTitle>Blog Details</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <p className="flex items-center text-gray-600 dark:text-gray-300">
-                                <Calendar className="h-4 w-4 mr-2" />
-                                Published: {formatDate(new Date(data.createdAt))}
-                            </p>
-                            <p className="flex items-center text-gray-600 dark:text-gray-300">
-                                <Clock className="h-4 w-4 mr-2" />
-                                Last Updated: {formatDate(new Date(data?.updatedAt ?? data.createdAt))}
-                            </p>
-                        </div>
-                        <div className="space-y-2">
-                            <p className="flex items-center text-gray-600 dark:text-gray-300">
-                                <Share2 className="h-4 w-4 mr-2" />
-                                Category: {data.category}
-                            </p>
-                            <div className="flex items-center space-x-2">
-                                {data.tags?.slice(0, 5).map((tag, index) => (
-                                    <span
-                                        key={index}
-                                        className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 rounded-full text-sm"
-                                    >
-                                        {tag}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </CardContent>
-
-            </Card>
+            <BlogDetails data={data} formatDate={formatDate} />
         </div>
     );
 }
