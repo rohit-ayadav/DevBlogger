@@ -1,6 +1,8 @@
 import { ArrowUpRight } from 'react-feather';
 import { Card, CardContent } from '@/components/ui/card';
 import { UserType } from '@/types/blogs-types';
+import { cleanMarkdown, isValidUrl } from '@/lib/common-function';
+import { CldImage } from 'next-cloudinary';
 
 const StatCard = ({ title, value, icon: Icon, trend, description }: any) => (
     <Card>
@@ -31,14 +33,36 @@ const AuthorCard = ({ user }: { user: UserType }) => (
     <Card>
         <CardContent className="pt-6">
             <div className="flex items-center space-x-4">
-                <img
-                    src={user.image || "/api/placeholder/40/40"}
-                    alt={user.name}
-                    className="w-16 h-16 rounded-full"
-                />
+                {user.image ? (
+                    isValidUrl(user.image) ? (
+                        <img
+                            src={user.image}
+                            alt={user.name}
+                            className="w-16 h-16 rounded-full"
+                        />
+                    ) : (
+                        // if not valid url, it is Cloudinary image
+                        <CldImage
+                            src={user.image}
+                            alt={user.name}
+                            width={40}
+                            height={40}
+                            className="w-16 h-16 rounded-full"
+                            loading="lazy"
+                        />
+                    )
+                ) : (
+                    <img
+                        src="/default-profile.jpg"
+                        alt={user.name}
+                        className="w-16 h-16 rounded-full"
+                    />
+                )}
+            </div>
+            {/* <div className="flex flex-col justify-center"> */}
                 <div>
                     <h3 className="font-semibold text-lg">{user.name}</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{user.bio}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{cleanMarkdown(user.bio).slice(0, 50)}...</p>
                     <div className="flex items-center space-x-4 mt-2">
                         <span className="text-sm">
                             <strong>{user.noOfBlogs}</strong> posts
@@ -48,7 +72,7 @@ const AuthorCard = ({ user }: { user: UserType }) => (
                         </span>
                     </div>
                 </div>
-            </div>
+            {/* </div> */}
         </CardContent>
     </Card>
 );

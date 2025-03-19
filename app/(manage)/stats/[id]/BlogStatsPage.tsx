@@ -48,15 +48,6 @@ const BlogStatsPage = ({ user, data, monthlyStats }: { user: UserType, data: Blo
     const [timePeriod, setTimePeriod] = useState('3M');
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const { data: session, status } = useSession();
-    if (status !== 'authenticated' || session?.user?.email !== data.createdBy) {
-        return (
-            <ErrorMessage
-                title="You are not authorized"
-                message="You can see the stats of only the blogs you have created."
-                variant="default"
-            />
-        );
-    }
 
     const filteredStats = useMemo(() => {
         const now = new Date();
@@ -113,6 +104,24 @@ const BlogStatsPage = ({ user, data, monthlyStats }: { user: UserType, data: Blo
         a.click();
     };
 
+    if (status !== 'authenticated' || session?.user?.email !== data.createdBy) {
+        return (
+            <ErrorMessage
+                title="You are not authorized"
+                message="You can see the stats of only the blogs you have created."
+                variant="default"
+            />
+        );
+    }
+    if (!data) {
+        return (
+            <ErrorMessage
+                title="Blog not found"
+                message="The blog you are trying to view does not exist."
+                variant="default"
+            />
+        );
+    }
     return (
         <div className="container mx-auto p-6 space-y-6">
             {/* Header Section with Actions */}
