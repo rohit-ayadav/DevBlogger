@@ -148,3 +148,53 @@
     @apply bg-secondary text-secondary-foreground;
   }
 }
+
+
+/* Additional styles for code highlighting */
+pre {
+  @apply bg-gray-800 text-gray-100 dark:bg-gray-900;
+  border-radius: 0 0 0.5rem 0.5rem;
+}
+
+code {
+  @apply font-mono text-sm;
+}
+
+/* Custom scrollbar for code blocks */
+pre::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+pre::-webkit-scrollbar-thumb {
+  @apply bg-gray-500 rounded-full;
+}
+
+pre::-webkit-scrollbar-track {
+  @apply bg-gray-800;
+}
+
+/* Responsive table styles */
+.prose table {
+  @apply w-full;
+  display: table;
+}
+
+@media (max-width: 640px) {
+  .prose thead {
+    @apply hidden;
+  }
+
+  .prose tbody tr {
+    @apply block border-b mb-4;
+  }
+
+  .prose tbody td {
+    @apply block text-right;
+  }
+
+  .prose tbody td::before {
+    content: attr(data-label);
+    @apply float-left font-bold text-left;
+  }
+}
