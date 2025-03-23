@@ -19,7 +19,6 @@ async function getPostData() {
     const totalLikes = postForStats.reduce((acc, post) => acc + post.likes, 0);
     const totalViews = postForStats.reduce((acc, post) => acc + post.views, 0);
 
-    // serialize each post and user
     const serializedPosts = posts.map(post => serializeDocument(post));
     const serializedUsers = users.map(user => serializeDocument(user));
 

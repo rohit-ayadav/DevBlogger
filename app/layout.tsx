@@ -180,7 +180,6 @@ export default function RootLayout({
     },
     sameAs: [
       "https://twitter.com/rohit.ayadav",
-      // Add other social media links here
     ],
     mainEntity: {
       "@type": "Blog",
@@ -204,7 +203,6 @@ export default function RootLayout({
     logo: "https://www.devblogger.in/icons/android/android-launchericon-192-192.png",
     sameAs: [
       "https://twitter.com/rohit.ayadav",
-      // Add other social media links here
     ]
   };
 
@@ -234,12 +232,10 @@ export default function RootLayout({
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}>
         <Toaster position="top-right" reverseOrder={false} />
-        {/* <Toast /> */}
         <ThemeProvider>
           <SessionWrapper>
             <Navbar />
             <main className="flex-grow min-h-[calc(100vh-100px)]">
-              {/* <main className="flex-grow"> */}
               {children}
             </main>
             <Footer />

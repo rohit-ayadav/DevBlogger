@@ -9,7 +9,6 @@ const NotFoundPage = () => {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-white p-4">
             <div className="max-w-2xl w-full text-center space-y-8">
-                {/* Error Code and Illustration */}
                 <div className="relative">
                     <h1 className="text-[150px] font-bold text-gray-200 select-none">404</h1>
                     <div className="absolute inset-0 flex items-center justify-center">
