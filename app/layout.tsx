@@ -230,6 +230,7 @@ export default function RootLayout({
           id="google-recaptcha"
           strategy="beforeInteractive"
         />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}>
         <Toaster position="top-right" reverseOrder={false} />
