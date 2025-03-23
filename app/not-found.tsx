@@ -61,7 +61,6 @@ const NotFoundPage = () => {
 
                 </div>
 
-                {/* Quick Links */}
                 <div className="pt-8 border-t border-gray-200">
                     <h3 className="text-sm font-medium text-gray-900 mb-4">Popular Pages</h3>
                     <div className="flex flex-wrap justify-center gap-3">
