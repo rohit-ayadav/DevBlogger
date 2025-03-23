@@ -28,7 +28,7 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.5rem
+    --radius: 0.5rem;
   }
 
   .dark {
@@ -55,11 +55,9 @@
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%
+    --chart-5: 340 75% 55%;
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
@@ -69,16 +67,23 @@
   }
 }
 
+/* Typography */
 .prose-dark * {
   color: inherit !important;
 }
 
+/* Utilities */
 @layer utilities {
   .backdrop-blur {
     backdrop-filter: blur(8px);
   }
+
+  ::selection {
+    @apply bg-primary text-primary-foreground;
+  }
 }
 
+/* Animations */
 .animate-shake {
   animation: shake 0.82s cubic-bezier(.36, .07, .19, .97) both;
 }
@@ -107,23 +112,14 @@
   }
 }
 
+/* Components */
 @layer components {
   .input-field {
     @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition;
   }
 }
 
-/* :root {
-  color-scheme: light dark;
-} */
-
-:root {
-  --tw-ring-color: rgba(59, 130, 246, 0.5); /* This is the default ring color */
-  --tw-ring-offset-width: 0px; /* This is the default ring offset width */
-  --tw-ring-offset-color: #fff; /* This is the default ring offset color */
-  --tw-ring-offset-shadow: 0 0 #0000; /* This is the default ring offset shadow */
-  --tw-ring-shadow: 0 0 #0000; /* This is the default ring shadow */
-}
+/* Scrollbar utilities */
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -133,26 +129,9 @@
   display: none;
 }
 
-@media (min-width: 1024px) {
-  .container {
-    max-width: 1200px;
-  }
-}
-
-@layer utilities {
-  ::selection {
-    @apply bg-primary text-primary-foreground;
-  }
-
-  .dark ::selection {
-    @apply bg-secondary text-secondary-foreground;
-  }
-}
-
-
-/* Additional styles for code highlighting */
+/* Code styling */
 pre {
-  @apply bg-gray-800 text-gray-100 dark:bg-gray-900;
+  @apply bg-gray-800 text-gray-100 dark:bg-gray-900 overflow-auto;
   border-radius: 0 0 0.5rem 0.5rem;
 }
 
@@ -160,7 +139,6 @@ code {
   @apply font-mono text-sm;
 }
 
-/* Custom scrollbar for code blocks */
 pre::-webkit-scrollbar {
   height: 8px;
   width: 8px;
@@ -174,13 +152,27 @@ pre::-webkit-scrollbar-track {
   @apply bg-gray-800;
 }
 
-/* Responsive table styles */
+/* Responsive tables */
 .prose table {
   @apply w-full;
   display: table;
 }
 
-@media (max-width: 640px) {
+@screen sm {
+  .prose thead {
+    @apply table-header-group;
+  }
+
+  .prose tbody tr {
+    @apply table-row;
+  }
+
+  .prose tbody td {
+    @apply table-cell;
+  }
+}
+
+@screen md {
   .prose thead {
     @apply hidden;
   }
