@@ -12,6 +12,7 @@ import { EmptyState, LoadingState, NoMorePosts, themeClasses } from '../themeCla
 import { useTheme } from '@/context/ThemeContext';
 import FilterPanel from './FilterPanel';
 import { getAuthorName } from '@/action/my-profile-action';
+import LazyAdSense from '@/components/LazyAds';
 interface HomePageBlogCollectionProps {
     state: stateType;
     handleRetry: () => void;
@@ -290,7 +291,6 @@ const HomePageBlogCollection = ({ state, handleRetry, setState, searchLoading }:
                     </div>
 
                     {/* States */}
-                    {/* {state.loadingMore && <LoadingState message="Loading more posts..." />} */}
                     {!state.loadingMore && !state.loading && !state.metadata.hasMore && state.posts.length > 0 ? (
                         <NoMorePosts />
                     ) : (
@@ -302,6 +302,14 @@ const HomePageBlogCollection = ({ state, handleRetry, setState, searchLoading }:
                             message='Try changing your search query or filters.'
                         />
                     )}
+                    {/* Bottom ad */}
+                    <div className="mt-8">
+                        <LazyAdSense
+                            adClient={"ca-pub-8778160378200057"}
+                            adSlot="9353510750"
+                            adFormat="autorelaxed"
+                        />
+                    </div>
                 </div>
 
                 {/* Filter Panel Component */}

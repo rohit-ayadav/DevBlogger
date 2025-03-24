@@ -37,15 +37,6 @@ const BlogPostGrid = ({ loading, filteredPosts, users }: BlogPostGridProps) => {
                         </React.Fragment>
                     ))}
             </div>
-
-            {/* Bottom ad */}
-            <div className="mt-8">
-                <LazyAdSense
-                    adClient={adClient}
-                    adSlot="9353510750"
-                    adFormat="autorelaxed"
-                />
-            </div>
         </div>
     );
 };
