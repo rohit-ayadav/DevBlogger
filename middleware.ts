@@ -25,13 +25,17 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // if token is available and user tries to access login, signup, reset-password, forgot-password routes,signout redirect to dashboard
   if (token && publicRoutes.includes(pathname)) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
-  // if token is available and user tries to access admin routes, redirect to
-  if (adminRoutes.includes(pathname) && token?.role !== "admin") {
-    return NextResponse.redirect(new URL("/unauthorized", req.url));
+  if (adminRoutes.includes(pathname)) {
+    if (token) {
+      if (token.role !== "admin") {
+        return NextResponse.redirect(new URL("/unauthorized", req.url));
+      }
+      } else {
+      return NextResponse.redirect(loginUrl);
+    }
   }
 
   return NextResponse.next();
