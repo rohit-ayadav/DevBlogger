@@ -8,6 +8,7 @@ import Script from "next/script";
 import SessionWrapper from "@/app/_component/sessionWrapper";
 import Footer from "./(legel-and-footer)/footer/page";
 import { Navbar } from "./_component/navigation/navbar/navbarComponent";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 declare global {
   interface Window {
     dataLayer: any[];
@@ -236,6 +237,7 @@ export default function RootLayout({
           <SessionWrapper>
             <Navbar />
             <main className="flex-grow min-h-[calc(100vh-100px)]">
+              <GoogleAnalytics />
               {children}
             </main>
             <Footer />
