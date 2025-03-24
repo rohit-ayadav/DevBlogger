@@ -210,6 +210,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <Script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"/>
         <Script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8778160378200057" />
         <meta name="google-adsense-account" content="ca-pub-8778160378200057"></meta>
         <Script

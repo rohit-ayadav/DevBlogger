@@ -2,6 +2,7 @@ import React from 'react';
 import { SkeletonCard } from './Skeleton';
 import { BlogPostType, UserType } from '@/types/blogs-types';
 import PostCard from './PostCard';
+import LazyAdSense from '@/components/LazyAds';
 interface BlogPostGridProps {
     loading: boolean;
     filteredPosts: BlogPostType[];
@@ -9,6 +10,7 @@ interface BlogPostGridProps {
 }
 
 const BlogPostGrid = ({ loading, filteredPosts, users }: BlogPostGridProps) => {
+    const adClient = 'ca-pub-8778160378200057';
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -17,9 +19,32 @@ const BlogPostGrid = ({ loading, filteredPosts, users }: BlogPostGridProps) => {
                     ? Array(6)
                         .fill(null)
                         .map((_, index) => <SkeletonCard key={index} />)
-                    : filteredPosts.map((post) => (
-                        <PostCard key={post._id} post={post} user={users[post.createdBy]} />
+                    : filteredPosts.map((post, index) => (
+                        <React.Fragment key={post._id}>
+                            <PostCard post={post} user={users[post.createdBy]} />
+
+                            {/* Insert ad after every 6 posts and ensure it spans full width */}
+                            {(index + 1) % 6 === 0 && (
+                                <div className="col-span-1 sm:col-span-2 xl:col-span-3 my-6">
+                                    <LazyAdSense
+                                        adClient={adClient}
+                                        adSlot="9353510750"
+                                        adFormat="fluid"
+                                        className="rounded overflow-hidden"
+                                    />
+                                </div>
+                            )}
+                        </React.Fragment>
                     ))}
+            </div>
+
+            {/* Bottom ad */}
+            <div className="mt-8">
+                <LazyAdSense
+                    adClient={adClient}
+                    adSlot="9353510750"
+                    adFormat="autorelaxed"
+                />
             </div>
         </div>
     );
