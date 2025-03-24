@@ -28,7 +28,6 @@ const Header = ({ author, isDarkMode, toggleDarkMode, isShareSheetOpen, setIsSha
                 url: shareUrl,
             }).catch((error) => console.log('Error sharing', error));
         } else {
-            // Fallback to copy to clipboard
             navigator.clipboard.writeText(shareUrl)
                 .then(() => alert('Profile link copied to clipboard!'))
                 .catch(err => console.error('Could not copy text: ', err));

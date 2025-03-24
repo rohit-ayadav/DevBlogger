@@ -7,11 +7,11 @@ import { BlogPostType, UserType } from '@/types/blogs-types';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { formatRelativeTime } from '@/utils/date-formatter';
+import ShowProfileImage from '@/components/ShowProfileImage';
 
 const RecentActivityFeed = ({ posts, users }: { posts: BlogPostType[], users: UserType[] }) => {
     const { isDarkMode } = useTheme();
 
-    // Sort posts by creation date (newest first)
     const recentActivities = [...posts]
         .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         .slice(0, 6);
@@ -41,11 +41,7 @@ const RecentActivityFeed = ({ posts, users }: { posts: BlogPostType[], users: Us
                                             <div className="flex-shrink-0 mr-4">
                                                 {author?.image ? (
                                                     <div className="w-12 h-12 rounded-full overflow-hidden">
-                                                        <img
-                                                            src={author.image}
-                                                            alt={author.name}
-                                                            className="w-full h-full object-cover"
-                                                        />
+                                                        <ShowProfileImage src={author.image} className="w-full h-full" size={48} />
                                                     </div>
                                                 ) : (
                                                     <div className="w-12 h-12 rounded-full flex items-center justify-center bg-blue-100 text-blue-600">

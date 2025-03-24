@@ -4,6 +4,7 @@ import { BlogPostType, Author } from '@/types/blogs-types';
 import { Calendar, ArrowRight, User, TimerIcon, Clock } from 'lucide-react';
 import LoadingSkeleton from '../LoadingComponent';
 import { formatRelativeTime, getReadingTime } from '@/utils/date-formatter';
+import ShowProfileImage from '../ShowProfileImage';
 
 interface AuthorPostsProps {
     author: Author | null;
@@ -20,36 +21,18 @@ const AuthorPosts = ({ author, posts, isDarkMode, error, loading }: AuthorPostsP
     if (loading) {
         return <LoadingSkeleton />;
     }
-   
+
     return (
         <div className={`space-y-4 ${isDarkMode ? 'dark' : ''}`}>
             {/* Author Header */}
             <div className="flex items-center gap-3 mb-4">
                 <div className="flex-shrink-0">
                     {author?.image ? (
-                        <img
-                            src={author.image}
-                            alt={author.name}
-                            className="w-10 h-10 rounded-full object-cover"
-                        />
+                        <ShowProfileImage src={author.image} className="w-10 h-10 rounded-full" />
                     ) : (
                         <div
-                            className={`
-                                w-10 h-10 rounded-full flex items-center justify-center
-                                ${isDarkMode
-                                    ? 'bg-gray-700'
-                                    : 'bg-gray-200'
-                                }
-                            `}
-                        >
-                            <User
-                                className={`w-6 h-6 
-                                    ${isDarkMode
-                                        ? 'text-gray-400'
-                                        : 'text-gray-500'
-                                    }
-                                `}
-                            />
+                            className={`w-10 h-10 rounded-full flex items-center justify-center ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+                            <User className={`w-6 h-6 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} `} />
                         </div>
                     )}
                 </div>
@@ -87,20 +70,8 @@ const AuthorPosts = ({ author, posts, isDarkMode, error, loading }: AuthorPostsP
                     </p>
                 )}
                 {posts.slice(0, 5).map((post) => (
-                    <Link
-                        href={`/blogs/${post.slug}`}
-                        key={post._id}
-                        className="group block"
-                    >
-                        <article
-                            className={`
-                                flex gap-4 p-3 rounded-lg transition-colors
-                                ${isDarkMode
-                                    ? 'hover:bg-gray-700/50'
-                                    : 'hover:bg-gray-100'
-                                }
-                            `}
-                        >
+                    <Link href={`/blogs/${post.slug}`} key={post._id} className="group block">
+                        <article className={`flex gap-4 p-3 rounded-lg transition-colors ${isDarkMode ? 'hover:bg-gray-700/50' : 'hover:bg-gray-100'}`}>
                             {post.thumbnail && (
                                 <div className="relative flex-shrink-0 w-20 h-20 rounded-md overflow-hidden">
                                     <img
@@ -112,27 +83,11 @@ const AuthorPosts = ({ author, posts, isDarkMode, error, loading }: AuthorPostsP
                             )}
 
                             <div className="flex-1 min-w-0">
-                                <h4
-                                    className={`
-                                        font-medium text-sm mb-1 line-clamp-2
-                                        ${isDarkMode
-                                            ? 'text-white hover:text-blue-400'
-                                            : 'text-gray-900 hover:text-blue-600'
-                                        }
-                                    `}
-                                >
+                                <h4 className={`font-medium text-sm mb-1 line-clamp-2 ${isDarkMode ? 'text-white hover:text-blue-400' : 'text-gray-900 hover:text-blue-600'}`}                                >
                                     {post.title}
                                 </h4>
 
-                                <div
-                                    className={`
-                                        flex items-center gap-2 text-xs
-                                        ${isDarkMode
-                                            ? 'text-gray-400'
-                                            : 'text-gray-500'
-                                        }
-                                    `}
-                                >
+                                <div className={`flex items-center gap-2 text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                                     <div className="flex items-center gap-2">
                                         <Calendar className="h-3 w-3" />
                                         <time dateTime={post.createdAt}>

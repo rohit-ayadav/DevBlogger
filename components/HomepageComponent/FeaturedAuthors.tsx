@@ -8,8 +8,7 @@ import { motion } from 'framer-motion';
 import { cleanMarkdown } from '@/lib/common-function';
 import React, { useEffect } from 'react';
 import { getTrendingAuthors } from '@/action/my-profile-action';
-import { CldImage } from 'next-cloudinary';
-import { isValidUrl } from '@/lib/common-function';
+import ShowProfileImage from '../ShowProfileImage';
 
 const FeaturedAuthors = () => {
     const { isDarkMode } = useTheme();
@@ -58,29 +57,7 @@ const FeaturedAuthors = () => {
                                 >
                                     <CardContent className="pt-6 flex flex-col items-center">
                                         <div className="mb-4 w-20 h-20 rounded-full overflow-hidden border-2 border-blue-500">
-                                            {author.image ? (
-                                                isValidUrl(author.image) ? (
-                                                    <img
-                                                        src={author.image}
-                                                        alt={author.name}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                ) : (
-                                                    <CldImage
-                                                        src={author.image}
-                                                        alt={author.name}
-                                                        width={100}
-                                                        height={100}
-                                                        className="w-full h-full object-cover"
-                                                        loading='eager'
-                                                        quality={100}
-                                                    />
-                                                )
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center bg-blue-100 text-blue-600">
-                                                    {author.name.charAt(0).toUpperCase()}
-                                                </div>
-                                            )}
+                                            <ShowProfileImage src={author.image} className="w-full h-full" size={80} />
                                         </div>
                                         <CardTitle className="text-lg font-semibold mb-1 text-center">
                                             {author.name}

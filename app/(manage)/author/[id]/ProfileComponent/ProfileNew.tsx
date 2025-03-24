@@ -1,8 +1,7 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Globe, Search, Eye, Heart, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { TabsList, TabsTrigger, Tabs, TabsContent } from '@/components/ui/tabs';
@@ -17,9 +16,7 @@ import { AuthorInfo } from './AuthorInfo';
 import Posts from './Posts';
 import StatsAuthorPage from './Stats';
 import ShareCTA from './ShareCTA';
-import { CldImage } from 'next-cloudinary';
-import { isValidUrl } from '@/lib/common-function';
-
+import ShowProfileImage from '@/components/ShowProfileImage';
 interface Author {
     _id: string;
     name: string;
@@ -43,84 +40,7 @@ interface Author {
 }
 
 const ProfileNEW = ({ authorPosts, author }: { authorPosts: BlogPostType[], author: Author }) => {
-    const {
-        isDarkMode,
-        toggleDarkMode,
-        searchTerm,
-        setSearchTerm,
-        selectedCategory,
-        setSelectedCategory,
-        sortBy,
-        setSortBy,
-        activeTab,
-        setActiveTab,
-        isShareSheetOpen,
-        setIsShareSheetOpen,
-        filteredAndSortedPosts,
-        categories,
-        totalStats,
-        copyProfileLink,
-    } = useProfile({ authorPosts, author });
-
-    const [imageError, setImageError] = useState(false);
-
-    useEffect(() => {
-        setImageError(false);
-    }, [author.image]);
-
-    const renderAvatarContent = () => {
-        if (imageError || !author.image) {
-            return (
-                <>
-                    <AvatarImage
-                        src="/default-profile.jpg"
-                        alt={author.name}
-                        onError={() => setImageError(true)}
-                    />
-                    <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white text-4xl">
-                        {author.name.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                </>
-            );
-        }
-
-        // If image is a valid URL
-        if (isValidUrl(author.image)) {
-            return (
-                <>
-                    <AvatarImage
-                        src={author.image}
-                        alt={author.name}
-                        onError={() => setImageError(true)}
-                    />
-                    <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white text-4xl">
-                        {author.name.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                </>
-            );
-        }
-
-        // If image is a Cloudinary public ID
-        return (
-            <>
-                <div className="w-full h-full rounded-full overflow-hidden">
-                    <CldImage
-                        src={`${author.image}`}
-                        width={160}
-                        height={160}
-                        alt={author.name}
-                        loading='eager'
-                        placeholder="blur"
-                        blurDataURL={author.image}
-                        format="auto"
-                        className="w-full h-full object-cover"
-                        onError={() => setImageError(true)}
-                    />
-                </div>
-            </>
-        );
-    };
-
+    const { isDarkMode, toggleDarkMode, searchTerm, setSearchTerm, selectedCategory, setSelectedCategory, sortBy, setSortBy, activeTab, setActiveTab, isShareSheetOpen, setIsShareSheetOpen, filteredAndSortedPosts, categories, totalStats, copyProfileLink, } = useProfile({ authorPosts, author });
     return (
         <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => window.location.reload()}>
             <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
@@ -128,7 +48,6 @@ const ProfileNEW = ({ authorPosts, author }: { authorPosts: BlogPostType[], auth
                     <Header author={author} isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} isShareSheetOpen={isShareSheetOpen} setIsShareSheetOpen={setIsShareSheetOpen} copyProfileLink={copyProfileLink} />
 
                     <main className="space-y-8">
-                        {/* Hero Section with Profile */}
                         <div className="relative">
                             <div className="h-40 sm:h-64 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl overflow-hidden">
                                 <div className="absolute inset-0 bg-gradient-to-r from-blue-600/90 to-purple-600/90 mix-blend-multiply"></div>
@@ -141,9 +60,11 @@ const ProfileNEW = ({ authorPosts, author }: { authorPosts: BlogPostType[], auth
 
                             <div className="container relative px-4 mx-auto">
                                 <div className="flex flex-col sm:flex-row items-center sm:items-end -mt-16 sm:-mt-24">
-                                    <Avatar className="w-32 h-32 sm:w-40 sm:h-40 ring-4 ring-white dark:ring-gray-900 bg-white dark:bg-gray-800 shadow-lg">
-                                        {renderAvatarContent()}
-                                    </Avatar>
+                                    <ShowProfileImage
+                                        src={author.image}
+                                        className="w-32 h-32 sm:w-40 sm:h-40 ring-4 ring-white dark:ring-gray-900 bg-white dark:bg-gray-800 shadow-lg"
+                                        style={{ borderRadius: '50%' }}
+                                    />
 
                                     <div className="mt-4 sm:mt-0 sm:ml-6 text-center sm:text-left">
                                         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{author.name}</h1>

@@ -123,7 +123,7 @@ const ContactPage = () => {
                                 <Phone className="mr-2" /> <span>+91 (639) 217-7974</span>
                             </div>
                             <div className="flex items-center">
-                                <MapPin className="mr-2" /> <span>123 Dog Street, Chinhat, Lucknow 226028</span>
+                                <MapPin className="mr-2" /> <span>421, 3rd Floor, Uttardhauna, Tiwariganj, Chinhat, Lucknow 226028</span>
                             </div>
                         </CardContent>
                     </Card>

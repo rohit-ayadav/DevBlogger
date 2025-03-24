@@ -17,6 +17,7 @@ import { AuthorStats } from './AuthorStats';
 import { ErrorFallback } from './ErrorFallback';
 import { BlogPostType } from '@/types/blogs-types';
 import { formatDate } from '@/utils/date-formatter';
+import ShowProfileImage from '@/components/ShowProfileImage';
 
 interface Author {
     _id: string;
@@ -123,12 +124,7 @@ const AuthorPage = ({ authorPosts, author }: { authorPosts: BlogPostType[], auth
                             <Card className="overflow-hidden border-0 shadow-lg">
                                 <CardContent className="p-6">
                                     <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
-                                        <Avatar className="w-32 h-32 ring-4 ring-blue-100 dark:ring-blue-900">
-                                            <AvatarImage src={author.image} alt={author.name} />
-                                            <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white text-2xl">
-                                                {author.name.charAt(0).toUpperCase()}
-                                            </AvatarFallback>
-                                        </Avatar>
+                                        <ShowProfileImage src={author.image} className="w-32 h-32 ring-4 ring-blue-100 dark:ring-blue-900" size={128} />
                                         <div className="flex-1 space-y-4">
                                             <div>
                                                 <h1 className="text-3xl font-bold mb-2">{author.name}</h1>

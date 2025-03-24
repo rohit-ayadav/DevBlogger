@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import Link from 'next/link';
 import { useTheme } from '@/context/ThemeContext';
 import { cn } from '@/lib/utils';
+import ShowProfileImage from '@/components/ShowProfileImage';
 
 type SortOption = 'followers' | 'posts' | 'newest' | 'alphabetical';
 
@@ -34,7 +35,7 @@ const AuthorCard = ({ author }: { author: UserType }) => {
             <CardContent className="p-4 sm:p-6">
                 <div className="flex flex-col sm:flex-row sm:items-start sm:space-x-4">
                     <div className="flex justify-center mb-4 sm:mb-0">
-                        <Avatar className="h-20 w-20 sm:h-24 sm:w-24 ring-2 ring-offset-2 ring-transparent group-hover:ring-blue-500 transition-all">
+                        {/* <Avatar className="h-20 w-20 sm:h-24 sm:w-24 ring-2 ring-offset-2 ring-transparent group-hover:ring-blue-500 transition-all">
                             <AvatarImage
                                 src={author.image}
                                 alt={author.name}
@@ -48,7 +49,8 @@ const AuthorCard = ({ author }: { author: UserType }) => {
                             >
                                 {author.name.charAt(0).toUpperCase()}
                             </AvatarFallback>
-                        </Avatar>
+                        </Avatar> */}
+                        <ShowProfileImage src={author.image} className="h-20 w-20 sm:h-24 sm:w-24 ring-2 ring-offset-2 ring-transparent group-hover:ring-blue-500 transition-all" size={100} />
                     </div>
                     <div className="flex-1 text-center sm:text-left">
                         <h2 className={cn(

@@ -1,12 +1,12 @@
 import React from 'react';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Eye, ThumbsUp, Calendar } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Link from 'next/link';
 import { BlogPostType, UserType } from '@/types/blogs-types';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import ShowProfileImage from '@/components/ShowProfileImage';
 interface PostCardProps {
     post: BlogPostType;
     showStats?: boolean;
@@ -91,12 +91,7 @@ export const PostCard = ({ post, showStats = false, author }: PostCardProps) => 
             <div className="px-3 sm:px-5 py-3 border-t flex items-center justify-between">
                 {author ? (
                     <div className="flex items-center gap-2">
-                        <Avatar className="h-6 w-6">
-                            <AvatarImage src={author.image} alt={author.name} />
-                            <AvatarFallback className="bg-blue-100 text-blue-900 text-xs">
-                                {author.name?.charAt(0).toUpperCase() || 'A'}
-                            </AvatarFallback>
-                        </Avatar>
+                        <ShowProfileImage src={author.image} className="h-6 w-6" size={24} />
                         <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">{author.name || 'Anonymous'}</span>
                     </div>
                 ) : (
