@@ -131,3 +131,20 @@ export async function getTrendingAuthors() {
         return [];
     }
 }
+
+export async function isAdmin(email: string) {
+    try {
+        await connectDB();
+        const user = await User.findOne({ email }).select("role").lean().exec() as { role: string } | null;
+        if (!user) {
+            throw new Error("User not found");
+        }
+        if (user.role !== "admin") {
+            throw new Error("User is not admin");
+        }
+        return true;
+    }
+    catch (error) {
+        return false;
+    }
+}

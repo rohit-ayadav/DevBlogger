@@ -1,5 +1,5 @@
 "use client";
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Eye, ThumbsUp, Tag, Loader2, BarChart as BarChartIcon } from 'lucide-react';
@@ -10,6 +10,9 @@ import NotificationTest from '@/components/NotificationTest/page';
 import StatCard, { ErrorFallback } from '@/app/(settings)/dashboard/admin/Statscard';
 import useAdmin from './useAdmin';
 import Overview from './Overview';
+import { useSession } from 'next-auth/react';
+import LoadingEffect from '@/lib/LoadingEffect';
+import { isAdmin as checkIsAdmin } from '@/action/my-profile-action';
 
 const PostManagement = lazy(() => import('./PostManagement'));
 const CategoryOverview = lazy(() => import('./CategoryOverview'));
@@ -28,6 +31,32 @@ const OptimizedAdminDashboard = () => {
         newsLetterDataPage,
         fetchData,
     } = useAdmin();
+
+    const [isAdmin, setIsAdmin] = React.useState(false);
+    const { data: session, status } = useSession();
+    useEffect(() => {
+        if (status === 'loading') {
+            return;
+        }
+        if (status === 'unauthenticated') {
+            setIsAdmin(false);
+        }
+        if (status === 'authenticated') {
+            if (session?.user?.email) {
+                checkIsAdmin(session.user.email).then(isAdmin => {
+                    setIsAdmin(isAdmin);
+                });
+            }
+        }
+    }, [status, session]);
+
+    if (!isAdmin) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <h1 className="text-2xl font-bold">Access Denied</h1>
+            </div>
+        );
+    }
 
     return (
         <div className="container mx-auto p-6 space-y-8">

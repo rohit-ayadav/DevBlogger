@@ -28,15 +28,15 @@ export async function middleware(req: NextRequest) {
   if (token && publicRoutes.includes(pathname)) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
-  if (adminRoutes.includes(pathname)) {
-    if (token) {
-      if (token.role !== "admin") {
-        return NextResponse.redirect(new URL("/unauthorized", req.url));
-      }
-      } else {
-      return NextResponse.redirect(loginUrl);
-    }
-  }
+  // if (adminRoutes.includes(pathname)) {
+  //   if (token) {
+  //     if (token.role !== "admin") {
+  //       return NextResponse.redirect(new URL("/unauthorized", req.url));
+  //     }
+  //     } else {
+  //     return NextResponse.redirect(loginUrl);
+  //   }
+  // }
 
   return NextResponse.next();
 }
