@@ -118,13 +118,48 @@ export async function updateBlog(Post: UpdatePostType) {
         revalidatePath(`/edit/${blog._id}`);
         revalidatePath(`/`);
         revalidatePath(`/blogs`);
-        
+
         return {
             message: `Blog post ${isUpdatedByAdmin ? `updated by admin ${session.user.name}` : "updated"} successfully`,
             error: ""
         }
     }
     catch (e) {
+        return {
+            message: "",
+            error: (e as Error).message
+        }
+    }
+}
+
+export async function publishBlog(id: string) {
+    if (!id) {
+        return {
+            message: "",
+            error: "Id is required"
+        }
+    }
+    try {
+        const blog = await Blog.findOne
+            (isValidObjectId(id) ? { _id: id } : { slug: id });
+        if (!blog) {
+            return {
+                message: "",
+                error: "Blog not found"
+            }
+        }
+        blog.status = "published";
+        await blog.save();
+        revalidatePath('/edit');
+        revalidatePath(`/blogs/${blog.slug}`);
+        revalidatePath(`/edit/${blog.slug}`);
+        revalidatePath(`/blogs/${blog._id.toString()}`);
+        return {
+            message: "Blog post published successfully",
+            error: ""
+        }
+
+    } catch (e) {
         return {
             message: "",
             error: (e as Error).message

@@ -175,7 +175,6 @@ export async function GET(request: NextRequest) {
       const posts = await Blog.find({})
         .select(projection)
         .sort({ createdAt: -1, totalViews: -1 })
-        .limit(limit)
         .lean();
       return NextResponse.json({ posts }, { status: 200 });
     }

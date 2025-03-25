@@ -35,21 +35,6 @@ const AuthorCard = ({ author }: { author: UserType }) => {
             <CardContent className="p-4 sm:p-6">
                 <div className="flex flex-col sm:flex-row sm:items-start sm:space-x-4">
                     <div className="flex justify-center mb-4 sm:mb-0">
-                        {/* <Avatar className="h-20 w-20 sm:h-24 sm:w-24 ring-2 ring-offset-2 ring-transparent group-hover:ring-blue-500 transition-all">
-                            <AvatarImage
-                                src={author.image}
-                                alt={author.name}
-                                className="object-cover"
-                            />
-                            <AvatarFallback
-                                className={cn(
-                                    "text-lg sm:text-xl",
-                                    isDarkMode ? "bg-blue-900 text-blue-100" : "bg-blue-100 text-blue-900"
-                                )}
-                            >
-                                {author.name.charAt(0).toUpperCase()}
-                            </AvatarFallback>
-                        </Avatar> */}
                         <ShowProfileImage src={author.image} className="h-20 w-20 sm:h-24 sm:w-24 ring-2 ring-offset-2 ring-transparent group-hover:ring-blue-500 transition-all" size={100} />
                     </div>
                     <div className="flex-1 text-center sm:text-left">

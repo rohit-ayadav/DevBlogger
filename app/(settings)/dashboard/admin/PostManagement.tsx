@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Search, Save, Loader2 } from 'lucide-react'
+import { Search, Save, Loader2, Edit, Delete, Trash2 } from 'lucide-react'
 import { CATEGORIES } from '@/types/blogs-types'
 interface BlogPostType {
     _id: string
@@ -22,11 +22,9 @@ interface PostManagementProps {
     loading: boolean;
     searchTerm: string;
     handleSearch: (value: string) => void;
-    updateCategory: (id: string, category: string) => void;
-    savingPost: string | null;
 }
 
-const PostManagement: React.FC<PostManagementProps> = ({ posts, loading, searchTerm, handleSearch, updateCategory, savingPost }) => {
+const PostManagement: React.FC<PostManagementProps> = ({ posts, loading, searchTerm, handleSearch }) => {
     return (
         <Card>
             <CardHeader>
@@ -47,10 +45,10 @@ const PostManagement: React.FC<PostManagementProps> = ({ posts, loading, searchT
                     <Table>
                         <TableHeader>
                             <TableRow>
+                                <TableHead>Sr. No.</TableHead>
                                 <TableHead>Title</TableHead>
                                 <TableHead>Created</TableHead>
                                 <TableHead>Author</TableHead>
-                                <TableHead>Category</TableHead>
                                 <TableHead>Views</TableHead>
                                 <TableHead>Likes</TableHead>
                                 <TableHead className="text-right">Actions</TableHead>
@@ -66,41 +64,18 @@ const PostManagement: React.FC<PostManagementProps> = ({ posts, loading, searchT
                             ) : (
                                 posts.map((post) => (
                                     <TableRow key={post._id}>
+                                        <TableCell className="font-medium"></TableCell>
                                         <TableCell className="font-medium">{post.title}</TableCell>
                                         <TableCell>{new Date(post.createdAt).toLocaleDateString()}</TableCell>
                                         <TableCell>{post.createdBy}</TableCell>
-                                        <TableCell>
-                                            <Select
-                                                value={post.category || ''}
-                                                onValueChange={(value) => updateCategory(post._id, value)}
-                                            >
-                                                <SelectTrigger className="w-[180px]">
-                                                    <SelectValue placeholder="Select category" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {CATEGORIES.map((cat) => (
-                                                        <SelectItem key={cat.value} value={cat.value}>
-                                                            {cat.label}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </TableCell>
                                         <TableCell>{post.views || 0}</TableCell>
                                         <TableCell>{post.likes || 0}</TableCell>
                                         <TableCell className="text-right">
-                                            {savingPost === post._id ? (
-                                                <Button disabled size="sm">
-                                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                                </Button>
-                                            ) : (
-                                                <Button
-                                                    size="sm"
-                                                    onClick={() => updateCategory(post._id, post.category || '')}
-                                                >
-                                                    <Save className="h-4 w-4" />
-                                                </Button>
-                                            )}
+                                            {/* Edit Delete buttons */}
+                                            <div className='flex items-center space-x-2'>
+                                                <Edit className="h-4 w-4 text-blue-500 cursor-pointer" />
+                                                <Trash2 className="h-4 w-4 text-red-500 cursor-pointer" />
+                                            </div>
                                         </TableCell>
 
                                     </TableRow>

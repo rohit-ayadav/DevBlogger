@@ -5,6 +5,7 @@ import 'prismjs/plugins/line-numbers/prism-line-numbers.js';
 import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
 import { BlogPostType } from '@/types/blogs-types';
 import { useTheme } from '@/context/ThemeContext';
+import LazyAdSense from '@/components/LazyAds';
 
 const RC = ({ content }: BlogPostType) => {
     const { isDarkMode } = useTheme();

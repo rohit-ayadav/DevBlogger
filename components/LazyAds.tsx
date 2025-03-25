@@ -14,7 +14,7 @@ interface LazyAdSenseProps {
 }
 
 const LazyAdSense = ({
-    adClient,
+    adClient = 'ca-pub-8778160378200057',
     adSlot,
     adFormat = 'auto',
     style = { display: 'block', width: '100%', height: '280px' },
