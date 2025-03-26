@@ -145,7 +145,6 @@ function CreateBlogComponent() {
         updateState({ isLoading: true });
 
         try {
-            setLoading(true);
             const blogPostData = {
                 title: sanitizer.title(state.title),
                 content: sanitizer.content(
@@ -170,11 +169,11 @@ function CreateBlogComponent() {
             const data = await response.json();
             if (!response.ok) throw new Error(data.message || 'Failed to create blog post');
 
-            updateState({ blogId: data.id });
+            updateState({ blogId: data.data.id });
             localStorage.removeItem(DRAFT_STORAGE_KEY);
             toast.success('Blog post created successfully');
             clearForm();
-            router.push(`/blogs/${data.id}`);
+            router.push(`/blogs/${data.data.id}`);
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
             updateState({ error: errorMessage });
