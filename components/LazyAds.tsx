@@ -6,8 +6,8 @@ declare global {
 }
 
 interface LazyAdSenseProps {
-    adClient: string;
-    adSlot: string;
+    adClient?: string;
+    adSlot?: string;
     adFormat?: string;
     style?: React.CSSProperties;
     className?: string;
