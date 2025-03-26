@@ -5,7 +5,7 @@ import { Metadata } from "next";
 import { getSessionAtHome } from "@/auth";
 import UserProfile from "./component/UserProfile";
 import serializeDocument from "@/utils/date-formatter";
-import { ErrorMessage } from "@/app/blogs/[id]/ErrorMessage";
+import { ErrorMessage } from "@/lib/ErrorMessage";
 
 async function getPostData() {
     try {

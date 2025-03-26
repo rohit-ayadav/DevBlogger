@@ -4,7 +4,7 @@ import { connectDB } from '@/utils/db';
 import Link from 'next/link';
 import { Pencil, Trash2 } from 'lucide-react';
 import { BlogPostType } from '@/types/blogs-types';
-import { ErrorMessage } from '@/app/blogs/[id]/ErrorMessage';
+import { ErrorMessage } from '@/lib/ErrorMessage';
 
 export const dynamic = "force-dynamic";
 

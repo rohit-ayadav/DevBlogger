@@ -8,7 +8,7 @@ import User from '@/models/users.models';
 import { connectDB } from '@/utils/db';
 import { isValidObjectId } from 'mongoose';
 import { Author, BlogPostType } from '@/types/blogs-types';
-import { ErrorMessage } from './ErrorMessage';
+import { ErrorMessage } from '../../../lib/ErrorMessage';
 import BlogPostClientContent from '@/components/BlogPostContent/page';
 import { isValidSlug } from '@/lib/common-function';
 import serializeDocument, { formatDate } from '@/utils/date-formatter';

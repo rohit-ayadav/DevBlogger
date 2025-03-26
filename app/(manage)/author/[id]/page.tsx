@@ -3,7 +3,7 @@ import { connectDB } from "@/utils/db";
 import Blog from "@/models/blogs.models";
 import User from "@/models/users.models";
 import { Metadata } from "next";
-import { ErrorMessage } from "@/app/blogs/[id]/ErrorMessage";
+import { ErrorMessage } from "@/lib/ErrorMessage";
 import { isValidObjectId } from "mongoose";
 import serializeDocument from "@/utils/date-formatter";
 import AuthorPage, { Author } from "@/app/(settings)/profile/id-omponent/Profile";

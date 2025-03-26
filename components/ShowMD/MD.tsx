@@ -26,78 +26,7 @@ const MarkdownComponents = {
     ),
 
     // Mobile-first responsive table components
-    table: (props: any) => (
-        <div className="my-6 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 shadow-md">
-            <div className="hidden md:block overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700" {...props} />
-            </div>
-            <div className="md:hidden">
-                {/* Custom responsive table container for mobile */}
-                <div className="responsive-table">{props.children}</div>
-            </div>
-        </div>
-    ),
-
-    thead: (props: any) => (
-        <>
-            {/* Regular thead for desktop */}
-            <thead className="bg-gray-50 dark:bg-gray-800 hidden md:table-header-group" {...props} />
-            {/* For mobile, we just render the children but they'll be styled differently */}
-            <div className="md:hidden bg-gray-50 dark:bg-gray-800 font-medium">{props.children}</div>
-        </>
-    ),
-
-    th: (props: any) => (
-        <>
-            {/* Regular th for desktop */}
-            <th
-                className="hidden md:table-cell px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
-                {...props}
-            />
-            {/* For mobile, we hide these as they'll be displayed as data-labels */}
-            <div className="md:hidden sr-only">{props.children}</div>
-        </>
-    ),
-
-    tr: (props: any) => (
-        <>
-            {/* Regular tr for desktop */}
-            <tr
-                className="hidden md:table-row bg-white dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800"
-                {...props}
-            />
-            {/* For mobile, we transform rows into card-like structures */}
-            <div className="md:hidden border-b border-gray-200 dark:border-gray-700 p-3 bg-white dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800">
-                {props.children}
-            </div>
-        </>
-    ),
-
-    td: (props: any) => {
-        // Extract the column header from the corresponding th element
-        const headerText = props['data-label'] || '';
-
-        return (
-            <>
-                {/* Regular td for desktop */}
-                <td
-                    className="hidden md:table-cell px-3 py-2 text-xs md:text-sm text-gray-700 dark:text-gray-300"
-                    {...props}
-                />
-                {/* For mobile, we format as label: value pairs */}
-                <div className="md:hidden py-2 flex flex-wrap">
-                    {headerText && (
-                        <span className="w-full font-medium text-xs text-gray-500 dark:text-gray-400 uppercase mb-1">
-                            {headerText}:
-                        </span>
-                    )}
-                    <span className="text-xs md:text-sm text-gray-700 dark:text-gray-300 break-words w-full">
-                        {props.children}
-                    </span>
-                </div>
-            </>
-        );
-    },
+    
 
     // Enhanced typography for headings with better spacing
     h1: (props: any) => (

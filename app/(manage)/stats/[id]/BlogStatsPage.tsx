@@ -11,7 +11,7 @@ import Link from 'next/link';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, } from "@/components/ui/alert-dialog";
 import { AuthorCard, StatCard, TIME_PERIODS } from './Card';
-import { ErrorMessage } from '@/app/blogs/[id]/ErrorMessage';
+import { ErrorMessage } from '@/lib/ErrorMessage';
 import { useSession } from 'next-auth/react';
 import BlogDetails from './BlogDetails';
 

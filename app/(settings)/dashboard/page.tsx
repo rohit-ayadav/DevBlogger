@@ -4,7 +4,7 @@ import AuthorDashboard from "./Dashboard";
 import { useEffect, useState } from "react";
 import { BlogPostType, UserType } from "@/types/blogs-types";
 import LoadingEffect from "@/lib/LoadingEffect";
-import { ErrorMessage } from "@/app/blogs/[id]/ErrorMessage";
+import { ErrorMessage } from "@/lib/ErrorMessage";
 
 const PersonalDashboard = () => {
     const [user, setUser] = useState<UserType | null>(null);

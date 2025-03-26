@@ -2,7 +2,7 @@ import { connectDB } from "@/utils/db";
 import User from "@/models/users.models";
 import Blog from "@/models/blogs.models";
 import { BlogPostType, UserType } from "@/types/blogs-types";
-import { ErrorMessage } from "./blogs/[id]/ErrorMessage";
+import { ErrorMessage } from "../lib/ErrorMessage";
 import HomePage from "@/components/HomepageComponent/HomePageComponent";
 import serializeDocument from "@/utils/date-formatter";
 

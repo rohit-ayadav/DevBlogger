@@ -1,5 +1,5 @@
 "use server";
-import { ErrorMessage } from '../../blogs/[id]/ErrorMessage';
+import { ErrorMessage } from '../../../lib/ErrorMessage';
 import { connectDB } from '@/utils/db';
 import User from '@/models/users.models';
 import Blog from '@/models/blogs.models';

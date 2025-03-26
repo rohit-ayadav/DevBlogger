@@ -3,7 +3,7 @@ import Blog from "@/models/blogs.models";
 import { isValidObjectId } from "mongoose";
 import { isValidSlug } from "@/lib/common-function";
 import EditBlogComponent from "./editBlog";
-import { ErrorMessage } from "@/app/blogs/[id]/ErrorMessage";
+import { ErrorMessage } from "@/lib/ErrorMessage";
 
 await connectDB();
 interface EditBlogState {

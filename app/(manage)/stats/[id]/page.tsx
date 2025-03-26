@@ -4,7 +4,7 @@ import User from "@/models/users.models";
 import { isValidObjectId } from "mongoose";
 import MonthlyStats from "@/models/monthlyStats";
 import serializeDocument from "@/utils/date-formatter";
-import { ErrorMessage } from "@/app/blogs/[id]/ErrorMessage";
+import { ErrorMessage } from "@/lib/ErrorMessage";
 import { BlogPostType, MonthlyStatsType, UserType } from "@/types/blogs-types";
 import BlogStatsPage from "./BlogStatsPage";
 
@@ -35,7 +35,7 @@ async function getPostResults(blogid: string) {
                 error: 'User not found'
             };
         }
-        
+
         // find the blog stats
         const monthlyStats = await MonthlyStats.find({ blog: blog._id }).lean() as unknown as MonthlyStatsType[];
         const formattedMonthlyStats = monthlyStats.map(stat => ({

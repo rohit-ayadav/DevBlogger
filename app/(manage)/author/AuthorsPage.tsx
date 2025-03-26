@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import { ErrorMessage } from '../../blogs/[id]/ErrorMessage';
+import { ErrorMessage } from '../../../lib/ErrorMessage';
 import { UserType } from '@/types/blogs-types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';

@@ -15,7 +15,7 @@ import BlogPostClientContent from '@/components/BlogPostContent/page';
 import { isValidSlug } from '@/lib/common-function';
 import serializeDocument from '@/utils/date-formatter';
 import { revalidateBlog } from '@/action/revalidate-post';
-import { ErrorMessage } from '@/app/blogs/[id]/ErrorMessage';
+import { ErrorMessage } from '@/lib/ErrorMessage';
 import PreviewConfirmation from './PreviewConfirmation';
 
 interface ApiResponse {
