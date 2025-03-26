@@ -4,7 +4,6 @@ declare global {
         adsbygoogle: any[];
     }
 }
-
 interface LazyAdSenseProps {
     adClient?: string;
     adSlot?: string;
