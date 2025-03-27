@@ -93,6 +93,9 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
 
     const formattedHeadings = getHeadingItems();
 
+    // If the heading of content user seeing, but not visible in the toc, then scroll to it
+    // means the colored toc always visible.
+
     return (
         <nav
             className={`toc-nav ${className}`}
@@ -116,8 +119,8 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({
                             <Link
                                 href={`#${heading.slug}`}
                                 className={`block py-1 px-2 ${getBulletStyle(heading.level)} hover:text-blue-500 transition-colors ${activeId === heading.slug
-                                        ? 'text-blue-600 font-medium'
-                                        : 'text-gray-600 dark:text-gray-300'
+                                    ? 'text-blue-600 font-medium'
+                                    : 'text-gray-600 dark:text-gray-300'
                                     }`}
                                 onClick={(e) => {
                                     e.preventDefault();
