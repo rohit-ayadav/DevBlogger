@@ -67,7 +67,7 @@
     "markdown-it": "^14.1.0",
     "markdown-to-jsx": "^7.7.4",
     "mongodb": "^6.10.0",
-    "mongoose": "^8.7.0",
+    "mongoose": "^8.9.5",
     "next": "14.2.14",
     "next-auth": "^4.24.8",
     "next-cloudinary": "^6.16.0",
