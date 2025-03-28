@@ -1,11 +1,8 @@
+import MarkdownPage from '@/components/ShowMD/MarkdownPage'
 import React from 'react'
 
-const page = () => {
-    return (
-        <div>
-
-        </div>
-    )
+const PythonCheatSheet: React.FC = () => {
+    return <MarkdownPage filename='js-cheatsheet' />
 }
 
-export default page
+export default PythonCheatSheet
