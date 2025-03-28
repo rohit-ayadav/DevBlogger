@@ -56,6 +56,7 @@
     "express-rate-limit": "^7.4.1",
     "firebase": "^10.14.0",
     "framer-motion": "^11.11.10",
+    "fs.promises": "^0.1.2",
     "gray-matter": "^4.0.3",
     "highlight.js": "^11.11.1",
     "input-otp": "^1.4.2",
