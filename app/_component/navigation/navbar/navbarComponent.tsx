@@ -63,6 +63,7 @@ export const Navbar = () => {
     { href: '/blogs', label: 'DevPosts', icon: Terminal },
     { href: '/create', label: 'Write', icon: Edit3 },
     { href: '/dashboard', label: 'Dashboard', icon: Code },
+    { href: '/tools', label: 'Tools', icon: CodeXml },
     { href: '/contacts', label: 'Community', icon: Users },
   ];
 
@@ -92,7 +93,7 @@ export const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-1 flex-1 justify-center max-w-2xl mx-8">
-            {navLinks.map((link) => (
+            {navLinks.slice(0, 5).map((link) => (
               <NavLink
                 key={link.href}
                 href={link.href}
