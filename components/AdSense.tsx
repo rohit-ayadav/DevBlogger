@@ -1,17 +1,30 @@
 'use client';
-import React, { useEffect, InsHTMLAttributes } from 'react';
+import React, { useEffect, InsHTMLAttributes, useRef } from 'react';
 
 function Adsense(props: InsHTMLAttributes<HTMLModElement>) {
+    const adRef = useRef<HTMLModElement>(null);
+    const initialized = useRef(false);
+
     useEffect(() => {
-        try {
-            (window.adsbygoogle = window.adsbygoogle || []).push({});
-        } catch (error) {
-            console.error('GOOGLE ADSENSE ERROR:', error);
+
+        if (typeof window === 'undefined') return;
+        if (!window.adsbygoogle) {
+            window.adsbygoogle = [];
+        }
+        if (adRef.current && !initialized.current) {
+            try {
+                initialized.current = true;
+                (window.adsbygoogle = window.adsbygoogle || []).push({});
+            } catch (error) {
+                console.error('GOOGLE ADSENSE ERROR:', error);
+                initialized.current = false;
+            }
         }
     }, []);
 
     return (
         <ins
+            ref={adRef}
             className="adsbygoogle"
             style={{ display: 'block', textAlign: 'center' }}
             data-ad-layout="in-article"
