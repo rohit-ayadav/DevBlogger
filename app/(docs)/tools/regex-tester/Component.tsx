@@ -603,7 +603,7 @@ const RegexTester: React.FC = () => {
                 </div>
 
                 <div className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
-                    <p>© {new Date().getFullYear()} DevBlogger.in - Made with ❤️ for developers</p>
+                    <p>Made with ❤️ for developers by <a href="https://devblogger.in" className="text-blue-500 hover:underline">DevBlogger</a></p>
                 </div>
             </div>
         </>
