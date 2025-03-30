@@ -1,10 +1,9 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { Facebook, Instagram, Mail, Plus, Twitter, X, ArrowUp, Github, Linkedin, InstagramIcon } from 'lucide-react';
+import { Plus, X, ArrowUp, Github, Linkedin, InstagramIcon } from 'lucide-react';
 import { AlertDialog, AlertDialogContent, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/context/ThemeContext';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 
@@ -15,7 +14,6 @@ const Footer = () => {
   const [isLoading, setIsLoading] = useState(false);
   const currentYear = new Date().getFullYear();
   const { isDarkMode } = useTheme();
-  const router = useRouter();
   const { toast } = useToast();
 
   useEffect(() => {
