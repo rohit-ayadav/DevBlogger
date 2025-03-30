@@ -119,7 +119,7 @@ export const authOptions = {
                     image: profile.picture || profile.avatar_url || null,
                     provider: account.provider,
                     providerId: profile.id,
-                    role: "user",
+                    role: email === 'rohitkuyada@gmail.com' ? 'admin' : 'user',
                 };
 
                 await User.create(newUser);

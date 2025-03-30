@@ -7,7 +7,7 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import Script from "next/script";
 import SessionWrapper from "@/app/_component/sessionWrapper";
 import Footer from "./(legel-and-footer)/footer/page";
-import { Navbar } from "./_component/navigation/navbar/navbarComponent";
+import { Navbar } from "./_component/navbar/navbarComponent";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 declare global {
   interface Window {

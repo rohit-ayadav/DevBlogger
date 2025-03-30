@@ -76,7 +76,7 @@ const ContentCreationGuide = () => {
                         >
                             <Card
                                 className={`overflow-hidden transition-all duration-300 
-                  ${expandedStep === index
+                                ${expandedStep === index
                                         ? (isDarkMode ? 'bg-blue-900/20' : 'bg-blue-50')
                                         : (isDarkMode ? 'bg-gray-800' : 'bg-white')}`}
                             >
@@ -85,7 +85,7 @@ const ContentCreationGuide = () => {
                                     onClick={() => setExpandedStep(expandedStep === index ? null : index)}
                                 >
                                     <div className={`flex-shrink-0 mr-4 w-10 h-10 rounded-full flex items-center justify-center
-                    ${isDarkMode ? 'bg-blue-900/30 text-blue-400' : 'bg-blue-100 text-blue-600'}`}>
+                                        ${isDarkMode ? 'bg-blue-900/30 text-blue-400' : 'bg-blue-100 text-blue-600'}`}>
                                         {step.icon}
                                     </div>
                                     <div className="flex-grow">

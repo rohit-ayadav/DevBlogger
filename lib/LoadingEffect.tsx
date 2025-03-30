@@ -6,7 +6,6 @@ import { useTheme } from '@/context/ThemeContext';
 const LoadingEffect = () => {
     const { isDarkMode } = useTheme();
 
-    // Generate random positions for circles
     const generateCircles = (count: number) => {
         return Array.from({ length: count }, (_, i) => ({
             id: i,
@@ -22,7 +21,6 @@ const LoadingEffect = () => {
 
     return (
         <div className={`relative min-h-screen w-full flex flex-col items-center justify-center ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
-            {/* Background circles spread across the screen */}
             {circles.map((circle) => (
                 <motion.div
                     key={circle.id}
@@ -51,7 +49,6 @@ const LoadingEffect = () => {
 
             {/* Center content */}
             <div className="z-10 flex flex-col items-center">
-                {/* Logo placeholder with proper centering */}
                 <div className="flex justify-center items-center mb-8">
                     <motion.div
                         animate={{ rotate: 360 }}

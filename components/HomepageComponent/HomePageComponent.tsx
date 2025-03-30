@@ -13,7 +13,6 @@ import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
 import { BlogPostType, UserType } from '@/types/blogs-types';
 import { registerServiceWorkerFirstTime } from '@/hooks/push-client';
-import Newsletter from '@/app/_component/newsletter';
 import FeaturedAuthors from './FeaturedAuthors';
 import CategoryBrowser from './CategoryBrowser';
 import { NewsletterSection } from './NewsletterSection';

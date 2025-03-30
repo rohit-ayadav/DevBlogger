@@ -164,20 +164,6 @@ const ToolsCollection: React.FC = () => {
 
     return (
         <>
-            <Head>
-                <title>Developer Tools | Free Online Web Development Tools | DevBlogger</title>
-                <meta name="description" content="Collection of free online tools for web developers and content creators. Includes regex tester, base64 encoder/decoder, markdown converter, and more." />
-                <meta name="keywords" content="developer tools, web tools, online tools, regex tester, base64 encoder, markdown converter, content tools" />
-                <meta property="og:title" content="Developer Tools | DevBlogger" />
-                <meta property="og:description" content="Collection of free online tools for web developers and content creators." />
-                <meta property="og:type" content="website" />
-                <meta property="og:url" content="https://devblogger.in/tools" />
-                <meta name="twitter:card" content="summary_large_image" />
-                <meta name="twitter:title" content="Developer Tools | DevBlogger" />
-                <meta name="twitter:description" content="Collection of free online tools for web developers and content creators." />
-                <link rel="canonical" href="https://devblogger.in/tools" />
-            </Head>
-
             <div className="container mx-auto px-4 py-12 max-w-7xl">
                 <div className="text-center mb-12">
                     <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-4">DevBlogger Tools</h1>
@@ -340,7 +326,7 @@ const ToolsCollection: React.FC = () => {
                         </div>
                         <div className="mt-8 md:mt-0 flex justify-center md:justify-end">
                             <Link
-                                href="/contact"
+                                href="/contacts"
                                 className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-indigo-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-indigo-700 focus:ring-white"
                             >
                                 Request a Tool

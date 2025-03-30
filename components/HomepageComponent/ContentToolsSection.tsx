@@ -44,8 +44,7 @@ const ContentToolsSection = () => {
                             whileHover={{ y: -5 }}
                             transition={{ duration: 0.2 }}
                         >
-                            <Card className={`h-full flex flex-col justify-between transition-all duration-300 
-                ${isDarkMode ? 'bg-gray-800/50 hover:bg-gray-800' : 'bg-white hover:bg-gray-50'}`}>
+                            <Card className={`h-full flex flex-col justify-between transition-all duration-300 ${isDarkMode ? 'bg-gray-800/50 hover:bg-gray-800' : 'bg-white hover:bg-gray-50'}`}>
                                 <CardContent className="pt-6">
                                     <div className="text-blue-600 mb-4 flex justify-center">{tool.icon}</div>
                                     <CardTitle className="text-2xl font-semibold mb-2 text-center">{tool.title}</CardTitle>

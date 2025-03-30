@@ -14,6 +14,7 @@ const FeaturedAuthors = () => {
     const { isDarkMode } = useTheme();
     const [trendingAuthors, setTrendingAuthors] = React.useState<UserType[]>([]);
     const [loading, setLoading] = React.useState<boolean>(true);
+
     useEffect(() => {
         const fetchTrendingAuthors = async () => {
             const authors = await getTrendingAuthors() as UserType[];
@@ -52,9 +53,7 @@ const FeaturedAuthors = () => {
                             whileHover={{ y: -5 }}
                         >
                             <Link href={`/author/${author.username}`}>
-                                <Card className={`h-full transition-all duration-300 
-                  ${isDarkMode ? 'bg-gray-800/50 hover:bg-gray-800' : 'bg-white hover:bg-gray-50'}`}
-                                >
+                                <Card className={`h-full transition-all duration-300 ${isDarkMode ? 'bg-gray-800/50 hover:bg-gray-800' : 'bg-white hover:bg-gray-50'}`}>
                                     <CardContent className="pt-6 flex flex-col items-center">
                                         <div className="mb-4 w-20 h-20 rounded-full overflow-hidden border-2 border-blue-500">
                                             <ShowProfileImage src={author.image} className="w-full h-full" size={80} />
