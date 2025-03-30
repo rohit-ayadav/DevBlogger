@@ -1,7 +1,7 @@
 'use client';
-import React, { useEffect, InsHTMLAttributes, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 
-function Adsense(props: InsHTMLAttributes<HTMLModElement>) {
+function Adsense() {
     const adRef = useRef<HTMLModElement>(null);
     const initialized = useRef(false);
 
@@ -30,7 +30,7 @@ function Adsense(props: InsHTMLAttributes<HTMLModElement>) {
             data-ad-layout="in-article"
             data-ad-format="fluid"
             data-ad-client="ca-pub-8778160378200057"
-            {...props}
+            data-ad-slot="1624739135"
         ></ins>
     );
 }
