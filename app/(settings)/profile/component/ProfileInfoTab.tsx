@@ -279,13 +279,15 @@ export const ProfileInfoTab = ({ userData, editMode, setEditMode, isDarkMode = f
                     }
                 />
 
-                {/* User Bio  */}
+                User Bio 
                 <div className="mb-4">
                     <label className={`block text-sm font-medium mb-1 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>Bio</label>
                     <textarea
                         value={formData.bio}
                         onChange={(e) => handleChange('bio', e.target.value)}
                         disabled={!editMode || isSubmitting}
+                        placeholder="Write a short bio about yourself... It will be shown on your public profile. Use markdown for better formatting. Keep it under 200 characters, with the first line as a tagline."
+                        rows={7}
                         className={`w-full px-3 py-2 rounded-lg border ${isDarkMode ? 'bg-gray-800 text-white border-gray-600 focus:ring-blue-600' : 'bg-white text-gray-900 border-gray-300 focus:ring-blue-500'} focus:outline-none focus:ring-2 min-h-[100px] resize-y transition duration-150 ${isDarkMode && !editMode ? 'disabled:bg-gray-800 disabled:text-gray-400' : 'disabled:bg-gray-50 disabled:text-gray-500'}`}
                     />
                 </div>
