@@ -7,7 +7,7 @@ import { vs } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
 import { useTheme } from "@/context/ThemeContext";
 
 // Define common file extensions to language mappings
-const FILE_EXTENSION_MAP: Record<string, string> = {
+const FILE_EXTENSION_MAP = {
     js: "javascript",
     jsx: "jsx",
     ts: "typescript",
@@ -89,31 +89,25 @@ const CSS_PATTERNS = [
 
 // Improved language detection function
 const detectLanguage = (className: string | undefined, code: string): string => {
-    // Check if language is written after ``` in the code block
-    const codeBlockMatch = code.match(/```(\w+)\s/);
-    if (codeBlockMatch && codeBlockMatch[1]) {
-        const lang = codeBlockMatch[1].toLowerCase();
-
-        // Check if it's a file extension that needs to be mapped
-        if (FILE_EXTENSION_MAP[lang]) {
-            return FILE_EXTENSION_MAP[lang];
-        }
-
-        // Return if it's a supported language
-        if (SUPPORTED_LANGUAGES.has(lang)) {
-            return lang;
-        }
-    }
-    
-    // First, try to get language from className
+    // Check if language is specified in the class name first
     if (className) {
-        const match = className.match(/language-(\w+)/);
+        let match = className.match(/language-(\w+)/);
+
+        // If that fails, also try alternate formats like lang-xxx or just the name itself
+        if (!match) {
+            match = className.match(/lang-(\w+)/);
+        }
+
+        // Last resort - check if className itself is a valid language
+        if (!match && SUPPORTED_LANGUAGES.has(className.toLowerCase())) {
+            match = ["", className.toLowerCase()];
+        }
         if (match && match[1]) {
             const lang = match[1].toLowerCase();
 
             // Check if it's a file extension that needs to be mapped
-            if (FILE_EXTENSION_MAP[lang]) {
-                return FILE_EXTENSION_MAP[lang];
+            if (FILE_EXTENSION_MAP[lang as keyof typeof FILE_EXTENSION_MAP]) {
+                return FILE_EXTENSION_MAP[lang as keyof typeof FILE_EXTENSION_MAP];
             }
 
             // Return if it's a supported language
@@ -123,14 +117,45 @@ const detectLanguage = (className: string | undefined, code: string): string => 
         }
     }
 
-    // Clean the code - remove backticks if present
+    // Clean the code and check for language specified after backticks
     let cleanCode = code;
-    if (code.startsWith('```') && code.endsWith('```')) {
+    let detectedLang = "";
+
+    if (code.startsWith('```')) {
         const lines = code.split('\n');
-        // Remove first and last line if they contain backticks
-        if (lines[0].trim().startsWith('```')) lines.shift();
-        if (lines[lines.length - 1].trim() === '```') lines.pop();
-        cleanCode = lines.join('\n');
+        // Check first line for language identifier (both with and without space)
+        if (lines[0].startsWith('```')) {
+            // Try to extract language from first line
+            // Match both ```python and ```python\n patterns
+            const langMatch = lines[0].match(/^```(\w+)(?:\s|$)/);
+            if (langMatch && langMatch[1]) {
+                const lang = langMatch[1].toLowerCase();
+
+                // Check if it's a file extension that needs to be mapped
+                if (FILE_EXTENSION_MAP[lang as keyof typeof FILE_EXTENSION_MAP]) {
+                    if (lang in FILE_EXTENSION_MAP) {
+                        detectedLang = FILE_EXTENSION_MAP[lang as keyof typeof FILE_EXTENSION_MAP];
+                    }
+                }
+                // Check if it's a supported language
+                else if (SUPPORTED_LANGUAGES.has(lang)) {
+                    detectedLang = lang;
+                }
+            }
+
+            // Remove the first line with backticks and language
+            lines.shift();
+            // Remove the last line if it's just closing backticks
+            if (lines[lines.length - 1].trim() === '```') {
+                lines.pop();
+            }
+            cleanCode = lines.join('\n');
+        }
+    }
+
+    // If we've already detected a language from the backticks, return it
+    if (detectedLang) {
+        return detectedLang;
     }
 
     // Check for shebang
@@ -201,7 +226,36 @@ const detectLanguage = (className: string | undefined, code: string): string => 
     return "plaintext";
 };
 
-// Code block component with syntax highlighting and copy functionality
+// Get human-readable language name for display
+const getDisplayLanguage = (lang: string): string => {
+    const displayNameMap = {
+        c: "C",
+        javascript: "JavaScript",
+        typescript: "TypeScript",
+        jsx: "React JSX",
+        tsx: "React TSX",
+        python: "Python",
+        plaintext: "Plain Text",
+        bash: "Bash",
+        shell: "Shell",
+        html: "HTML",
+        css: "CSS",
+        json: "JSON",
+        cpp: "C++",
+        csharp: "C#",
+        java: "Java",
+        rust: "Rust",
+        go: "Go",
+        ruby: "Ruby",
+        swift: "Swift",
+        kotlin: "Kotlin",
+        dart: "Dart",
+        php: "PHP",
+    };
+
+    return displayNameMap[lang as keyof typeof displayNameMap] || lang.charAt(0).toUpperCase() + lang.slice(1);
+};
+
 const CodeBlock = ({ className, children }: { className?: string; children: React.ReactNode }) => {
     const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">("idle");
     const [theme, setTheme] = useState<"dark" | "light">("dark");
@@ -222,10 +276,22 @@ const CodeBlock = ({ className, children }: { className?: string; children: Reac
         return () => mediaQuery.removeEventListener("change", handleChange);
     }, [isDarkMode]);
 
-    // Handle copy functionality
+    
     const handleCopy = async () => {
         try {
-            await navigator.clipboard.writeText(codeString);
+            let textToCopy = codeString;
+            if (codeString.startsWith('```')) {
+                const lines = codeString.split('\n');
+                if (lines[0].startsWith('```')) {
+                    lines.shift();
+                }
+                if (lines[lines.length - 1].trim() === '```') {
+                    lines.pop();
+                }
+                textToCopy = lines.join('\n');
+            }
+
+            await navigator.clipboard.writeText(textToCopy);
             setCopyStatus("copied");
             setTimeout(() => setCopyStatus("idle"), 2000);
         } catch (err) {
@@ -234,40 +300,11 @@ const CodeBlock = ({ className, children }: { className?: string; children: Reac
         }
     };
 
-    // Get human-readable language name for display
-    const getDisplayLanguage = (lang: string): string => {
-        const displayNameMap: Record<string, string> = {
-            javascript: "JavaScript",
-            typescript: "TypeScript",
-            jsx: "React JSX",
-            tsx: "React TSX",
-            python: "Python",
-            plaintext: "Plain Text",
-            bash: "Bash",
-            shell: "Shell",
-            html: "HTML",
-            css: "CSS",
-            json: "JSON",
-            cpp: "C++",
-            csharp: "C#",
-            java: "Java",
-            rust: "Rust",
-            go: "Go",
-            ruby: "Ruby",
-            swift: "Swift",
-            kotlin: "Kotlin",
-            dart: "Dart",
-            php: "PHP",
-        };
-
-        return displayNameMap[lang] || lang.charAt(0).toUpperCase() + lang.slice(1);
-    };
-
     return (
         <div className="code-block-wrapper rounded-lg overflow-hidden my-3 shadow-lg border border-gray-200 dark:border-gray-700">
             <div className="code-header bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs py-1.5 px-3 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
                 <span className="font-medium">
-                    {language !== "plaintext" ? getDisplayLanguage(language) : ""}
+                    {getDisplayLanguage(language)}
                 </span>
                 <button
                     className={`copy-button px-2 py-0.5 rounded transition-all duration-200 ${copyStatus === "idle"
@@ -306,31 +343,23 @@ const CodeBlock = ({ className, children }: { className?: string; children: Reac
                 </button>
             </div>
 
-            <div className={language === "plaintext" ? "p-3 bg-gray-50 dark:bg-gray-900 font-mono text-sm whitespace-pre-wrap" : ""}>
-                {language !== "plaintext" ? (
-                    <SyntaxHighlighter
-                        language={language}
-                        style={theme === "dark" ? atomDark : vs}
-                        customStyle={{
-                            margin: 0,
-                            padding: '0.75rem',
-                            borderRadius: '0 0 0.5rem 0.5rem',
-                            fontSize: '0.9rem',
-                            lineHeight: '1.4',
-                            minHeight: '2.5rem'
-                        }}
-                        showLineNumbers={codeString.split('\n').length > 1}
-                        wrapLines={true}
-                        wrapLongLines={false}
-                    >
-                        {codeString}
-                    </SyntaxHighlighter>
-                ) : (
-                    <pre className="text-gray-800 dark:text-gray-200 p-0 m-0 overflow-x-auto">
-                        {codeString}
-                    </pre>
-                )}
-            </div>
+            <SyntaxHighlighter
+                language={language}
+                style={theme === "dark" ? atomDark : vs}
+                customStyle={{
+                    margin: 0,
+                    padding: '0.75rem',
+                    borderRadius: '0 0 0.5rem 0.5rem',
+                    fontSize: '0.9rem',
+                    lineHeight: '1.4',
+                    minHeight: '2.5rem'
+                }}
+                showLineNumbers={codeString.split('\n').length > 1}
+                wrapLines={true}
+                wrapLongLines={false}
+            >
+                {codeString}
+            </SyntaxHighlighter>
         </div>
     );
 };

@@ -114,7 +114,7 @@ const MarkdownContent = ({ sections }: { sections: string[] }) => (
                 props: { className: markdownStyles.pre }
               },
               code: {
-                component: ({ className, children }) =>
+                component: ({ className, children }: { className?: string; children: React.ReactNode }) =>
                   className
                     ? <CodeBlock className={className}>{children}</CodeBlock>
                     : <InlineCode>{children}</InlineCode>
