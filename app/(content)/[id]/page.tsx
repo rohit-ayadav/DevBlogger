@@ -15,10 +15,30 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
         const fileContent = await fs.readFile(filePath, 'utf8');
         const titleMatch = fileContent.match(/#\s*(.*)/);
         const title = titleMatch ? titleMatch[1] : 'Document';
+        // thumbnail in public folder
+        const thumbnailPath = path.join(process.cwd(), 'public/content', `${id}.png`);
+        // check if thumbnail exists
+        const thumbnailExists = await fs.access(thumbnailPath).then(() => true).catch(() => false);
+        const thumbnailUrl = thumbnailExists ? `/content/${id}.png` : 'default-thumbnail.png';
 
         return {
             title,
             description: `Read the ${title} document - ${id}`,
+            openGraph: {
+                title,
+                description: `Read the ${title} document - ${id}`,
+                images: [thumbnailUrl],
+            },
+            twitter: {
+                title,
+                description: `Read the ${title} document - ${id}`,
+                images: [thumbnailUrl],
+            },
+            icons: {
+                icon: '/favicon.ico',
+                shortcut: '/favicon.ico',
+                apple: '/favicon.ico',
+            },
         };
     } catch (error) {
         return {
