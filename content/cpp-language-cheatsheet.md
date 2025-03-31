@@ -1,6 +1,7 @@
 # C++ Programming Language Cheatsheet
 
 ## Table of Contents
+
 - [Introduction to C++](#introduction-to-c)
 - [Basic Program Structure](#basic-program-structure)
 - [Data Types](#data-types)
@@ -12,6 +13,7 @@
 - [Strings](#strings)
 - [Input/Output Operations](#inputoutput-operations)
 
+_For advance concepts, see [C++ Programming Language Cheatsheet - Part 2: Fundamentals](/cpp-language-cheatsheet-part2)_
 
 ## Introduction to C++
 
@@ -23,6 +25,8 @@ C++ is a powerful general-purpose programming language that extends the C langua
 - Functional programming (especially in modern C++)
 
 C++ combines low-level memory manipulation capabilities with high-level abstractions, making it suitable for system programming, game development, embedded systems, and performance-critical applications.
+
+<!-- ADSENSE -->
 
 ## Basic Program Structure
 
@@ -41,10 +45,10 @@ void greet(const string& name);
 int main() {
     // Variable declaration and initialization
     string userName = "C++ Learner";
-    
+
     // Function call
     greet(userName);
-    
+
     // Return statement
     return 0;  // Zero indicates successful execution
 }
@@ -56,47 +60,53 @@ void greet(const string& name) {
 ```
 
 ### Comments
+
 ```cpp
 // Single-line comment
 
-/* 
+/*
    Multi-line
    comment
 */
 
 /// Documentation comment (often used with tools like Doxygen)
-/** 
+/**
  * Documentation comment block
  * @param name Description of parameter
  * @return Description of return value
  */
 ```
 
+<!-- ADSENSE -->
+
 ## Data Types
 
 ### Basic Types
-| Type | Description | Typical Size | Example |
-|------|-------------|--------------|---------|
-| `bool` | Boolean (true/false) | 1 byte | `bool isActive = true;` |
-| `char` | Character/small integer | 1 byte | `char grade = 'A';` |
-| `int` | Integer | 4 bytes | `int count = 42;` |
-| `float` | Single-precision floating point | 4 bytes | `float price = 10.99f;` |
-| `double` | Double-precision floating point | 8 bytes | `double pi = 3.14159265359;` |
-| `void` | No type/empty | - | Used in functions with no return value |
-| `wchar_t` | Wide character | 2 or 4 bytes | `wchar_t wideChar = L'Ω';` |
-| `char16_t` | UTF-16 character (C++11) | At least 2 bytes | `char16_t c = u'Ω';` |
-| `char32_t` | UTF-32 character (C++11) | At least 4 bytes | `char32_t c = U'Ω';` |
+
+| Type       | Description                     | Typical Size     | Example                                |
+| ---------- | ------------------------------- | ---------------- | -------------------------------------- |
+| `bool`     | Boolean (true/false)            | 1 byte           | `bool isActive = true;`                |
+| `char`     | Character/small integer         | 1 byte           | `char grade = 'A';`                    |
+| `int`      | Integer                         | 4 bytes          | `int count = 42;`                      |
+| `float`    | Single-precision floating point | 4 bytes          | `float price = 10.99f;`                |
+| `double`   | Double-precision floating point | 8 bytes          | `double pi = 3.14159265359;`           |
+| `void`     | No type/empty                   | -                | Used in functions with no return value |
+| `wchar_t`  | Wide character                  | 2 or 4 bytes     | `wchar_t wideChar = L'Ω';`             |
+| `char16_t` | UTF-16 character (C++11)        | At least 2 bytes | `char16_t c = u'Ω';`                   |
+| `char32_t` | UTF-32 character (C++11)        | At least 4 bytes | `char32_t c = U'Ω';`                   |
 
 ### Type Modifiers
-| Modifier | Description | Example |
-|----------|-------------|---------|
-| `signed` | Can represent both positive and negative values (default) | `signed int count = -10;` |
-| `unsigned` | Can only represent non-negative values | `unsigned int count = 10;` |
-| `short` | Reduced size integer | `short int num = 100;` |
-| `long` | Extended size integer | `long int population = 8000000000L;` |
-| `long long` | Even larger integer (C++11) | `long long int bigNum = 9223372036854775807LL;` |
+
+| Modifier    | Description                                               | Example                                         |
+| ----------- | --------------------------------------------------------- | ----------------------------------------------- |
+| `signed`    | Can represent both positive and negative values (default) | `signed int count = -10;`                       |
+| `unsigned`  | Can only represent non-negative values                    | `unsigned int count = 10;`                      |
+| `short`     | Reduced size integer                                      | `short int num = 100;`                          |
+| `long`      | Extended size integer                                     | `long int population = 8000000000L;`            |
+| `long long` | Even larger integer (C++11)                               | `long long int bigNum = 9223372036854775807LL;` |
 
 ### Fixed-Width Integer Types (C++11)
+
 ```cpp
 #include <cstdint>
 
@@ -111,6 +121,7 @@ uint64_t h = 18446744073709551615U;  // 64-bit unsigned integer
 ```
 
 ### Type Aliases
+
 ```cpp
 // Traditional typedef
 typedef unsigned long ulong;
@@ -122,6 +133,7 @@ using IntVector = std::vector<int>;
 ```
 
 ### Type Conversion
+
 ```cpp
 // Implicit conversion
 int i = 42;
@@ -143,16 +155,19 @@ Derived* derived_ptr = dynamic_cast<Derived*>(base_ptr);  // Safe downcasting, r
 int addr = reinterpret_cast<int>(base_ptr);   // Low-level reinterpretation, use with caution
 ```
 
+<!-- ADSENSE -->
+
 ## Variables and Constants
 
 ### Variable Declaration and Initialization
+
 ```cpp
 // Declaration
 int count;
 
 // Initialization
 int value = 10;          // C-style initialization
-int value2(10);          // Constructor initialization 
+int value2(10);          // Constructor initialization
 int value3{10};          // Uniform initialization (C++11, preferred)
 
 // Multiple declarations
@@ -170,6 +185,7 @@ decltype(a) b = 20;      // b is an int
 ```
 
 ### Constants
+
 ```cpp
 // Constant variables (cannot be changed after initialization)
 const int MAX_VALUE = 100;
@@ -189,91 +205,103 @@ Fruit myFruit = Fruit::APPLE;  // Must use scope resolution
 ```
 
 ### Storage Classes
-| Class | Description | Lifetime | Scope |
-|-------|-------------|----------|-------|
-| `auto` | Default for local variables (keyword repurposed in C++11) | Function block | Function block |
-| `static` | Preserves value between function calls, single instance for all objects of a class | Program lifetime | Function or class |
-| `extern` | References variable defined in another file | Program lifetime | Global |
-| `thread_local` | Each thread has its own copy (C++11) | Thread lifetime | Thread |
-| `mutable` | Can be modified even in const objects | Object lifetime | Class |
+
+| Class          | Description                                                                        | Lifetime         | Scope             |
+| -------------- | ---------------------------------------------------------------------------------- | ---------------- | ----------------- |
+| `auto`         | Default for local variables (keyword repurposed in C++11)                          | Function block   | Function block    |
+| `static`       | Preserves value between function calls, single instance for all objects of a class | Program lifetime | Function or class |
+| `extern`       | References variable defined in another file                                        | Program lifetime | Global            |
+| `thread_local` | Each thread has its own copy (C++11)                                               | Thread lifetime  | Thread            |
+| `mutable`      | Can be modified even in const objects                                              | Object lifetime  | Class             |
+
+<!-- ADSENSE -->
 
 ## Operators
 
 ### Arithmetic Operators
-| Operator | Description | Example |
-|----------|-------------|---------|
-| `+` | Addition | `a + b` |
-| `-` | Subtraction | `a - b` |
-| `*` | Multiplication | `a * b` |
-| `/` | Division | `a / b` |
-| `%` | Modulus (remainder) | `a % b` |
-| `++` | Increment | `a++` (postfix), `++a` (prefix) |
-| `--` | Decrement | `a--` (postfix), `--a` (prefix) |
+
+| Operator | Description         | Example                         |
+| -------- | ------------------- | ------------------------------- |
+| `+`      | Addition            | `a + b`                         |
+| `-`      | Subtraction         | `a - b`                         |
+| `*`      | Multiplication      | `a * b`                         |
+| `/`      | Division            | `a / b`                         |
+| `%`      | Modulus (remainder) | `a % b`                         |
+| `++`     | Increment           | `a++` (postfix), `++a` (prefix) |
+| `--`     | Decrement           | `a--` (postfix), `--a` (prefix) |
 
 ### Comparison Operators
-| Operator | Description | Example |
-|----------|-------------|---------|
-| `==` | Equal to | `a == b` |
-| `!=` | Not equal to | `a != b` |
-| `>` | Greater than | `a > b` |
-| `<` | Less than | `a < b` |
-| `>=` | Greater than or equal to | `a >= b` |
-| `<=` | Less than or equal to | `a <= b` |
-| `<=>` | Three-way comparison (C++20) | `a <=> b` |
+
+| Operator | Description                  | Example   |
+| -------- | ---------------------------- | --------- |
+| `==`     | Equal to                     | `a == b`  |
+| `!=`     | Not equal to                 | `a != b`  |
+| `>`      | Greater than                 | `a > b`   |
+| `<`      | Less than                    | `a < b`   |
+| `>=`     | Greater than or equal to     | `a >= b`  |
+| `<=`     | Less than or equal to        | `a <= b`  |
+| `<=>`    | Three-way comparison (C++20) | `a <=> b` |
 
 ### Logical Operators
-| Operator | Description | Example |
-|----------|-------------|---------|
-| `&&` | Logical AND | `a && b` |
-| `\|\|` | Logical OR | `a \|\| b` |
-| `!` | Logical NOT | `!a` |
+
+| Operator | Description | Example    |
+| -------- | ----------- | ---------- |
+| `&&`     | Logical AND | `a && b`   |
+| `\|\|`   | Logical OR  | `a \|\| b` |
+| `!`      | Logical NOT | `!a`       |
 
 ### Bitwise Operators
-| Operator | Description | Example |
-|----------|-------------|---------|
-| `&` | Bitwise AND | `a & b` |
-| `\|` | Bitwise OR | `a \| b` |
-| `^` | Bitwise XOR | `a ^ b` |
-| `~` | Bitwise complement | `~a` |
-| `<<` | Left shift | `a << n` |
-| `>>` | Right shift | `a >> n` |
+
+| Operator | Description        | Example  |
+| -------- | ------------------ | -------- |
+| `&`      | Bitwise AND        | `a & b`  |
+| `\|`     | Bitwise OR         | `a \| b` |
+| `^`      | Bitwise XOR        | `a ^ b`  |
+| `~`      | Bitwise complement | `~a`     |
+| `<<`     | Left shift         | `a << n` |
+| `>>`     | Right shift        | `a >> n` |
 
 ### Assignment Operators
-| Operator | Description | Equivalent |
-|----------|-------------|------------|
-| `=` | Simple assignment | `a = b` |
-| `+=` | Add and assign | `a = a + b` |
-| `-=` | Subtract and assign | `a = a - b` |
-| `*=` | Multiply and assign | `a = a * b` |
-| `/=` | Divide and assign | `a = a / b` |
-| `%=` | Modulus and assign | `a = a % b` |
-| `&=` | Bitwise AND and assign | `a = a & b` |
-| `\|=` | Bitwise OR and assign | `a = a \| b` |
-| `^=` | Bitwise XOR and assign | `a = a ^ b` |
-| `<<=` | Left shift and assign | `a = a << b` |
-| `>>=` | Right shift and assign | `a = a >> b` |
+
+| Operator | Description            | Equivalent   |
+| -------- | ---------------------- | ------------ |
+| `=`      | Simple assignment      | `a = b`      |
+| `+=`     | Add and assign         | `a = a + b`  |
+| `-=`     | Subtract and assign    | `a = a - b`  |
+| `*=`     | Multiply and assign    | `a = a * b`  |
+| `/=`     | Divide and assign      | `a = a / b`  |
+| `%=`     | Modulus and assign     | `a = a % b`  |
+| `&=`     | Bitwise AND and assign | `a = a & b`  |
+| `\|=`    | Bitwise OR and assign  | `a = a \| b` |
+| `^=`     | Bitwise XOR and assign | `a = a ^ b`  |
+| `<<=`    | Left shift and assign  | `a = a << b` |
+| `>>=`    | Right shift and assign | `a = a >> b` |
 
 ### Other Operators
-| Operator | Description | Example |
-|----------|-------------|---------|
-| `?:` | Ternary conditional | `condition ? expr1 : expr2` |
-| `,` | Comma (sequence evaluation) | `expr1, expr2` |
-| `sizeof` | Size of object or type | `sizeof(int)`, `sizeof var` |
-| `alignof` | Alignment requirement (C++11) | `alignof(int)` |
-| `typeid` | Type information | `typeid(var).name()` |
-| `new` | Dynamic memory allocation | `int* p = new int(10)` |
-| `delete` | Dynamic memory deallocation | `delete p` |
-| `new[]` | Allocate array | `int* arr = new int[5]` |
-| `delete[]` | Deallocate array | `delete[] arr` |
-| `::`  | Scope resolution | `std::cout`, `Class::member` |
-| `.` | Member access (object) | `obj.member` |
-| `->` | Member access (pointer) | `ptr->member` |
-| `.*` | Pointer to member (object) | `obj.*memberPtr` |
-| `->*` | Pointer to member (pointer) | `ptr->*memberPtr` |
+
+| Operator   | Description                   | Example                      |
+| ---------- | ----------------------------- | ---------------------------- |
+| `?:`       | Ternary conditional           | `condition ? expr1 : expr2`  |
+| `,`        | Comma (sequence evaluation)   | `expr1, expr2`               |
+| `sizeof`   | Size of object or type        | `sizeof(int)`, `sizeof var`  |
+| `alignof`  | Alignment requirement (C++11) | `alignof(int)`               |
+| `typeid`   | Type information              | `typeid(var).name()`         |
+| `new`      | Dynamic memory allocation     | `int* p = new int(10)`       |
+| `delete`   | Dynamic memory deallocation   | `delete p`                   |
+| `new[]`    | Allocate array                | `int* arr = new int[5]`      |
+| `delete[]` | Deallocate array              | `delete[] arr`               |
+| `::`       | Scope resolution              | `std::cout`, `Class::member` |
+| `.`        | Member access (object)        | `obj.member`                 |
+| `->`       | Member access (pointer)       | `ptr->member`                |
+| `.*`       | Pointer to member (object)    | `obj.*memberPtr`             |
+| `->*`      | Pointer to member (pointer)   | `ptr->*memberPtr`            |
+
+<!-- ADSENSE -->
 
 ## Control Flow
 
 ### Conditional Statements
+
 ```cpp
 // If statement
 if (condition) {
@@ -328,6 +356,7 @@ if constexpr (std::is_integral<T>::value) {
 ```
 
 ### Loops
+
 ```cpp
 // While loop
 while (condition) {
@@ -357,6 +386,7 @@ for (;;) {
 ```
 
 ### Jump Statements
+
 ```cpp
 break;      // Exit loop or switch
 continue;   // Skip to next iteration
@@ -369,9 +399,12 @@ someLabel:
     if (condition) goto someLabel;
 ```
 
+<!-- ADSENSE -->
+
 ## Functions
 
 ### Function Declaration and Definition
+
 ```cpp
 // Function prototype (declaration)
 returnType functionName(parameterType1 parameter1, parameterType2 parameter2);
@@ -389,6 +422,7 @@ int add(int a, int b) {
 ```
 
 ### Default Parameters
+
 ```cpp
 void printMessage(std::string message, bool newLine = true) {
     std::cout << message;
@@ -401,6 +435,7 @@ printMessage("Hello", false);   // Prints without newline
 ```
 
 ### Function Overloading
+
 ```cpp
 // Multiple functions with the same name but different parameters
 void display(int value) {
@@ -422,6 +457,7 @@ display("Hello");  // Calls display(std::string)
 ```
 
 ### Inline Functions
+
 ```cpp
 // Hint to compiler to replace function call with function body
 inline int square(int x) {
@@ -430,6 +466,7 @@ inline int square(int x) {
 ```
 
 ### Lambda Expressions (C++11)
+
 ```cpp
 // Basic lambda
 auto add = [](int a, int b) { return a + b; };
@@ -457,6 +494,7 @@ auto genericAdd = [](auto a, auto b) { return a + b; };
 ```
 
 ### Function Pointers
+
 ```cpp
 // Function pointer declaration
 returnType (*pointerName)(parameterTypes);
@@ -473,6 +511,7 @@ int result2 = func(5, 6);
 ```
 
 ### Parameter Passing
+
 ```cpp
 // Pass by value (creates a copy)
 void incrementByValue(int x) {
@@ -501,6 +540,7 @@ void processVector(std::vector<int>&& vec) {
 ```
 
 ### Variadic Templates (C++11)
+
 ```cpp
 // Function that accepts any number of arguments
 template<typename... Args>
@@ -512,9 +552,12 @@ void printAll(Args... args) {
 printAll(1, 2.5, "Hello", 'c');  // Prints: 12.5Helloc
 ```
 
+<!-- ADSENSE -->
+
 ## Arrays and Pointers
 
 ### Arrays
+
 ```cpp
 // Declaration and initialization
 int numbers[5];            // Uninitialized array of 5 integers
@@ -531,6 +574,7 @@ values[1] = 10;         // Modify second element
 ```
 
 ### Modern Array Alternatives
+
 ```cpp
 // std::array (C++11, fixed-size container)
 #include <array>
@@ -546,6 +590,7 @@ int vecSize = vec.size();
 ```
 
 ### Pointers
+
 ```cpp
 // Declaration and initialization
 int* ptr;                // Declaration (uninitialized)
@@ -570,6 +615,7 @@ int result = funcPtr(3, 4);  // result = 7
 ```
 
 ### Smart Pointers (C++11)
+
 ```cpp
 #include <memory>
 
@@ -593,6 +639,7 @@ if (auto temp = wptr.lock()) {  // Get shared_ptr if still alive
 ```
 
 ### Dynamic Arrays
+
 ```cpp
 // C-style dynamic array (avoid in modern C++)
 int* dynamicArray = new int[5];
@@ -605,9 +652,12 @@ vec[0] = 10;
 // No explicit delete needed
 ```
 
+<!-- ADSENSE -->
+
 ## Strings
 
 ### C-style Strings
+
 ```cpp
 // Null-terminated character arrays
 char str1[10] = "Hello";
@@ -624,6 +674,7 @@ int cmp = strcmp(str1, str2);
 ```
 
 ### std::string
+
 ```cpp
 #include <string>
 
@@ -656,6 +707,7 @@ std::string strFromNum = std::to_string(100);  // Int to string
 ```
 
 ### std::string_view (C++17)
+
 ```cpp
 #include <string_view>
 
@@ -664,9 +716,12 @@ std::string_view sv = "Hello World";
 std::string_view subsv = sv.substr(6, 5);  // "World" (no copying)
 ```
 
+<!-- ADSENSE -->
+
 ## Input/Output Operations
 
 ### Console I/O
+
 ```cpp
 #include <iostream>
 
@@ -694,6 +749,7 @@ std::cout << std::setw(10) << std::right << "Hello";  // "     Hello"
 ```
 
 ### File I/O
+
 ```cpp
 #include <fstream>
 
@@ -727,6 +783,7 @@ binIn.close();
 ```
 
 ### String Streams
+
 ```cpp
 #include <sstream>
 
@@ -744,29 +801,8 @@ std::string word;
 iss >> num >> pi >> word;  // num=42, pi=3.14, word="Hello"
 ```
 
+<!-- ADSENSE -->
+
 ## Part 2
-(Click here)[/cpp-language-cheatsheet-part2] to read the part 2 to know about - [Object-Oriented Programming](#object-oriented-programming)
-  - [Classes and Objects](#classes-and-objects)
-  - [Constructors and Destructors](#constructors-and-destructors)
-  - [Inheritance](#inheritance)
-  - [Polymorphism](#polymorphism)
-  - [Encapsulation](#encapsulation)
-  - [Abstraction](#abstraction)
-- [Templates](#templates)
-- [Exception Handling](#exception-handling)
-- [Standard Template Library (STL)](#standard-template-library-stl)
-  - [Containers](#containers)
-  - [Iterators](#iterators)
-  - [Algorithms](#algorithms)
-  - [Function Objects](#function-objects)
-- [Memory Management](#memory-management)
-- [File Handling](#file-handling)
-- [Namespaces](#namespaces)
-- [Preprocessor Directives](#preprocessor-directives)
-- [Modern C++ Features](#modern-c-features)
-  - [C++11](#c11)
-  - [C++14](#c14)
-  - [C++17](#c17)
-  - [C++20](#c20)
-- [Common Pitfalls](#common-pitfalls)
-- [Best Practices](#best-practices)
+
+[Click here](/cpp-language-cheatsheet-part2) to read the part 2.

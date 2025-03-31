@@ -1,950 +1,1059 @@
-# C++ Programming Language Cheatsheet
+# C++ Programming Language Cheatsheet - Part 2: Advanced Concepts
 
 ## Table of Contents
-- [Introduction to C++](#introduction-to-c)
-- [Basic Program Structure](#basic-program-structure)
-- [Data Types](#data-types)
-- [Variables and Constants](#variables-and-constants)
-- [Operators](#operators)
-- [Control Flow](#control-flow)
-- [Functions](#functions)
-- [Arrays and Pointers](#arrays-and-pointers)
-- [Strings](#strings)
-- [Input/Output Operations](#inputoutput-operations)
 - [Object-Oriented Programming](#object-oriented-programming)
-  - [Classes and Objects](#classes-and-objects)
-  - [Constructors and Destructors](#constructors-and-destructors)
-  - [Inheritance](#inheritance)
-  - [Polymorphism](#polymorphism)
-  - [Encapsulation](#encapsulation)
-  - [Abstraction](#abstraction)
 - [Templates](#templates)
 - [Exception Handling](#exception-handling)
 - [Standard Template Library (STL)](#standard-template-library-stl)
+- [Memory Management](#memory-management)
+- [Namespaces](#namespaces)
+- [Preprocessor Directives](#preprocessor-directives)
+- [Modern C++ Features](#modern-c-features)
+- [Common Pitfalls & Best Practices](#common-pitfalls--best-practices)
+
+*For fundamental concepts, see [C++ Programming Language Cheatsheet - Part 1: Fundamentals](/cpp-language-cheatsheet)*
+# C++ Programming Language Cheatsheet - Part 2: Advanced Concepts
+
+## Table of Contents
+- [Object-Oriented Programming](#object-oriented-programming)
+  - [Classes and Objects](#classes-and-objects)
+  - [Access Specifiers](#access-specifiers)
+  - [Constructors and Destructors](#constructors-and-destructors)
+  - [Inheritance](#inheritance)
+  - [Multiple Inheritance](#multiple-inheritance)
+  - [Virtual Inheritance](#virtual-inheritance)
+  - [Operator Overloading](#operator-overloading)
+- [Templates](#templates)
+  - [Function Templates](#function-templates)
+  - [Class Templates](#class-templates)
+  - [Template Specialization](#template-specialization)
+  - [Variadic Templates](#variadic-templates)
+- [Exception Handling](#exception-handling)
+  - [Basic Exception Handling](#basic-exception-handling)
+  - [Throwing Exceptions](#throwing-exceptions)
+  - [Function Exception Specification](#function-exception-specification)
+  - [Resource Management with RAII](#resource-management-with-raii)
+- [Standard Template Library (STL)](#standard-template-library-stl)
   - [Containers](#containers)
+    - [Sequence Containers](#sequence-containers)
+    - [Associative Containers](#associative-containers)
+    - [Unordered Containers](#unordered-containers)
+    - [Container Adaptors](#container-adaptors)
   - [Iterators](#iterators)
   - [Algorithms](#algorithms)
   - [Function Objects](#function-objects)
 - [Memory Management](#memory-management)
-- [File Handling](#file-handling)
+  - [Raw Pointers](#raw-pointers)
+  - [Smart Pointers](#smart-pointers)
+  - [Memory Alignment](#memory-alignment)
 - [Namespaces](#namespaces)
+  - [Basic Namespace Usage](#basic-namespace-usage)
+  - [Namespace Aliases](#namespace-aliases)
 - [Preprocessor Directives](#preprocessor-directives)
+  - [Basic Directives](#basic-directives)
+  - [Predefined Macros](#predefined-macros)
 - [Modern C++ Features](#modern-c-features)
-  - [C++11](#c11)
-  - [C++14](#c14)
-  - [C++17](#c17)
-  - [C++20](#c20)
-- [Common Pitfalls](#common-pitfalls)
-- [Best Practices](#best-practices)
-
-## Introduction to C++
-
-C++ is a powerful general-purpose programming language that extends the C language with object-oriented features. Created by Bjarne Stroustrup in 1979, C++ supports multiple programming paradigms:
-
-- Procedural programming (like C)
-- Object-oriented programming
-- Generic programming
-- Functional programming (especially in modern C++)
-
-C++ combines low-level memory manipulation capabilities with high-level abstractions, making it suitable for system programming, game development, embedded systems, and performance-critical applications.
-
-## Basic Program Structure
-
-```cpp
-// Include libraries
-#include <iostream>  // Standard input/output stream
-#include <string>    // String library
-
-// Namespace declaration (avoid prefix for std members)
-using namespace std;  // Not always recommended in larger projects
-
-// Function prototype (optional)
-void greet(const string& name);
-
-// Main function - program entry point
-int main() {
-    // Variable declaration and initialization
-    string userName = "C++ Learner";
-    
-    // Function call
-    greet(userName);
-    
-    // Return statement
-    return 0;  // Zero indicates successful execution
-}
-
-// Function definition
-void greet(const string& name) {
-    cout << "Hello, " << name << "!" << endl;
-}
-```
-
-### Comments
-```cpp
-// Single-line comment
-
-/* 
-   Multi-line
-   comment
-*/
-
-/// Documentation comment (often used with tools like Doxygen)
-/** 
- * Documentation comment block
- * @param name Description of parameter
- * @return Description of return value
- */
-```
-
-## Data Types
-
-### Basic Types
-| Type | Description | Typical Size | Example |
-|------|-------------|--------------|---------|
-| `bool` | Boolean (true/false) | 1 byte | `bool isActive = true;` |
-| `char` | Character/small integer | 1 byte | `char grade = 'A';` |
-| `int` | Integer | 4 bytes | `int count = 42;` |
-| `float` | Single-precision floating point | 4 bytes | `float price = 10.99f;` |
-| `double` | Double-precision floating point | 8 bytes | `double pi = 3.14159265359;` |
-| `void` | No type/empty | - | Used in functions with no return value |
-| `wchar_t` | Wide character | 2 or 4 bytes | `wchar_t wideChar = L'Ω';` |
-| `char16_t` | UTF-16 character (C++11) | At least 2 bytes | `char16_t c = u'Ω';` |
-| `char32_t` | UTF-32 character (C++11) | At least 4 bytes | `char32_t c = U'Ω';` |
-
-### Type Modifiers
-| Modifier | Description | Example |
-|----------|-------------|---------|
-| `signed` | Can represent both positive and negative values (default) | `signed int count = -10;` |
-| `unsigned` | Can only represent non-negative values | `unsigned int count = 10;` |
-| `short` | Reduced size integer | `short int num = 100;` |
-| `long` | Extended size integer | `long int population = 8000000000L;` |
-| `long long` | Even larger integer (C++11) | `long long int bigNum = 9223372036854775807LL;` |
-
-### Fixed-Width Integer Types (C++11)
-```cpp
-#include <cstdint>
-
-int8_t a = 127;             // 8-bit signed integer
-uint8_t b = 255;            // 8-bit unsigned integer
-int16_t c = 32767;          // 16-bit signed integer
-uint16_t d = 65535;         // 16-bit unsigned integer
-int32_t e = 2147483647;     // 32-bit signed integer
-uint32_t f = 4294967295;    // 32-bit unsigned integer
-int64_t g = 9223372036854775807;  // 64-bit signed integer
-uint64_t h = 18446744073709551615U;  // 64-bit unsigned integer
-```
-
-### Type Aliases
-```cpp
-// Traditional typedef
-typedef unsigned long ulong;
-ulong counter = 0;
-
-// Modern type alias (C++11)
-using Integer = int;
-using IntVector = std::vector<int>;
-```
-
-### Type Conversion
-```cpp
-// Implicit conversion
-int i = 42;
-double d = i;  // Automatically converts int to double
-
-// C-style explicit cast (not recommended in C++)
-float f = 3.14f;
-int i1 = (int)f;  // Truncates to 3
-
-// C++ style casts (preferred)
-double value = 3.14159;
-int i2 = static_cast<int>(value);            // Most common cast, compile-time checked
-const int* ptr = &i2;
-int* mutable_ptr = const_cast<int*>(ptr);    // Removes const qualifier
-struct Base { virtual ~Base() {} };
-struct Derived : Base { };
-Base* base_ptr = new Derived();
-Derived* derived_ptr = dynamic_cast<Derived*>(base_ptr);  // Safe downcasting, runtime checked
-int addr = reinterpret_cast<int>(base_ptr);   // Low-level reinterpretation, use with caution
-```
-
-## Variables and Constants
-
-### Variable Declaration and Initialization
-```cpp
-// Declaration
-int count;
-
-// Initialization
-int value = 10;          // C-style initialization
-int value2(10);          // Constructor initialization 
-int value3{10};          // Uniform initialization (C++11, preferred)
-
-// Multiple declarations
-int x = 1, y = 2, z = 3;
-
-// Auto type deduction (C++11)
-auto i = 42;             // int
-auto d = 3.14;           // double
-auto s = "Hello";        // const char*
-auto v = std::vector<int>{1, 2, 3};  // std::vector<int>
-
-// Decltype (C++11)
-int a = 10;
-decltype(a) b = 20;      // b is an int
-```
-
-### Constants
-```cpp
-// Constant variables (cannot be changed after initialization)
-const int MAX_VALUE = 100;
-const double PI = 3.14159;
-
-// Constexpr (compile-time constants, C++11)
-constexpr int ARRAY_SIZE = 10;
-constexpr double LIGHT_SPEED = 299792458.0;
-
-// Enumeration
-enum Color { RED, GREEN, BLUE };  // RED=0, GREEN=1, BLUE=2
-Color myColor = RED;
-
-// Scoped enumeration (C++11)
-enum class Fruit { APPLE, BANANA, ORANGE };
-Fruit myFruit = Fruit::APPLE;  // Must use scope resolution
-```
-
-### Storage Classes
-| Class | Description | Lifetime | Scope |
-|-------|-------------|----------|-------|
-| `auto` | Default for local variables (keyword repurposed in C++11) | Function block | Function block |
-| `static` | Preserves value between function calls, single instance for all objects of a class | Program lifetime | Function or class |
-| `extern` | References variable defined in another file | Program lifetime | Global |
-| `thread_local` | Each thread has its own copy (C++11) | Thread lifetime | Thread |
-| `mutable` | Can be modified even in const objects | Object lifetime | Class |
-
-## Operators
-
-### Arithmetic Operators
-| Operator | Description | Example |
-|----------|-------------|---------|
-| `+` | Addition | `a + b` |
-| `-` | Subtraction | `a - b` |
-| `*` | Multiplication | `a * b` |
-| `/` | Division | `a / b` |
-| `%` | Modulus (remainder) | `a % b` |
-| `++` | Increment | `a++` (postfix), `++a` (prefix) |
-| `--` | Decrement | `a--` (postfix), `--a` (prefix) |
-
-### Comparison Operators
-| Operator | Description | Example |
-|----------|-------------|---------|
-| `==` | Equal to | `a == b` |
-| `!=` | Not equal to | `a != b` |
-| `>` | Greater than | `a > b` |
-| `<` | Less than | `a < b` |
-| `>=` | Greater than or equal to | `a >= b` |
-| `<=` | Less than or equal to | `a <= b` |
-| `<=>` | Three-way comparison (C++20) | `a <=> b` |
-
-### Logical Operators
-| Operator | Description | Example |
-|----------|-------------|---------|
-| `&&` | Logical AND | `a && b` |
-| `\|\|` | Logical OR | `a \|\| b` |
-| `!` | Logical NOT | `!a` |
-
-### Bitwise Operators
-| Operator | Description | Example |
-|----------|-------------|---------|
-| `&` | Bitwise AND | `a & b` |
-| `\|` | Bitwise OR | `a \| b` |
-| `^` | Bitwise XOR | `a ^ b` |
-| `~` | Bitwise complement | `~a` |
-| `<<` | Left shift | `a << n` |
-| `>>` | Right shift | `a >> n` |
-
-### Assignment Operators
-| Operator | Description | Equivalent |
-|----------|-------------|------------|
-| `=` | Simple assignment | `a = b` |
-| `+=` | Add and assign | `a = a + b` |
-| `-=` | Subtract and assign | `a = a - b` |
-| `*=` | Multiply and assign | `a = a * b` |
-| `/=` | Divide and assign | `a = a / b` |
-| `%=` | Modulus and assign | `a = a % b` |
-| `&=` | Bitwise AND and assign | `a = a & b` |
-| `\|=` | Bitwise OR and assign | `a = a \| b` |
-| `^=` | Bitwise XOR and assign | `a = a ^ b` |
-| `<<=` | Left shift and assign | `a = a << b` |
-| `>>=` | Right shift and assign | `a = a >> b` |
-
-### Other Operators
-| Operator | Description | Example |
-|----------|-------------|---------|
-| `?:` | Ternary conditional | `condition ? expr1 : expr2` |
-| `,` | Comma (sequence evaluation) | `expr1, expr2` |
-| `sizeof` | Size of object or type | `sizeof(int)`, `sizeof var` |
-| `alignof` | Alignment requirement (C++11) | `alignof(int)` |
-| `typeid` | Type information | `typeid(var).name()` |
-| `new` | Dynamic memory allocation | `int* p = new int(10)` |
-| `delete` | Dynamic memory deallocation | `delete p` |
-| `new[]` | Allocate array | `int* arr = new int[5]` |
-| `delete[]` | Deallocate array | `delete[] arr` |
-| `::`  | Scope resolution | `std::cout`, `Class::member` |
-| `.` | Member access (object) | `obj.member` |
-| `->` | Member access (pointer) | `ptr->member` |
-| `.*` | Pointer to member (object) | `obj.*memberPtr` |
-| `->*` | Pointer to member (pointer) | `ptr->*memberPtr` |
-
-## Control Flow
-
-### Conditional Statements
-```cpp
-// If statement
-if (condition) {
-    // Code executed if condition is true
-}
-
-// If-else statement
-if (condition) {
-    // Code executed if condition is true
-} else {
-    // Code executed if condition is false
-}
-
-// If-else if-else chain
-if (condition1) {
-    // Code executed if condition1 is true
-} else if (condition2) {
-    // Code executed if condition1 is false and condition2 is true
-} else {
-    // Code executed if all conditions are false
-}
-
-// Switch statement
-switch (expression) {
-    case value1:
-        // Code executed if expression equals value1
-        break;
-    case value2:
-        // Code executed if expression equals value2
-        break;
-    default:
-        // Code executed if no case matches
-        break;
-}
-
-// Ternary conditional operator
-result = (condition) ? valueIfTrue : valueIfFalse;
-
-// C++17 initialization in if statements
-if (int value = getValue(); value > 0) {
-    // value is in scope here
-} else {
-    // value is still in scope here
-}
-
-// C++17 constexpr if (compile-time conditional)
-if constexpr (std::is_integral<T>::value) {
-    // This branch is compiled only when T is an integral type
-} else {
-    // This branch is compiled only when T is not an integral type
-}
-```
-
-### Loops
-```cpp
-// While loop
-while (condition) {
-    // Code executed while condition is true
-}
-
-// Do-while loop (executes at least once)
-do {
-    // Code executed at least once and then while condition is true
-} while (condition);
-
-// For loop
-for (initialization; condition; update) {
-    // Code executed while condition is true
-}
-
-// Range-based for loop (C++11)
-for (const auto& element : container) {
-    // Process element
-}
-
-// Infinite loop
-for (;;) {
-    // Code executed indefinitely
-    if (exitCondition) break;
-}
-```
-
-### Jump Statements
-```cpp
-break;      // Exit loop or switch
-continue;   // Skip to next iteration
-return;     // Exit function (with optional value)
-goto label; // Jump to label (use sparingly)
-
-// Example with label
-someLabel:
-    // Code
-    if (condition) goto someLabel;
-```
-
-## Functions
-
-### Function Declaration and Definition
-```cpp
-// Function prototype (declaration)
-returnType functionName(parameterType1 parameter1, parameterType2 parameter2);
-
-// Function definition
-returnType functionName(parameterType1 parameter1, parameterType2 parameter2) {
-    // Function body
-    return value;  // If non-void return type
-}
-
-// Example
-int add(int a, int b) {
-    return a + b;
-}
-```
-
-### Default Parameters
-```cpp
-void printMessage(std::string message, bool newLine = true) {
-    std::cout << message;
-    if (newLine) std::cout << std::endl;
-}
-
-// Call with or without the optional parameter
-printMessage("Hello");          // Prints with newline
-printMessage("Hello", false);   // Prints without newline
-```
-
-### Function Overloading
-```cpp
-// Multiple functions with the same name but different parameters
-void display(int value) {
-    std::cout << "Integer: " << value << std::endl;
-}
-
-void display(double value) {
-    std::cout << "Double: " << value << std::endl;
-}
-
-void display(std::string value) {
-    std::cout << "String: " << value << std::endl;
-}
-
-// Compiler selects the appropriate function based on arguments
-display(5);        // Calls display(int)
-display(3.14);     // Calls display(double)
-display("Hello");  // Calls display(std::string)
-```
-
-### Inline Functions
-```cpp
-// Hint to compiler to replace function call with function body
-inline int square(int x) {
-    return x * x;
-}
-```
-
-### Lambda Expressions (C++11)
-```cpp
-// Basic lambda
-auto add = [](int a, int b) { return a + b; };
-int sum = add(2, 3);  // sum = 5
-
-// Lambda with capture clause
-int multiplier = 3;
-auto multiply = [multiplier](int value) { return value * multiplier; };
-int result = multiply(5);  // result = 15
-
-// Capturing by reference
-int counter = 0;
-auto increment = [&counter]() { counter++; };
-increment();  // counter = 1
-
-// Capturing all local variables
-auto captureAll = [=]() { return multiplier * 2; };  // By value
-auto captureAllRef = [&]() { counter++; };          // By reference
-
-// Lambda with explicit return type
-auto divide = [](double a, double b) -> double { return a / b; };
-
-// Generic lambda (C++14)
-auto genericAdd = [](auto a, auto b) { return a + b; };
-```
-
-### Function Pointers
-```cpp
-// Function pointer declaration
-returnType (*pointerName)(parameterTypes);
-
-// Example
-int (*funcPtr)(int, int);
-funcPtr = add;  // Points to add function
-int result = funcPtr(3, 4);  // Calls add(3, 4)
-
-// Using std::function (C++11, more flexible)
-#include <functional>
-std::function<int(int, int)> func = add;
-int result2 = func(5, 6);
-```
-
-### Parameter Passing
-```cpp
-// Pass by value (creates a copy)
-void incrementByValue(int x) {
-    x++;  // Only modifies the local copy
-}
-
-// Pass by reference
-void incrementByReference(int& x) {
-    x++;  // Modifies the original value
-}
-
-// Pass by const reference (cannot modify)
-void printByConstRef(const std::string& str) {
-    std::cout << str;  // Cannot modify str
-}
-
-// Pass by pointer
-void incrementByPointer(int* x) {
-    (*x)++;  // Modifies the pointed value
-}
-
-// Pass by rvalue reference (C++11, for move semantics)
-void processVector(std::vector<int>&& vec) {
-    // Takes ownership of the resources
-}
-```
-
-### Variadic Templates (C++11)
-```cpp
-// Function that accepts any number of arguments
-template<typename... Args>
-void printAll(Args... args) {
-    (std::cout << ... << args) << std::endl;  // C++17 fold expression
-}
-
-// Usage
-printAll(1, 2.5, "Hello", 'c');  // Prints: 12.5Helloc
-```
-
-## Arrays and Pointers
-
-### Arrays
-```cpp
-// Declaration and initialization
-int numbers[5];            // Uninitialized array of 5 integers
-int values[3] = {1, 2, 3}; // Initialized array
-int scores[] = {75, 80, 95, 88}; // Size determined by initializer
-
-// Multi-dimensional arrays
-int matrix[3][4];  // 3 rows, 4 columns
-int grid[2][3] = {{1, 2, 3}, {4, 5, 6}};
-
-// Accessing elements
-int first = values[0];  // First element (index 0)
-values[1] = 10;         // Modify second element
-```
-
-### Modern Array Alternatives
-```cpp
-// std::array (C++11, fixed-size container)
-#include <array>
-std::array<int, 3> arr = {1, 2, 3};
-int second = arr[1];
-int size = arr.size();
-
-// std::vector (dynamic-size container)
-#include <vector>
-std::vector<int> vec = {1, 2, 3, 4, 5};
-vec.push_back(6);  // Add element
-int vecSize = vec.size();
-```
-
-### Pointers
-```cpp
-// Declaration and initialization
-int* ptr;                // Declaration (uninitialized)
-int value = 42;
-int* ptr2 = &value;      // Points to value's address
-int* ptr3 = nullptr;     // C++11 null pointer (preferred over NULL)
-
-// Dereferencing (accessing the value)
-int x = *ptr2;           // x = 42
-*ptr2 = 100;             // Changes value to 100
-
-// Pointer arithmetic
-int arr[5] = {10, 20, 30, 40, 50};
-int* p = arr;            // Points to first element
-int second = *(p + 1);   // Access second element (20)
-int third = p[2];        // Array-like syntax (30)
-p++;                     // Points to second element
-
-// Pointers to functions
-int (*funcPtr)(int, int) = add;
-int result = funcPtr(3, 4);  // result = 7
-```
-
-### Smart Pointers (C++11)
-```cpp
-#include <memory>
-
-// Unique pointer (exclusive ownership)
-std::unique_ptr<int> uptr = std::make_unique<int>(42);  // C++14
-int value1 = *uptr;  // Dereference
-// std::unique_ptr<int> uptr2 = uptr;  // ERROR: Cannot copy
-std::unique_ptr<int> uptr3 = std::move(uptr);  // Transfer ownership
-
-// Shared pointer (shared ownership, reference counted)
-std::shared_ptr<int> sptr1 = std::make_shared<int>(100);
-std::shared_ptr<int> sptr2 = sptr1;  // Both point to same object
-int value2 = *sptr1;
-int count = sptr1.use_count();  // Reference count (2)
-
-// Weak pointer (non-owning reference to shared object)
-std::weak_ptr<int> wptr = sptr1;
-if (auto temp = wptr.lock()) {  // Get shared_ptr if still alive
-    std::cout << *temp << std::endl;
-}
-```
-
-### Dynamic Arrays
-```cpp
-// C-style dynamic array (avoid in modern C++)
-int* dynamicArray = new int[5];
-dynamicArray[0] = 10;
-delete[] dynamicArray;  // Must use delete[] for arrays
-
-// Modern approach: std::vector
-std::vector<int> vec(5, 0);  // 5 elements initialized to 0
-vec[0] = 10;
-// No explicit delete needed
-```
-
-## Strings
-
-### C-style Strings
-```cpp
-// Null-terminated character arrays
-char str1[10] = "Hello";
-char str2[] = "World";
-char str3[6] = {'H', 'e', 'l', 'l', 'o', '\0'};
-
-// String functions (include <cstring>)
-size_t len = strlen(str1);
-char dest[20];
-strcpy(dest, str1);
-strcat(dest, " ");
-strcat(dest, str2);
-int cmp = strcmp(str1, str2);
-```
-
-### std::string
-```cpp
-#include <string>
-
-// Creation and initialization
-std::string s1 = "Hello";
-std::string s2("World");
-std::string s3(5, 'a');    // "aaaaa"
-
-// String operations
-std::string combined = s1 + " " + s2;  // Concatenation
-int length = s1.length();              // or s1.size()
-char first = s1[0];                    // Access character
-s1[1] = 'E';                           // Modify character
-std::string sub = s1.substr(1, 3);     // Substring: "Ell"
-
-// Finding and replacing
-size_t pos = s1.find('l');             // First 'l'
-size_t rpos = s1.rfind('l');           // Last 'l'
-s1.replace(1, 2, "oo");                // Replace "El" with "oo"
-
-// Comparing
-if (s1 == s2) { /* equal */ }
-if (s1 < s2) { /* less than */ }
-int result = s1.compare(s2);
-
-// Converting
-std::string numStr = "42";
-int num = std::stoi(numStr);           // String to int
-std::string strFromNum = std::to_string(100);  // Int to string
-```
-
-### std::string_view (C++17)
-```cpp
-#include <string_view>
-
-// Non-owning reference to a string (more efficient than std::string for read-only operations)
-std::string_view sv = "Hello World";
-std::string_view subsv = sv.substr(6, 5);  // "World" (no copying)
-```
-
-## Input/Output Operations
-
-### Console I/O
-```cpp
-#include <iostream>
-
-// Standard output
-std::cout << "Hello" << " " << "World!" << std::endl;
-
-// Standard input
-int age;
-std::cout << "Enter your age: ";
-std::cin >> age;
-
-// Error output
-std::cerr << "Error message" << std::endl;
-
-// Input with spaces
-std::string fullName;
-std::cout << "Enter your full name: ";
-std::cin.ignore();  // Clear newline from previous input
-std::getline(std::cin, fullName);
-
-// Formatted output
-#include <iomanip>
-std::cout << std::fixed << std::setprecision(2) << 3.14159;  // 3.14
-std::cout << std::setw(10) << std::right << "Hello";  // "     Hello"
-```
-
-### File I/O
-```cpp
-#include <fstream>
-
-// Writing to a file
-std::ofstream outFile("output.txt");
-if (outFile.is_open()) {
-    outFile << "Hello, File I/O!" << std::endl;
-    outFile.close();
-}
-
-// Reading from a file
-std::ifstream inFile("input.txt");
-if (inFile.is_open()) {
-    std::string line;
-    while (std::getline(inFile, line)) {
-        std::cout << line << std::endl;
-    }
-    inFile.close();
-}
-
-// Binary file I/O
-std::ofstream binFile("data.bin", std::ios::binary);
-int data[3] = {1, 2, 3};
-binFile.write(reinterpret_cast<char*>(data), 3 * sizeof(int));
-binFile.close();
-
-std::ifstream binIn("data.bin", std::ios::binary);
-int readData[3];
-binIn.read(reinterpret_cast<char*>(readData), 3 * sizeof(int));
-binIn.close();
-```
-
-### String Streams
-```cpp
-#include <sstream>
-
-// String output stream
-std::ostringstream oss;
-oss << "Age: " << 25 << ", Score: " << 95.5;
-std::string result = oss.str();  // "Age: 25, Score: 95.5"
-
-// String input stream
-std::string data = "42 3.14 Hello";
-std::istringstream iss(data);
-int num;
-double pi;
-std::string word;
-iss >> num >> pi >> word;  // num=42, pi=3.14, word="Hello"
-```
+  - [C++11 Features](#c11-features)
+  - [C++14 Features](#c14-features)
+  - [C++17 Features](#c17-features)
+  - [C++20 Features](#c20-features)
+  - [C++23 Features](#c23-features)
+- [Common Pitfalls & Best Practices](#common-pitfalls--best-practices)
+  - [Memory Management Pitfalls](#memory-management-pitfalls)
+  - [Modern C++ Idioms](#modern-c-idioms)
+  - [Performance Considerations](#performance-considerations)
+  - [Code Organization](#code-organization)
+
+*For fundamental concepts, see [C++ Programming Language Cheatsheet - Part 1: Fundamentals](/cpp-language-cheatsheet)*
 
 ## Object-Oriented Programming
 
 ### Classes and Objects
-
 ```cpp
-// Class definition
+// Class declaration
 class Person {
 private:
-    // Private members (accessible only within the class)
+    // Private members - accessible only within class methods
     std::string name;
     int age;
     
 public:
-    // Public members (accessible from anywhere)
+    // Public members - accessible from anywhere
     // Constructor
     Person(const std::string& n, int a) : name(n), age(a) {}
     
-    // Member functions (methods)
+    // Methods
     void setName(const std::string& n) { name = n; }
+    void setAge(int a) { age = a; }
     std::string getName() const { return name; }
-    
-    void setAge(int a) { 
-        if (a >= 0) age = a; 
-    }
     int getAge() const { return age; }
     
-    void display() const {
-        std::cout << "Name: " << name << ", Age: " << age << std::endl;
-    }
+    // Method with implementation outside class definition
+    void displayInfo() const;
 };
 
-// Object creation and usage
-Person person1("Alice", 30);
-Person person2 = {"Bob", 25};  // C++11 aggregate initialization
+// Method implementation outside class
+void Person::displayInfo() const {
+    std::cout << "Name: " << name << ", Age: " << age << std::endl;
+}
 
-person1.display();             // Name: Alice, Age: 30
-person1.setAge(31);
-std::string name = person1.getName();
+// Creating and using objects
+int main() {
+    Person person1("Alice", 30);
+    person1.displayInfo();
+    
+    Person person2("Bob", 25);
+    std::cout << person2.getName() << " is " << person2.getAge() << " years old." << std::endl;
+    
+    return 0;
+}
+```
+
+### Access Specifiers
+```cpp
+class MyClass {
+public:
+    // Accessible from anywhere
+    int publicVar;
+    
+protected:
+    // Accessible within this class and derived classes
+    int protectedVar;
+    
+private:
+    // Accessible only within this class
+    int privateVar;
+};
 ```
 
 ### Constructors and Destructors
-
 ```cpp
-class MyClass {
+class Rectangle {
 private:
-    int* data;
+    double width;
+    double height;
     
 public:
     // Default constructor
-    MyClass() : data(new int(0)) {
+    Rectangle() : width(0), height(0) {
         std::cout << "Default constructor called" << std::endl;
     }
     
     // Parameterized constructor
-    MyClass(int value) : data(new int(value)) {
+    Rectangle(double w, double h) : width(w), height(h) {
         std::cout << "Parameterized constructor called" << std::endl;
     }
     
     // Copy constructor
-    MyClass(const MyClass& other) : data(new int(*other.data)) {
+    Rectangle(const Rectangle& other) : width(other.width), height(other.height) {
         std::cout << "Copy constructor called" << std::endl;
     }
     
     // Move constructor (C++11)
-    MyClass(MyClass&& other) noexcept : data(other.data) {
+    Rectangle(Rectangle&& other) noexcept : width(other.width), height(other.height) {
+        other.width = 0;
+        other.height = 0;
         std::cout << "Move constructor called" << std::endl;
-        other.data = nullptr;  // Prevent double deletion
+    }
+    
+    // Destructor
+    ~Rectangle() {
+        std::cout << "Destructor called" << std::endl;
     }
     
     // Copy assignment operator
-    MyClass& operator=(const MyClass& other) {
-        std::cout << "Copy assignment called" << std::endl;
+    Rectangle& operator=(const Rectangle& other) {
         if (this != &other) {
-            delete data;
-            data = new int(*other.data);
+            width = other.width;
+            height = other.height;
         }
+        std::cout << "Copy assignment called" << std::endl;
         return *this;
     }
     
     // Move assignment operator (C++11)
-    MyClass& operator=(MyClass&& other) noexcept {
-        std::cout << "Move assignment called" << std::endl;
+    Rectangle& operator=(Rectangle&& other) noexcept {
         if (this != &other) {
-            delete data;
-            data = other.data;
-            other.data = nullptr;
+            width = other.width;
+            height = other.height;
+            other.width = 0;
+            other.height = 0;
         }
+        std::cout << "Move assignment called" << std::endl;
         return *this;
     }
     
-    // Destructor
-    ~MyClass() {
-        std::cout << "Destructor called" << std::endl;
-        delete data;
-    }
-    
-    // Accessor
-    int getValue() const { return *data; }
+    // Accessors
+    double getWidth() const { return width; }
+    double getHeight() const { return height; }
+    double getArea() const { return width * height; }
 };
-
-// Usage
-MyClass obj1;                    // Default constructor
-MyClass obj2(42);                // Parameterized constructor
-MyClass obj3 = obj2;             // Copy constructor
-MyClass obj4 = std::move(obj1);  // Move constructor
-obj4 = obj2;                     // Copy assignment
-obj4 = std::move(obj3);          // Move assignment
 ```
 
 ### Inheritance
-
 ```cpp
 // Base class
-class Animal {
+class Shape {
 protected:
-    std::string name;
+    double x, y;
     
 public:
-    Animal(const std::string& n) : name(n) {}
+    Shape(double xPos = 0, double yPos = 0) : x(xPos), y(yPos) {}
+    virtual ~Shape() {}  // Virtual destructor for proper cleanup
     
-    virtual void makeSound() const {
-        std::cout << "Some generic sound" << std::endl;
+    void setPosition(double xPos, double yPos) {
+        x = xPos;
+        y = yPos;
     }
     
-    std::string getName() const { return name; }
-    
-    // Virtual destructor for proper cleanup of derived classes
-    virtual ~Animal() {
-        std::cout << "Animal destructor" << std::endl;
+    // Virtual function - can be overridden in derived classes
+    virtual void draw() const {
+        std::cout << "Drawing a shape at (" << x << ", " << y << ")" << std::endl;
     }
+    
+    // Pure virtual function - must be implemented by derived classes
+    virtual double area() const = 0;  // Makes Shape an abstract class
 };
 
-// Derived class (inherits from Animal)
-class Dog : public Animal {
+// Derived class
+class Circle : public Shape {
 private:
-    std::string breed;
+    double radius;
     
 public:
-    Dog(const std::string& name, const std::string& b)
-        : Animal(name), breed(b) {}
-        
-    // Override base class method
-    void makeSound() const override {
-        std::cout << "Woof!" << std::endl;
+    Circle(double r, double xPos = 0, double yPos = 0) 
+        : Shape(xPos, yPos), radius(r) {}
+    
+    // Override base class virtual function
+    void draw() const override {
+        std::cout << "Drawing a circle at (" << x << ", " << y 
+                  << ") with radius " << radius << std::endl;
     }
     
-    std::string getBreed() const { return breed; }
-    
-    ~Dog() {
-        std::cout << "Dog destructor" << std::endl;
+    // Implement the pure virtual function
+    double area() const override {
+        return M_PI * radius * radius;  // M_PI from <cmath>
     }
 };
 
 // Another derived class
-class Cat : public Animal {
-public:
-    Cat(const std::string& name) : Animal(name) {}
+class Rectangle : public Shape {
+private:
+    double width, height;
     
-    void makeSound() const override {
-        std::cout << "Meow!" << std::endl;
+public:
+    Rectangle(double w, double h, double xPos = 0, double yPos = 0)
+        : Shape(xPos, yPos), width(w), height(h) {}
+        
+    void draw() const override {
+        std::cout << "Drawing a rectangle at (" << x << ", " << y 
+                  << ") with width " << width << " and height " << height << std::endl;
     }
     
-    ~Cat() {
-        std::cout << "Cat destructor" << std::endl;
+    double area() const override {
+        return width * height;
+    }
+};
+
+// Using polymorphism
+void drawShape(const Shape& shape) {
+    shape.draw();  // Calls the appropriate draw() based on the actual object type
+}
+
+int main() {
+    Circle circle(5, 10, 10);
+    Rectangle rectangle(4, 6, 20, 20);
+    
+    drawShape(circle);     // Calls Circle::draw()
+    drawShape(rectangle);  // Calls Rectangle::draw()
+    
+    // Using pointers
+    std::vector<std::unique_ptr<Shape>> shapes;  // Modern C++ approach
+    shapes.push_back(std::make_unique<Circle>(3));
+    shapes.push_back(std::make_unique<Rectangle>(2, 4));
+    
+    for (const auto& shape : shapes) {
+        shape->draw();
+        std::cout << "Area: " << shape->area() << std::endl;
+    }
+    
+    return 0;
+}
+```
+
+### Multiple Inheritance
+```cpp
+class A {
+public:
+    void funcA() { std::cout << "A::funcA()" << std::endl; }
+};
+
+class B {
+public:
+    void funcB() { std::cout << "B::funcB()" << std::endl; }
+};
+
+// Multiple inheritance
+class C : public A, public B {
+public:
+    void funcC() { std::cout << "C::funcC()" << std::endl; }
+};
+
+// Usage
+int main() {
+    C c;
+    c.funcA();  // From class A
+    c.funcB();  // From class B
+    c.funcC();  // From class C
+    return 0;
+}
+```
+
+### Virtual Inheritance
+```cpp
+class Base {
+protected:
+    int value;
+public:
+    Base(int v) : value(v) {}
+    virtual void display() const {
+        std::cout << "Base value: " << value << std::endl;
+    }
+};
+
+// Virtual inheritance
+class Derived1 : virtual public Base {
+public:
+    Derived1(int v) : Base(v) {}
+    void display() const override {
+        std::cout << "Derived1 with ";
+        Base::display();
+    }
+};
+
+// Virtual inheritance
+class Derived2 : virtual public Base {
+public:
+    Derived2(int v) : Base(v) {}
+    void display() const override {
+        std::cout << "Derived2 with ";
+        Base::display();
+    }
+};
+
+// Diamond problem solved with virtual inheritance
+class Final : public Derived1, public Derived2 {
+public:
+    Final(int v) : Base(v), Derived1(v), Derived2(v) {}
+    
+    void display() const override {
+        std::cout << "Final class with value: " << value << std::endl;
+    }
+};
+
+int main() {
+    Final f(42);
+    f.display();  // Calls Final::display()
+    
+    // The following is unambiguous thanks to virtual inheritance
+    Derived1& d1 = f;
+    d1.display();  // Calls Derived1::display()
+    
+    Base& b = f;
+    b.display();  // Calls Final::display() due to virtual function
+    
+    return 0;
+}
+```
+
+### Operator Overloading
+```cpp
+class Complex {
+private:
+    double real, imag;
+    
+public:
+    Complex(double r = 0, double i = 0) : real(r), imag(i) {}
+    
+    // Accessor methods
+    double getReal() const { return real; }
+    double getImag() const { return imag; }
+    
+    // Overload + operator
+    Complex operator+(const Complex& other) const {
+        return Complex(real + other.real, imag + other.imag);
+    }
+    
+    // Overload - operator
+    Complex operator-(const Complex& other) const {
+        return Complex(real - other.real, imag - other.imag);
+    }
+    
+    // Overload * operator
+    Complex operator*(const Complex& other) const {
+        return Complex(
+            real * other.real - imag * other.imag,
+            real * other.imag + imag * other.real
+        );
+    }
+    
+    // Overload == operator
+    bool operator==(const Complex& other) const {
+        return (real == other.real) && (imag == other.imag);
+    }
+    
+    // Overload != operator
+    bool operator!=(const Complex& other) const {
+        return !(*this == other);
+    }
+    
+    // Unary operators
+    Complex operator-() const {
+        return Complex(-real, -imag);
+    }
+    
+    // Prefix increment
+    Complex& operator++() {
+        ++real;
+        return *this;
+    }
+    
+    // Postfix increment
+    Complex operator++(int) {
+        Complex temp(*this);
+        ++real;
+        return temp;
+    }
+    
+    // Overload << operator as a friend function
+    friend std::ostream& operator<<(std::ostream& os, const Complex& c);
+};
+
+// Implementation of friend function
+std::ostream& operator<<(std::ostream& os, const Complex& c) {
+    os << c.real;
+    if (c.imag >= 0) {
+        os << " + " << c.imag << "i";
+    } else {
+        os << " - " << -c.imag << "i";
+    }
+    return os;
+}
+
+// Usage
+int main() {
+    Complex a(1, 2);
+    Complex b(3, 4);
+    Complex c = a + b;  // Calls a.operator+(b)
+    Complex d = a * b;  // Calls a.operator*(b)
+    
+    std::cout << "a = " << a << std::endl;
+    std::cout << "b = " << b << std::endl;
+    std::cout << "a + b = " << c << std::endl;
+    std::cout << "a * b = " << d << std::endl;
+    
+    if (a != b) {
+        std::cout << "a and b are different" << std::endl;
+    }
+    
+    Complex e = -a;     // Unary minus
+    Complex f = ++a;    // Prefix increment
+    Complex g = b++;    // Postfix increment
+    
+    return 0;
+}
+```
+
+## Templates
+
+### Function Templates
+```cpp
+// Basic function template
+template<typename T>
+T max(T a, T b) {
+    return (a > b) ? a : b;
+}
+
+// Function template with multiple parameters
+template<typename T, typename U>
+auto add(T a, U b) -> decltype(a + b) {  // Trailing return type
+    return a + b;
+}
+
+// Function template with constraints (C++20)
+template<typename T>
+requires std::is_arithmetic_v<T>
+T square(T x) {
+    return x * x;
+}
+
+// Usage
+int main() {
+    int maxInt = max<int>(3, 7);        // Explicit type
+    double maxDouble = max(3.5, 7.2);   // Type deduced from arguments
+    
+    auto sum1 = add(5, 3.14);           // int + double = double
+    auto sum2 = add(std::string("Hello, "), "World!"); // Concatenation
+    
+    auto sq1 = square(4);       // int
+    auto sq2 = square(4.5);     // double
+    // auto sq3 = square("test"); // Error: constraint not satisfied
+    
+    return 0;
+}
+```
+
+### Class Templates
+```cpp
+// Basic class template
+template<typename T>
+class Box {
+private:
+    T value;
+    
+public:
+    Box(T val) : value(val) {}
+    T getValue() const { return value; }
+    void setValue(T val) { value = val; }
+};
+
+// Class template with multiple parameters
+template<typename T, int Size, typename Allocator = std::allocator<T>>
+class FixedVector {
+private:
+    T elements[Size];
+    size_t count = 0;
+    
+public:
+    bool push_back(const T& value) {
+        if (count < Size) {
+            elements[count++] = value;
+            return true;
+        }
+        return false;
+    }
+    
+    T& operator[](size_t index) {
+        return elements[index];
+    }
+    
+    const T& operator[](size_t index) const {
+        return elements[index];
+    }
+    
+    size_t size() const {
+        return count;
+    }
+    
+    size_t capacity() const {
+        return Size;
     }
 };
 
 // Usage
-Dog dog("Buddy", "Golden Retriever");
-Cat cat("Whiskers");
+int main() {
+    Box<int> intBox(42);
+    std::cout << intBox.getValue() << std::endl;
+    
+    Box<std::string> stringBox("Hello, Templates!");
+    std::cout << stringBox.getValue() << std::endl;
+    
+    FixedVector<int, 5> numbers;
+    numbers.push_back(1);
+    numbers.push_back(2);
+    numbers.push_back(3);
+    
+    for (size_t i = 0; i < numbers.size(); ++i) {
+        std::cout << numbers[i] << " ";
+    }
+    std::cout << std::endl;
+    
+    return 0;
+}
+```
 
-dog.makeSound();  // Woof!
-cat.makeSound();  // Meow!
+### Template Specialization
+```cpp
+// Primary template
+template<typename T>
+class TypeInfo {
+public:
+    static const char* name() {
+        return "unknown";
+    }
+};
 
-// Polymorphism
-Animal* animal1 = &dog;
-Animal* animal2 = &cat;
+// Full specialization for int
+template<>
+class TypeInfo<int> {
+public:
+    static const char* name() {
+        return "int";
+    }
+};
 
-animal1->makeSound();  // Woof! (calls Dog's implementation)
-animal2->makeSound();  // Meow! (calls Cat's implementation)
+// Full specialization for double
+template<>
+class TypeInfo<double> {
+public:
+    static const char* name() {
+        return "double";
+    }
+};
+
+// Partial specialization for pointers
+template<typename T>
+class TypeInfo<T*> {
+public:
+    static const char* name() {
+        static std::string result = std::string(TypeInfo<T>::name()) + "*";
+        return result.c_str();
+    }
+};
+
+// Partial specialization for arrays
+template<typename T, size_t N>
+class TypeInfo<T[N]> {
+public:
+    static const char* name() {
+        static std::string result = std::string(TypeInfo<T>::name()) + 
+                                   "[" + std::to_string(N) + "]";
+        return result.c_str();
+    }
+};
+
+// Usage
+int main() {
+    std::cout << "Type: " << TypeInfo<int>::name() << std::endl;
+    std::cout << "Type: " << TypeInfo<double>::name() << std::endl;
+    std::cout << "Type: " << TypeInfo<float>::name() << std::endl;
+    std::cout << "Type: " << TypeInfo<int*>::name() << std::endl;
+    std::cout << "Type: " << TypeInfo<int[10]>::name() << std::endl;
+    
+    return 0;
+}
+```
+
+### Variadic Templates
+```cpp
+// Recursive variadic template
+template<typename T>
+void print(T value) {
+    std::cout << value << std::endl;
+}
+
+template<typename First, typename... Rest>
+void print(First first, Rest... rest) {
+    std::cout << first << ", ";
+    print(rest...); // Recursive call with remaining arguments
+}
+
+// Sum function using recursion
+template<typename T>
+T sum(T value) {
+    return value;
+}
+
+template<typename T, typename... Args>
+T sum(T first, Args... args) {
+    return first + sum(args...);
+}
+
+// Fold expressions (C++17)
+template<typename... Args>
+auto sum_fold(Args... args) {
+    return (... + args); // Unary left fold
+}
+
+template<typename... Args>
+auto product_fold(Args... args) {
+    return (args * ...); // Unary right fold
+}
+
+template<typename... Args>
+void print_fold(Args... args) {
+    ((std::cout << args << " "), ...); // Fold with comma operator
+    std::cout << std::endl;
+}
+
+// Perfect forwarding with variadic templates
+template<typename... Args>
+void forward_to_function(Args&&... args) {
+    some_function(std::forward<Args>(args)...);
+}
+
+// Usage
+int main() {
+    print(1, 2.5, "Hello", 'A');
+    
+    std::cout << "Sum: " << sum(1, 2, 3, 4, 5) << std::endl;
+    std::cout << "Sum with fold: " << sum_fold(1, 2, 3, 4, 5) << std::endl;
+    std::cout << "Product with fold: " << product_fold(1, 2, 3, 4, 5) << std::endl;
+    
+    print_fold(1, 2.5, "Hello", 'A');
+    
+    return 0;
+}
+```
+
+## Exception Handling
+
+### Basic Exception Handling
+```cpp
+#include <iostream>
+#include <stdexcept>
+#include <string>
+#include <vector>
+
+int main() {
+    try {
+        // Code that might throw exceptions
+        std::vector<int> vec;
+        vec.at(5) = 10;  // Throws std::out_of_range
+    } 
+    catch (const std::out_of_range& e) {
+        std::cerr << "Out of range error: " << e.what() << std::endl;
+    } 
+    catch (const std::runtime_error& e) {
+        std::cerr << "Runtime error: " << e.what() << std::endl;
+    } 
+    catch (const std::exception& e) {
+        std::cerr << "Standard exception: " << e.what() << std::endl;
+    } 
+    catch (...) {
+        std::cerr << "Unknown exception caught" << std::endl;
+    }
+    
+    try {
+        // Multiple exceptions in one block
+        int* arr = new int[1000000000];  // Might throw std::bad_alloc
+        throw std::runtime_error("Manual exception");
+        delete[] arr;  // Never reached if exception thrown
+    } 
+    catch (const std::bad_alloc& e) {
+        std::cerr << "Memory allocation failed: " << e.what() << std::endl;
+    } 
+    catch (const std::exception& e) {
+        std::cerr << "Exception caught: " << e.what() << std::endl;
+    }
+    
+    return 0;
+}
+```
+
+### Throwing Exceptions
+```cpp
+#include <iostream>
+#include <stdexcept>
+#include <string>
+
+// Throwing standard exceptions
+void validatePositive(int value) {
+    if (value < 0) {
+        throw std::invalid_argument("Value must be non-negative");
+    }
+}
+
+// Throwing custom exceptions
+class DivideByZeroException : public std::exception {
+private:
+    std::string message;
+    
+public:
+    DivideByZeroException(const std::string& msg = "Division by zero attempted") 
+        : message(msg) {}
+    
+    // Override what() from std::exception
+    const char* what() const noexcept override {
+        return message.c_str();
+    }
+};
+
+double safeDivide(double a, double b) {
+    if (b == 0) {
+        throw DivideByZeroException();
+    }
+    return a / b;
+}
+
+// Rethrowing exceptions
+void processValue(int value) {
+    try {
+        validatePositive(value);
+        // Process the value
+    } catch (const std::exception& e) {
+        std::cerr << "Error in processValue: " << e.what() << std::endl;
+        throw; // Rethrow the same exception
+    }
+}
+
+// Nested exceptions (C++11)
+void nestedExceptionExample() {
+    try {
+        throw std::runtime_error("Original exception");
+    } catch (const std::exception& e) {
+        std::throw_with_nested(std::logic_error("Additional context"));
+    }
+}
+
+void handleNestedExceptions() {
+    try {
+        nestedExceptionExample();
+    } catch (const std::exception& e) {
+        std::cerr << "Exception: " << e.what() << std::endl;
+        
+        try {
+            std::rethrow_if_nested(e);
+        } catch (const std::exception& nested) {
+            std::cerr << "Nested exception: " << nested.what() << std::endl;
+        }
+    }
+}
+
+int main() {
+    try {
+        validatePositive(-5);
+    } catch (const std::exception& e) {
+        std::cerr << "Exception: " << e.what() << std::endl;
+    }
+    
+    try {
+        safeDivide(10, 0);
+    } catch (const DivideByZeroException& e) {
+        std::cerr << "Custom exception: " << e.what() << std::endl;
+    }
+    
+    try {
+        processValue(-10);
+    } catch (const std::exception& e) {
+        std::cerr << "Rethrown exception: " << e.what() << std::endl;
+    }
+    
+    handleNestedExceptions();
+    
+    return 0;
+}
+```
+
+### Function Exception Specification
+```cpp
+#include <iostream>
+#include <string>
+
+// noexcept specification (C++11)
+void func1() noexcept {
+    // This function guarantees it won't throw any exceptions
+    // If it does throw, std::terminate is called
+}
+
+// Conditional noexcept (C++11)
+template<typename T>
+void swap(T& a, T& b) noexcept(noexcept(T(std::declval<T>())))
+{
+    T temp = std::move(a);
+    a = std::move(b);
+    b = std::move(temp);
+}
+
+// noexcept operator (C++11)
+template<typename T>
+void process(T& obj) {
+    static_assert(noexcept(obj.process()), 
+                 "T::process() must be noexcept");
+    obj.process();
+}
+
+// Dynamic exception specification (deprecated in C++11, removed in C++17)
+// void oldStyle() throw(std::runtime_error, std::logic_error); // Don't use this style
+
+int main() {
+    // Checking if operations are noexcept
+    std::cout << "int addition is noexcept: " 
+              << noexcept(1 + 2) << std::endl;
+              
+    std::cout << "new can throw: " 
+              << !noexcept(new int) << std::endl;
+              
+    return 0;
+}
+```
+
+### Resource Management with RAII
+```cpp
+#include <iostream>
+#include <fstream>
+#include <memory>
+#include <stdexcept>
+
+// RAII for file handling
+class File {
+private:
+    std::fstream file;
+    
+public:
+    File(const std::string& filename, std::ios_base::openmode mode)
+        : file(filename, mode)
+    {
+        if (!file) {
+            throw std::runtime_error("Failed to open file: " + filename);
+        }
+    }
+    
+    ~File() {
+        if (file.is_open()) {
+            file.close();
+        }
+    }
+    
+    // Prevent copying
+    File(const File&) = delete;
+    File& operator=(const File&) = delete;
+    
+    // Allow moving
+    File(File&& other) noexcept
+        : file(std::move(other.file))
+    {
+    }
+    
+    File& operator=(File&& other) noexcept {
+        if (this != &other) {
+            file = std::move(other.file);
+        }
+        return *this;
+    }
+    
+    // File operations
+    void write(const std::string& text) {
+        file << text;
+        if (!file) {
+            throw std::runtime_error("Failed to write to file");
+        }
+    }
+    
+    std::string read() {
+        std::string content;
+        std::string line;
+        while (std::getline(file, line)) {
+            content += line + "\n";
+        }
+        return content;
+    }
+};
+
+// RAII for lock management
+class Lock {
+private:
+    std::mutex& mutex;
+    
+public:
+    explicit Lock(std::mutex& m) : mutex(m) {
+        mutex.lock();
+    }
+    
+    ~Lock() {
+        mutex.unlock();
+    }
+    
+    // Prevent copying
+    Lock(const Lock&) = delete;
+    Lock& operator=(const Lock&) = delete;
+};
+
+// Usage example
+void writeToFile(const std::string& filename, const std::string& content) {
+    // File is automatically closed when function returns or throws
+    File file(filename, std::ios::out);
+    file.write(content);
+    // No need to explicitly close the file
+}
+
+int main() {
+    try {
+        writeToFile("example.txt", "Hello, RAII!");
+        
+        // Use std::lock_guard (built-in RAII for mutex)
+        std::mutex m;
+        {
+            std::lock_guard<std::mutex> lock(m);
+            // Critical section...
+        } // Mutex automatically unlocked here
+        
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
+    
+    return 0;
+}
+```
+
+## Standard Template Library (STL)
+
+### Containers
+
+#### Sequence Containers
+```cpp
+#include <vector>
+#include <deque>
+#include <list>
+#include <forward_list>
+#include <array>
+#include <iostream>
+
+int main() {
+    // Vector - dynamic array
+    std::vector<int> vec = {1, 2, 3, 4, 5};
+    vec.push_back(6);        // Add to end
+    vec.pop_back();          // Remove from end
+    vec.insert(vec.begin() + 2, 10);  // Insert at position
+    vec.erase(vec.begin());  // Remove from position
+    std::cout << "Vector size: " << vec.size() << std::endl;
+    std::cout << "Vector capacity: " << vec.capacity() << std::endl;
+    vec.shrink_to_fit();     // Reduce capacity to fit size
+    vec.reserve(100);        // Reserve space for 100 elements
+    vec.resize(10);          // Resize to 10 elements (new elements initialized to 0)
+    vec.clear();             // Remove all elements
+    
+    // Deque - double-ended queue
+    std::deque<int> dq = {1, 2, 3};
+    dq.push_back(4);         // Add to end
+    dq.push_front(0);        // Add to beginning
+    dq.pop_back();           // Remove from end
+    dq.pop_front();          // Remove from beginning
+    dq.insert(dq.begin() + 1, 5);  // Insert at position
+    dq.erase(dq.end() - 1);  // Remove from position
+    
+    // List - doubly-linked list
+    std::list<int> lst = {1, 2, 3, 4, 5};
+    lst.push_back(6);        // Add to end
+    lst.push_front(0);       // Add to beginning
+    lst.pop_back();          // Remove from end
+    lst.pop_front();         // Remove from beginning
+    lst.insert(std::next(lst.begin(), 2), 10);  // Insert at position
+    lst.remove(3);           // Remove all elements with value 3
+    lst.remove_if([](int n) { return n % 2 == 0; });  // Remove all even numbers
+    lst.sort();              // Sort elements
+    lst.unique();            // Remove consecutive duplicates
+    lst.reverse();           // Reverse order of elements
+    
+    // Forward list - singly-linked list (C++11)
+    std::forward_list<int> flist = {1, 2, 3, 4, 5};
+    flist.push_front(0);     // Add to beginning
+    flist.pop_front();       // Remove from beginning
+    flist.insert_after(flist.begin(), 10);  // Insert after position
+    flist.erase_after(flist.begin());       // Remove after position
+    flist.remove(3);         // Remove all elements with value 3
+    flist.sort();            // Sort elements
+    flist.unique();          // Remove consecutive duplicates
+    flist.reverse();         // Reverse order of elements
+    
+    // Array - fixed-size array (C++11)
+    std::array<int, 5> arr = {1, 2, 3, 4, 5};
+    int first = arr.front();  // First element
+    int last = arr.back();    // Last element
+    int element = arr[2];     // Access by index
+    arr.fill(10);             // Set all elements to 10
+    std::cout << "Array size: " << arr.size() << std::endl;  // Always 5
+    
+    return 0;
+}
+```
