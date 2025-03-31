@@ -5,6 +5,7 @@ import { useTheme } from '@/context/ThemeContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
+import Image from 'next/image';
 import { PenTool, Users, Lightbulb, ThumbsUp } from 'lucide-react';
 import { ToastContainer } from 'react-toastify';
 import { TableOfContents, FeatureCard, SectionHeader } from '@/app/(docs)/guides/how-to-write/comp/useHelp';
@@ -112,6 +113,13 @@ const GuidePage = () => {
                                     subtitle="Discover the benefits of sharing your technical knowledge"
                                 />
 
+                                <Image
+                                    src="/content/writing-guide.png"
+                                    alt='Writing Guide'
+                                    width={800}
+                                    height={400}
+                                    className="rounded-lg mb-8"
+                                />
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                                     <FeatureCard
                                         icon={<PenTool size={40} />}

@@ -1,6 +1,7 @@
 import React from 'react'
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { SectionHeader } from '../comp/useHelp'
+import Image from 'next/image'
 
 const Audience = ({ isDarkMode }: { isDarkMode: boolean }) => {
     return (
@@ -14,6 +15,14 @@ const Audience = ({ isDarkMode }: { isDarkMode: boolean }) => {
                 <p className="text-lg mb-6">
                     Before you start writing, it's crucial to understand who you're writing for. DevBlogger hosts content for developers at various experience levels:
                 </p>
+
+                <Image
+                    src={'/content/know-your-audience.png'}
+                    alt="Know your audience"
+                    width={800}
+                    height={300}
+                    className='rounded-lg mb-6'
+                />
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <Card className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
