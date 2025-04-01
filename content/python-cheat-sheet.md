@@ -1,6 +1,6 @@
 # Ultimate Python Cheat Sheet: The Complete Developer Reference Guide
 
-![Python Cheat Sheet Thumbnail](/content/python-cheatsheet.png)
+![Python Cheat Sheet Thumbnail](/content/python-cheat-sheet.png)
 
 Are you looking for a comprehensive Python reference guide? This ultimate Python cheat sheet covers everything from basic syntax to advanced concepts, making it perfect for beginners and experienced developers alike. Whether you're learning Python programming for the first time or need a quick refresher on specific features, this guide has you covered with practical examples and clear explanations.
 
