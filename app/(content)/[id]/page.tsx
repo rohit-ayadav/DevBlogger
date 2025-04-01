@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
         const thumbnailPath = path.join(process.cwd(), 'public/content', `${id}.png`);
         // check if thumbnail exists
         const thumbnailExists = await fs.access(thumbnailPath).then(() => true).catch(() => false);
-        const thumbnailUrl = thumbnailExists ? `/content/${id}.png` : 'default-thumbnail.png';
+        const thumbnailUrl = thumbnailExists ? `https://www.devblogger.in/content/${id}.png` : 'default-thumbnail.png';
 
         return {
             title,
