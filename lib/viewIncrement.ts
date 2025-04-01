@@ -1,4 +1,5 @@
 import incrementViewInDB from "@/action/incrementView";
+import { isValidSlug } from "./common-function";
 
 interface ViewResponse {
     error: boolean;
@@ -9,13 +10,14 @@ interface ViewedBlogs {
     [blogId: string]: string;
 }
 
-const incrementView = async (id: string, like: boolean) => {
+const incrementView = async (id: string, like: boolean, staticContent?: boolean): Promise<void> => {
     if (typeof window === 'undefined' || !id?.trim() || !isLocalStorageAvailable()) {
         // console.log('View increment skipped');
         return;
     }
     const STORAGE_KEY_FOR_BLOG_VIEWS = 'viewed_blogs';
     const STORAGE_KEY_FOR_BLOG_LIKES = 'liked_blogs';
+    const STORAGE_KEY_FOR_BLOG_VIEWS_STATIC = 'viewed_blogs_static';
     try {
         const today = new Date().toISOString().slice(0, 10);
 
@@ -43,6 +45,32 @@ const incrementView = async (id: string, like: boolean) => {
             localStorage.setItem(STORAGE_KEY_FOR_BLOG_LIKES, JSON.stringify(likedBlogs));
             // console.log(`Like incremented for blog post with ID: ${id}`);
         }
+        else if (staticContent) {
+            console.log('Static content view will be incremented');
+            if (!isValidSlug(id)) {
+                throw new Error("Invalid slug for static content view increment");
+            }
+            const storedBlogs = localStorage.getItem(STORAGE_KEY_FOR_BLOG_VIEWS_STATIC);
+            let viewedBlogs: ViewedBlogs = {};
+            try {
+                viewedBlogs = storedBlogs ? JSON.parse(storedBlogs) : {};
+            } catch {
+                localStorage.removeItem(STORAGE_KEY_FOR_BLOG_VIEWS_STATIC);
+            }
+            viewedBlogs = Object.fromEntries(
+                Object.entries(viewedBlogs).filter(([_, date]) => date === today)
+            );
+            if (viewedBlogs[id] === today) return;
+            else {
+                const response: ViewResponse = await incrementViewInDB(id, false, true);
+                if (response.error) {
+                    throw new Error(response.message);
+                }
+            }
+            viewedBlogs[id] = today;
+            localStorage.setItem(STORAGE_KEY_FOR_BLOG_VIEWS_STATIC, JSON.stringify(viewedBlogs));
+            console.log(`View incremented for static content with ID: ${id}`);
+        }
         else {
             const storedBlogs = localStorage.getItem(STORAGE_KEY_FOR_BLOG_VIEWS);
             let viewedBlogs: ViewedBlogs = {};
@@ -54,10 +82,8 @@ const incrementView = async (id: string, like: boolean) => {
             viewedBlogs = Object.fromEntries(
                 Object.entries(viewedBlogs).filter(([_, date]) => date === today)
             );
-            if (viewedBlogs[id] === today) {
-                // console.log(`View already incremented for blog post with ID: ${id}`);
-                return;
-            }
+            if (viewedBlogs[id] === today) return;
+
             const response: ViewResponse = await incrementViewInDB(id, false);
             if (response.error) {
                 throw new Error(response.message);

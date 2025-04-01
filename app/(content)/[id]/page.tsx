@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation';
 import fs from 'fs/promises';
 import path from 'path';
 import MarkdownPage from '@/components/ShowMD/MarkdownPage';
+import incrementViewInDB from '@/action/incrementView';
+import { incrementView } from '@/lib/viewIncrement';
 
 // Metadata
 export async function generateMetadata({ params }: { params: { id: string } }) {
@@ -61,11 +63,10 @@ export async function generateStaticParams() {
 
 export default async function MDPage({ params }: { params: { id: string } }) {
     const { id } = params;
-
     try {
         const filePath = path.join(process.cwd(), 'content', `${id}.md`);
         await fs.access(filePath);
-
+        await incrementView(id, false, true); // Increment view count in local storage
         return <MarkdownPage filename={id} />;
     } catch (error) {
         notFound();
