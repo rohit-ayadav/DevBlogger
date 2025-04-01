@@ -2,7 +2,6 @@
 
 ![Summer Internship 2025](http://devblogger.in/content/summer-internship.png)
 
-<!-- ADSENSE -->
 
 ## Why Summer Internships Matter
 
