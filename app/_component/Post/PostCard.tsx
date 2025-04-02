@@ -143,7 +143,11 @@ export const PostCard = ({ post, user, showActions = false, author }: BlogPostCa
 
     return (
         <Card className={`h-full overflow-hidden flex flex-col transition-all duration-300 hover:shadow-md ${isDarkMode ? 'dark bg-zinc-900 hover:shadow-zinc-800 border-zinc-800' : 'bg-white hover:shadow-gray-200 border-gray-200'} group`}>
-            <Link href={`/blogs/${post.slug}`} className="flex-1 flex flex-col">
+            <Link
+                href={`/blogs/${post.slug}`}
+                className="flex-1 flex flex-col group relative"
+                title={`Read "${post.title}"`}
+            >
                 <div className="relative">
                     <div
                         className={`h-32 sm:h-40 md:h-48 w-full bg-gradient-to-br ${isDarkMode ? 'from-blue-900 to-indigo-950 group-hover:from-blue-800 group-hover:to-indigo-900' : 'from-blue-100 to-indigo-100 group-hover:from-blue-200 group-hover:to-indigo-200'} transition-all duration-300`}
@@ -153,6 +157,7 @@ export const PostCard = ({ post, user, showActions = false, author }: BlogPostCa
                             backgroundPosition: 'center'
                         }}
                         aria-label={post.title}
+                        title={post.thumbnail ? `Click to read the post` : `No thumbnail available for "${post.title}"`}
                     >
                         {!post.thumbnail && (
                             <div className="absolute inset-0 flex items-center justify-center">
@@ -165,6 +170,7 @@ export const PostCard = ({ post, user, showActions = false, author }: BlogPostCa
                         <Badge
                             variant="outline"
                             className={`capitalize text-xs shadow-sm ${categoryColor.bg} ${categoryColor.text} ${categoryColor.border}`}
+                            title={`Category: ${post.category}`}
                         >
                             {post.category}
                         </Badge>
@@ -173,53 +179,65 @@ export const PostCard = ({ post, user, showActions = false, author }: BlogPostCa
 
                 <CardContent className={`flex-1 flex flex-col p-3 sm:p-4 ${isDarkMode ? 'text-gray-200' : 'text-gray-900'}`}>
                     <div className="flex items-center justify-between mb-2">
-                        <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} flex items-center gap-1`}>
+                        <span
+                            className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} flex items-center gap-1`}
+                            title={`Published on ${formatDate(post.createdAt)}`}
+                        >
                             <Calendar className="h-3 w-3" />
                             {formatDate(post.createdAt)}
                         </span>
 
                         <div className="flex items-center gap-2">
-                            <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} flex items-center gap-1`}>
+                            <span
+                                className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} flex items-center gap-1`}
+                                title={`${post.views?.toLocaleString() || 0} views`}
+                            >
                                 <Eye className="h-3 w-3" />
                                 {post.views?.toLocaleString() || 0}
                             </span>
-                            <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} flex items-center gap-1`}>
+                            <span
+                                className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} flex items-center gap-1`}
+                                title={`${post.likes?.toLocaleString() || 0} likes`}
+                            >
                                 <ThumbsUp className="h-3 w-3" />
                                 {post.likes?.toLocaleString() || 0}
                             </span>
                         </div>
                     </div>
 
-                    <h3 className={`text-sm sm:text-base md:text-lg font-semibold mb-2 ${isDarkMode ? 'text-gray-100 group-hover:text-blue-400' : 'text-gray-900 group-hover:text-blue-600'} transition-colors line-clamp-2`}>
+                    <h3
+                        className={`text-sm sm:text-base md:text-lg font-semibold mb-2 ${isDarkMode ? 'text-gray-100 group-hover:text-blue-400' : 'text-gray-900 group-hover:text-blue-600'} transition-colors line-clamp-2`}
+                        title={post.title}
+                    >
                         {post.title}
                     </h3>
 
-                    <p className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} line-clamp-2 sm:line-clamp-3 mb-2 flex-1`}>
+                    <p
+                        className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} line-clamp-2 sm:line-clamp-3 mb-2 flex-1`}
+                        title={truncateText(post.content, 250)}
+                    >
                         {truncateText(post.content, user ? 120 : 250)}
                     </p>
 
                     {user && (
                         <div className="mt-auto pt-2 flex items-center justify-between">
+                            <div title='Click to view author profile' className="flex items-center gap-2">
                             <UserAvatar user={user} isDarkMode={isDarkMode} />
+                            </div>
 
                             <div className="flex items-center gap-2">
-                                <TooltipProvider>
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <button
-                                                onClick={(e) => copyLink(e, post.slug)}
-                                                className={`${isDarkMode ? 'text-gray-400 hover:text-blue-400' : 'text-gray-500 hover:text-blue-600'} transition-colors`}
-                                            >
-                                                <Clipboard className="h-4 w-4" />
-                                            </button>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p className="text-xs">Copy link</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
+                                <button
+                                    onClick={(e) => copyLink(e, post.slug)}
+                                    className={`${isDarkMode ? 'text-gray-400 hover:text-blue-400' : 'text-gray-500 hover:text-blue-600'} transition-colors`}
+                                    title="Copy link to this post"
+                                >
+                                    <Clipboard className="h-4 w-4" />
+                                </button>
 
-                                <span className={`text-xs ${isDarkMode ? 'text-blue-400' : 'text-blue-600'} flex items-center gap-1 group-hover:gap-2 transition-all`}>
+                                <span
+                                    className={`text-xs ${isDarkMode ? 'text-blue-400' : 'text-blue-600'} flex items-center gap-1 group-hover:gap-2 transition-all`}
+                                    title="Click to read more"
+                                >
                                     Read more
                                     <ArrowRight className="h-3 w-3" />
                                 </span>

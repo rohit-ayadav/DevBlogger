@@ -7,10 +7,10 @@ import { ErrorBoundary } from 'react-error-boundary';
 import BlogPostHeader from '../BlogPostHeader/page';
 import BlogPostFooter from '../BlogPostFooter/page';
 import { useTheme } from '@/context/ThemeContext';
-import RenderContent from '@/app/blogs/components/RenderContent';
 import { incrementView } from '@/lib/viewIncrement';
 import CommentSection from '@/app/_component/CommentComponent/Comment';
 import RC from '@/app/blogs/components/RC';
+import MarkdownContent from '../ShowMD/MarkDownContent';
 
 const SKELETON_COUNT = 3;
 
@@ -108,9 +108,11 @@ const BlogPostClientContent: React.FC<BlogPostClientContentProps> = ({
 
                 <BlogPostContainer>
                     <article className={`prose max-w-none ${proseClasses}`}>
-                        {/* <RenderContent {...initialData} /> */}
-                        <RC {...initialData} />
-
+                        {initialData.language === 'markdown' ? (
+                            <MarkdownContent sections={Array.isArray(initialData.content) ? initialData.content : [initialData.content]} />
+                        ) : (
+                            <RC {...initialData} />
+                        )}
                         <BlogPostFooter
                             post={initialData}
                             likes={postStats.likes}

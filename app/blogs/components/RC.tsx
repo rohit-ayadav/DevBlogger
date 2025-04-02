@@ -5,7 +5,7 @@ import 'prismjs/plugins/line-numbers/prism-line-numbers.js';
 import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
 import { BlogPostType } from '@/types/blogs-types';
 import { useTheme } from '@/context/ThemeContext';
-import LazyAdSense from '@/components/LazyAds';
+import ReadingProgress from '@/components/ShowMD/ReadingProgress';
 
 const RC = ({ content }: BlogPostType) => {
     const { isDarkMode } = useTheme();
@@ -227,6 +227,7 @@ const RC = ({ content }: BlogPostType) => {
     return (
         <>
             <style>{customStyles}</style>
+            <ReadingProgress />
             <div
                 className={`prose max-w-none ${isDarkMode ? 'prose-invert' : ''}`}
                 dangerouslySetInnerHTML={{

@@ -31,12 +31,12 @@ const sanitizer = {
     slug: (slug: string) => DOMPurify.sanitize(slug),
     content: (value: string, editorMode: BlogState['editorMode']) => {
         if (editorMode === 'markdown') {
-            const md = new MarkdownIt({ html: true });
-            return DOMPurify.sanitize(md.render(value));
+            return DOMPurify.sanitize(value);
         }
         return DOMPurify.sanitize(value);
     }
 };
+
 
 const validateBlogPost = (state: BlogState): string | null => {
     if (!state.title?.trim()) return 'Title is required';

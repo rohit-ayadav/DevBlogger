@@ -11,8 +11,7 @@ import { Author, BlogPostType } from '@/types/blogs-types';
 import { ErrorMessage } from '../../../lib/ErrorMessage';
 import BlogPostClientContent from '@/components/BlogPostContent/page';
 import { isValidSlug } from '@/lib/common-function';
-import serializeDocument, { formatDate } from '@/utils/date-formatter';
-import { revalidatePath } from 'next/cache';
+import serializeDocument from '@/utils/date-formatter';
 import { revalidateBlog } from '@/action/revalidate-post';
 interface ApiResponse {
     success: boolean;
@@ -33,7 +32,7 @@ async function getPostData(id: string): Promise<ApiResponse> {
             post = await Blog.findOne({ slug: id }).lean().exec();
         }
 
-        if (!post) {
+        if (!post || (Array.isArray(post) ? post[0]?.status !== 'published' : post.status !== 'published')) {
             return {
                 success: false,
                 statusCode: 404,

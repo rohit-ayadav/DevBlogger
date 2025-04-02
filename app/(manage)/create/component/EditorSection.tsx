@@ -10,7 +10,6 @@ import MarkdownEditor from 'react-markdown-editor-lite';
 import 'react-quill/dist/quill.snow.css';
 import 'react-markdown-editor-lite/lib/index.css';
 import CustomToolbar from './CustomToolbar';
-import CustomMarkdownEditor from '@/components/CustomMarkdownEditor';
 
 // Dynamic import for ReactQuill with SSR handling
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -114,19 +113,44 @@ export const EditorSection = ({
         };
     }, [content]);
 
-    // Markdown configuration
     const markdownConfig = {
         view: {
             menu: true,
             md: true,
-            html: false,
+            html: true,
+            both: true,
+            fullScreen: true,
         },
         canView: {
             menu: true,
             md: true,
-            html: false,
+            html: true,
             fullScreen: true,
             hideMenu: true,
+            both: true,
+        },
+        html: true,
+        syncScrollMode: ['leftFollowRight', 'rightFollowLeft'],
+        image: {
+            upload: true,
+            server: '/api/upload',
+        },
+        toolbar: {
+            bold: true,
+            italic: true,
+            strikethrough: true,
+            underline: true,
+            quote: true,
+            code: true,
+            link: true,
+            image: true,
+            table: true,
+            orderedList: true,
+            unorderedList: true,
+            checkList: true,
+            undo: true,
+            redo: true,
+            clear: true,
         }
     };
 
@@ -166,7 +190,7 @@ export const EditorSection = ({
                                         "rounded-md border",
                                         isDarkMode ? "border-gray-700" : "border-gray-200"
                                     )}>
-                                        {/* <MarkdownEditor
+                                        <MarkdownEditor
                                             style={{ height: '400px' }}
                                             value={content}
                                             renderHTML={(text) => new MarkdownIt({
@@ -174,14 +198,9 @@ export const EditorSection = ({
                                                 linkify: true,
                                                 typographer: true
                                             }).render(text)}
-                                            onChange={(text) => handleContentChange(text)}
+                                            onChange={({ text }: { text: string; html: string }) => handleContentChange(text)}
                                             config={markdownConfig}
                                             className={cn('editor-wrapper', isDarkMode && 'dark-mode')}
-                                        /> */}
-                                        <CustomMarkdownEditor
-                                            initialValue={content}
-                                            onChange={useCallback((text: string) => handleContentChange(text), [handleContentChange])}
-                                            darkModeDefault={isDarkMode}
                                         />
                                     </div>
                                 </Suspense>
