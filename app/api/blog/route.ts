@@ -10,7 +10,6 @@ import mongoose from "mongoose";
 import { getSessionAtHome } from "@/auth";
 import webpush from "web-push";
 import Notification from "@/models/notification.models";
-import { isValidSlug } from "@/lib/common-function";
 import { revalidatePath } from "next/cache";
 
 await connectDB();
@@ -36,7 +35,7 @@ export async function POST(request: NextRequest) {
   if (!session) { return NextResponse.json({ message: "You need to be logged in to create a blog post", success: false }, { status: 401 }); }
   if (!session.user.email) { return NextResponse.json({ message: "You need to be logged in to create a blog post", success: false }, { status: 401 }); }
 
-  let { title, content, status, tags, language, slug, thumbnail, thumbnailCredit, category } = body;
+  let { title, content, status, isPublic, tags, language, slug, thumbnail, thumbnailCredit, category } = body;
 
   const { error } = blogSchema.validate({ title, content, status, tags, language });
 
@@ -55,14 +54,13 @@ export async function POST(request: NextRequest) {
   const sanitizedTitle = purify.sanitize(title);
   const sanitizedTags = tags.map((tag: string) => purify.sanitize(tag));
   const sanitizedCategory = purify.sanitize(category);
+  const isAdmin = await User.findOne({ email: session.user.email, role: "admin" });
 
   try {
     const existingBlog = await Blog.findOne({ slug });
     if (existingBlog) slug = `${slug}-${Date.now()}`;
 
-    const blogPost = {
-      title: sanitizedTitle, content: sanitizedContent, status, tags: sanitizedTags, language, slug, thumbnail, thumbnailCredit, category: sanitizedCategory, createdBy: session.user.email
-    };
+    const blogPost = { title: sanitizedTitle, content: sanitizedContent, status, tags: sanitizedTags, isPublic: isPublic ? isPublic : false, language, slug, thumbnail, thumbnailCredit, category: sanitizedCategory, createdBy: session.user.email };
 
     // Save blog post
     const newBlogPost = new Blog(blogPost);
@@ -71,41 +69,41 @@ export async function POST(request: NextRequest) {
 
     await User.findOneAndUpdate({ email: session.user.email }, { $inc: { noOfBlogs: 1 } });
 
-    // Send notifications to subscribers
-    const subscriptions = await Notification.find({});
-    if (subscriptions.length) {
-      const payload = {
-        title: `New Blog Post: ${blogPost.title}`,
-        body: `A new blog post "${blogPost.title}" has been published`,
-        image: blogPost.thumbnail,
-        icon: "/favicon.ico",
-        tag: "new-blog-post",
-        data: {
-          url: `/blogs/${slug}`
-        },
-        actions: [
-          { action: "open", title: "Open" },
-          { action: "close", title: "Dismiss" }
-        ]
-      };
+    if (isAdmin && isPublic && status === "published") {
+      // Send notifications to subscribers
+      const subscriptions = await Notification.find({});
+      if (subscriptions.length) {
+        const payload = {
+          title: `New Blog Post: ${blogPost.title}`,
+          body: `A new blog post "${blogPost.title}" has been published`,
+          image: blogPost.thumbnail,
+          icon: "/favicon.ico",
+          tag: "new-blog-post",
+          data: {
+            url: `/blogs/${slug}`
+          },
+          actions: [
+            { action: "open", title: "Open" },
+            { action: "close", title: "Dismiss" }
+          ]
+        };
 
-      // Send notifications to all subscriptions
-      const notificationPromises = subscriptions.map(({ subscription }) =>
-        webpush
-          .sendNotification(subscription, JSON.stringify(payload))
-          .catch((error) => {
-            console.error("Error sending notification:", error);
-          })
-      );
-
-      revalidatePath("/");
-      revalidatePath(`/blogs/${slug}`);
-      revalidatePath(`/blogs`);
-
-      await Promise.all(notificationPromises);
-      await Notification.deleteMany({ active: false });
+        // Send notifications to all subscriptions
+        const notificationPromises = subscriptions.map(({ subscription }) =>
+          webpush
+            .sendNotification(subscription, JSON.stringify(payload))
+            .catch((error) => {
+              console.error("Error sending notification:", error);
+            })
+        );
+        await Promise.all(notificationPromises);
+        await Notification.deleteMany({ active: false });
+      }
     }
 
+    revalidatePath("/");
+    revalidatePath(`/blogs/${slug}`);
+    revalidatePath(`/blogs`);
     return NextResponse.json({ message: "Blog post created successfully", success: true, data: { id: blogPostId } }, { status: 201 });
   } catch (error) {
     console.error("Error saving blog post:", error);
@@ -180,18 +178,22 @@ export async function GET(request: NextRequest) {
     }
 
     const [authorPosts, relatedPosts] = await Promise.all([
-      Blog.find({ createdBy: email }, projection)
+      Blog.find({
+        createdBy: email, isPublic: true, status: "published",
+      }, projection)
         .sort({ createdAt: -1, totalViews: -1 })
         .limit(limit + 1)
         .lean(),
-      Blog.find({ category }, projection)
+      Blog.find({
+        category, isPublic: true, status: "published",
+      }, projection)
         .sort({ createdAt: -1, totalViews: -1 })
         .limit(limit + 1)
         .lean()
     ]);
     if (!relatedPosts.length) {
       // find trending posts if no related posts found
-      const trendingPosts = await Blog.find({})
+      const trendingPosts = await Blog.find({ isPublic: true, status: "published" })
         .sort({ totalViews: -1 })
         .limit(limit + 1)
         .lean();

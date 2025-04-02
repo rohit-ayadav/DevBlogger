@@ -107,6 +107,10 @@ const buildQuery = (params: QueryParams): mongoose.FilterQuery<typeof Blog> => {
         query.readingTime = { $lte: words };
     }
 
+    // Remove that blog which is not published, isPublic is false
+    query.isPublic = true;
+    query.status = "published";
+
     return query;
 }
 

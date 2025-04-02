@@ -9,7 +9,7 @@ import serializeDocument from "@/utils/date-formatter";
 async function getPostData() {
     await connectDB();
     // find all posts, sort by createdAt, limit to 3 and Get all users who created the posts
-    const posts = await Blog.find({}).sort({ createdAt: -1 }).limit(3).lean();
+    const posts = await Blog.find({ isPublic: true, status: "published" }).sort({ createdAt: -1 }).limit(3).lean();
     const users = await User.find({ email: { $in: posts.map(post => post.createdBy) } }).lean();
 
     const totalBlogs = await Blog.countDocuments();

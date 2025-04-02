@@ -18,7 +18,12 @@ export async function GET(request: NextRequest) {
     );
   }
   try {
-    const blogs = await Blog.find({ createdBy: id });
+    const blogs = await Blog.find({ createdBy: id, isPublic: true, status: "published" })
+      .select("-__v")
+      .sort({ createdAt: -1 })
+      .lean()
+      .exec();
+    
     if (!blogs) {
       return NextResponse.json(
         {
@@ -28,10 +33,6 @@ export async function GET(request: NextRequest) {
         { status: 404 }
       );
     }
-    // Sort by views or likes or date
-    // blogs.sort((a, b) => b.views - a.views);
-    // blogs.sort((a, b) => b.likes - a.likes);
-    blogs.sort((a, b) => b.createdAt - a.createdAt);
 
     return NextResponse.json({ blogs, success: true });
   } catch (error: any) {

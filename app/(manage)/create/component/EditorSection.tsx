@@ -1,4 +1,4 @@
-import React, { useState, useMemo, Suspense } from 'react';
+import React, { useState, useMemo, Suspense, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -10,6 +10,7 @@ import MarkdownEditor from 'react-markdown-editor-lite';
 import 'react-quill/dist/quill.snow.css';
 import 'react-markdown-editor-lite/lib/index.css';
 import CustomToolbar from './CustomToolbar';
+import CustomMarkdownEditor from '@/components/CustomMarkdownEditor';
 
 // Dynamic import for ReactQuill with SSR handling
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -165,7 +166,7 @@ export const EditorSection = ({
                                         "rounded-md border",
                                         isDarkMode ? "border-gray-700" : "border-gray-200"
                                     )}>
-                                        <MarkdownEditor
+                                        {/* <MarkdownEditor
                                             style={{ height: '400px' }}
                                             value={content}
                                             renderHTML={(text) => new MarkdownIt({
@@ -173,9 +174,14 @@ export const EditorSection = ({
                                                 linkify: true,
                                                 typographer: true
                                             }).render(text)}
-                                            onChange={({ text }) => handleContentChange(text)}
+                                            onChange={(text) => handleContentChange(text)}
                                             config={markdownConfig}
                                             className={cn('editor-wrapper', isDarkMode && 'dark-mode')}
+                                        /> */}
+                                        <CustomMarkdownEditor
+                                            initialValue={content}
+                                            onChange={useCallback((text: string) => handleContentChange(text), [handleContentChange])}
+                                            darkModeDefault={isDarkMode}
                                         />
                                     </div>
                                 </Suspense>

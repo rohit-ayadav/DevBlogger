@@ -142,45 +142,47 @@ function CreateBlogComponent() {
             return;
         }
 
-        updateState({ isLoading: true });
+        if (window.confirm('Your blog will be published as private. You can share the link with others, and it will become public after admin approval. Are you sure you want to proceed with publishing?')) {
+            updateState({ isLoading: true });
+            try {
+                const blogPostData = {
+                    title: sanitizer.title(state.title),
+                    content: sanitizer.content(
+                        state.editorMode === 'markdown' ? state.markdownContent : state.htmlContent,
+                        state.editorMode
+                    ),
+                    thumbnail: state.thumbnail,
+                    thumbnailCredit: state.thumbnailCredit,
+                    slug: sanitizer.slug(state.slug),
+                    tags: state.tags.map(sanitizer.tags),
+                    category: state.category,
+                    status: 'published',
+                    isPublic: false,
+                    language: state.editorMode === 'markdown' ? 'markdown' : 'html',
+                };
 
-        try {
-            const blogPostData = {
-                title: sanitizer.title(state.title),
-                content: sanitizer.content(
-                    state.editorMode === 'markdown' ? state.markdownContent : state.htmlContent,
-                    state.editorMode
-                ),
-                thumbnail: state.thumbnail,
-                thumbnailCredit: state.thumbnailCredit,
-                slug: sanitizer.slug(state.slug),
-                tags: state.tags.map(sanitizer.tags),
-                category: state.category,
-                status: 'published',
-                language: state.editorMode === 'markdown' ? 'markdown' : 'html',
-            };
+                const response = await fetch('/api/blog', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(blogPostData),
+                });
 
-            const response = await fetch('/api/blog', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(blogPostData),
-            });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'Failed to create blog post');
 
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.message || 'Failed to create blog post');
-
-            updateState({ blogId: data.data.id });
-            localStorage.removeItem(DRAFT_STORAGE_KEY);
-            toast.success('Blog post created successfully');
-            clearForm();
-            router.push(`/blogs/${data.data.id}`);
-        } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-            updateState({ error: errorMessage });
-            toast.error(errorMessage);
-        } finally {
-            updateState({ isLoading: false });
-            setLoading(false);
+                updateState({ blogId: data.data.id });
+                localStorage.removeItem(DRAFT_STORAGE_KEY);
+                toast.success('Blog post created successfully');
+                clearForm();
+                router.push(`/blogs/${data.data.id}`);
+            } catch (error) {
+                const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+                updateState({ error: errorMessage });
+                toast.error(errorMessage);
+            } finally {
+                updateState({ isLoading: false });
+                setLoading(false);
+            }
         }
     }, [state, updateState, clearForm, router]);
 
