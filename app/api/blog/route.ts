@@ -40,6 +40,7 @@ export async function POST(request: NextRequest) {
   const { error } = blogSchema.validate({ title, content, status, tags, language });
 
   if (error) return NextResponse.json({ message: error.message, success: false }, { status: 400 });
+  
   slug = slug || title;
   slug = slug.trim()
     .toLowerCase()
