@@ -8,6 +8,7 @@ import Header from './dashcomponent/Header';
 import Overview from './dashcomponent/Overview';
 import Analytics from './dashcomponent/Analytics';
 import BlogPost from './dashcomponent/BlogPost';
+import { isAdmin } from '@/action/my-profile-action';
 interface AuthorDashboardProps {
     user: UserType;
     blogs: BlogPostType[];
@@ -108,6 +109,9 @@ function AuthorDashboard({ user, blogs, monthlyStats }: AuthorDashboardProps) {
                             <TabsTrigger value="analytics">Analytics</TabsTrigger>
                             <TabsTrigger value="blogs">My Blogs</TabsTrigger>
                             {/* <TabsTrigger value="author">Author</TabsTrigger> */}
+                            {/* {await isAdmin(session.user.email) && (
+                                <TabsTrigger value="admin">Admin</TabsTrigger>
+                            )} */}
                         </TabsList>
 
                         <Select value={timeframe} onValueChange={setTimeframe}>
