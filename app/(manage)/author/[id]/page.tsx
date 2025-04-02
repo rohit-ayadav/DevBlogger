@@ -24,7 +24,11 @@ async function getPostData(id: string) {
         if (!user) {
             return { success: false, statusCode: 404 };
         }
-        let postData = await Blog.find({ createdBy: user.email }).lean() as BlogPostType[];
+        let postData = await Blog.find({
+            createdBy: user.email,
+            isPublic: true,
+            status: "published"
+        }).lean() as BlogPostType[];
         if (!postData || postData.length === 0) {
             return { success: false, statusCode: 404 };
         }

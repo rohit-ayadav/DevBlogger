@@ -4,6 +4,7 @@ type BlogPostType = {
   createdAt: string;
   updatedAt?: string;
   tags?: string[];
+  isPublic?: boolean;
   content: string;
   createdBy: string;
   thumbnail?: string;

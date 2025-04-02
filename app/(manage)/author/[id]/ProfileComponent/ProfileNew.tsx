@@ -46,7 +46,6 @@ const ProfileNEW = ({ authorPosts, author }: { authorPosts: BlogPostType[], auth
             <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
                 <div className="container mx-auto px-4 py-8 max-w-7xl">
                     <Header author={author} isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} isShareSheetOpen={isShareSheetOpen} setIsShareSheetOpen={setIsShareSheetOpen} copyProfileLink={copyProfileLink} />
-
                     <main className="space-y-8">
                         <div className="relative">
                             <div className="h-40 sm:h-64 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl overflow-hidden">
@@ -57,7 +56,6 @@ const ProfileNEW = ({ authorPosts, author }: { authorPosts: BlogPostType[], auth
                                     className="w-full h-full object-cover opacity-30"
                                 />
                             </div>
-
                             <div className="container relative px-4 mx-auto">
                                 <div className="flex flex-col sm:flex-row items-center sm:items-end -mt-16 sm:-mt-24">
                                     <ShowProfileImage
@@ -90,7 +88,6 @@ const ProfileNEW = ({ authorPosts, author }: { authorPosts: BlogPostType[], auth
                                 </div>
                             </div>
                         </div>
-
                         <AuthorInfo author={author} authorPostsLength={authorPosts.length} totalStats={totalStats} />
 
                         {/* Profile Tabs */}
