@@ -85,7 +85,7 @@ const BlogApproved = (name: string, blogTitle: string, blogUrl: string): string 
 <body>
     <div class="container">
         <div class="header">
-            <img src="https://devblogger.com/logo.png" alt="DevBlogger Logo" class="logo" />
+            <img src="https://devblogger.in/logo.png" alt="DevBlogger Logo" class="logo" />
             <h1>Congratulations! Your Blog is Approved</h1>
         </div>
         <div class="content">
@@ -112,13 +112,13 @@ const BlogApproved = (name: string, blogTitle: string, blogUrl: string): string 
             <div class="social-share">
                 <p>Share your blog with your network:</p>
                 <a href="https://twitter.com/intent/tweet?url=${encodeURIComponent(BlogUrl)}&text=${encodeURIComponent(`Check out my new blog post: ${BlogTitle} on DevBlogger!`)}" target="_blank" class="social-icon">
-                    <img src="https://devblogger.com/images/twitter-icon.png" alt="Twitter" width="32" height="32" />
+                    <img src="https://devblogger.in/images/twitter-icon.png" alt="Twitter" width="32" height="32" />
                 </a>
                 <a href="https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(BlogUrl)}&title=${encodeURIComponent(BlogTitle)}" target="_blank" class="social-icon">
-                    <img src="https://devblogger.com/images/linkedin-icon.png" alt="LinkedIn" width="32" height="32" />
+                    <img src="https://devblogger.in/images/linkedin-icon.png" alt="LinkedIn" width="32" height="32" />
                 </a>
                 <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(BlogUrl)}" target="_blank" class="social-icon">
-                    <img src="https://devblogger.com/images/facebook-icon.png" alt="Facebook" width="32" height="32" />
+                    <img src="https://devblogger.in/images/facebook-icon.png" alt="Facebook" width="32" height="32" />
                 </a>
             </div>
            
@@ -131,8 +131,8 @@ const BlogApproved = (name: string, blogTitle: string, blogUrl: string): string 
        
         <div class="footer">
             <p>© ${currentYear} DevBlogger. All rights reserved.</p>
-            <p>Questions? Contact us at <a href="mailto:support@devblogger.com">support@devblogger.com</a></p>
-            <p><small>If you no longer wish to receive these emails, you can <a href="https://devblogger.com/settings/notifications">unsubscribe here</a>.</small></p>
+            <p>Questions? Contact us at <a href="mailto:support@devblogger.in">support@devblogger.in</a></p>
+            <p><small>If you no longer wish to receive these emails, you can <a href="https://devblogger.in/settings/notifications">unsubscribe here</a>.</small></p>
         </div>
     </div>
 </body>
@@ -143,7 +143,7 @@ const BlogRejected = (name: string, blogTitle: string, reason: string, dashboard
     const authorName = name || "Author";
     const BlogTitle = blogTitle || "Your Blog Title";
     const rejectionReason = reason || "It doesn't meet our community guidelines.";
-    const dashboardLink = dashboardUrl || "https://devblogger.com/dashboard";
+    const dashboardLink = dashboardUrl || "https://devblogger.in/dashboard";
     const currentYear = new Date().getFullYear();
 
     return `<!DOCTYPE html>
@@ -223,7 +223,7 @@ const BlogRejected = (name: string, blogTitle: string, reason: string, dashboard
 <body>
     <div class="container">
         <div class="header">
-            <img src="https://devblogger.com/logo.png" alt="DevBlogger Logo" class="logo" />
+            <img src="https://devblogger.in/logo.png" alt="DevBlogger Logo" class="logo" />
             <h1>Update on Your Blog Submission</h1>
         </div>
         <div class="content">
@@ -260,8 +260,8 @@ const BlogRejected = (name: string, blogTitle: string, reason: string, dashboard
        
         <div class="footer">
             <p>© ${currentYear} DevBlogger. All rights reserved.</p>
-            <p>Questions? Contact us at <a href="mailto:support@devblogger.com">support@devblogger.com</a></p>
-            <p><small>If you no longer wish to receive these emails, you can <a href="https://devblogger.com/settings/notifications">unsubscribe here</a>.</small></p>
+            <p>Questions? Contact us at <a href="mailto:support@devblogger.in">support@devblogger.in</a></p>
+            <p><small>If you no longer wish to receive these emails, you can <a href="https://devblogger.in/settings/notifications">unsubscribe here</a>.</small></p>
         </div>
     </div>
 </body>
