@@ -35,6 +35,7 @@ const OptimizedAdminDashboard = () => {
     } = useAdmin();
 
     const [isAdmin, setIsAdmin] = React.useState(false);
+    const [isAdminLoading, setIsAdminLoading] = React.useState(true);
     const { data: session, status } = useSession();
     useEffect(() => {
         if (status === 'loading') {
@@ -48,9 +49,8 @@ const OptimizedAdminDashboard = () => {
                 checkIsAdmin(session.user.email).then(isAdmin => {
                     if (isAdmin) {
                         setIsAdmin(true);
-                    } else {
-                        return <UnauthorizedPage />;
                     }
+                    setIsAdminLoading(false);
                 });
             }
         }
@@ -62,10 +62,11 @@ const OptimizedAdminDashboard = () => {
                 <Loader2 className="h-8 w-8 animate-spin" />
                 <h1 className="text-2xl font-bold">Access Denied</h1>
                 <p className="mt-2">You do not have permission to access this page.</p>
-                {/* <Button onClick={() => window.location.href = '/'} className="mt-4">Go to Home</Button> */}
-
             </div>
         );
+    }
+    if(!isAdminLoading && isAdmin) {
+        return <UnauthorizedPage />;
     }
 
     return (
