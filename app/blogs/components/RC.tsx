@@ -6,6 +6,7 @@ import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
 import { BlogPostType } from '@/types/blogs-types';
 import { useTheme } from '@/context/ThemeContext';
 import ReadingProgress from '@/components/ShowMD/ReadingProgress';
+import Adsense from '@/components/AdSense';
 
 const RC = ({ content }: BlogPostType) => {
     const { isDarkMode } = useTheme();
@@ -228,10 +229,28 @@ const RC = ({ content }: BlogPostType) => {
         <>
             <style>{customStyles}</style>
             <ReadingProgress />
-            <div
+            {/* <div
                 className={`prose max-w-none ${isDarkMode ? 'prose-invert' : ''}`}
                 dangerouslySetInnerHTML={{
                     __html: addCustomStyles(makeZlink(content)),
+                }}
+            /> */}
+
+            <style>{customStyles}</style>
+            <ReadingProgress />
+            <div
+                className={`prose max-w-none ${isDarkMode ? "prose-invert" : ""}`}
+                dangerouslySetInnerHTML={{
+                    __html: addCustomStyles(
+                        makeZlink(
+                            content.replace(
+                                /(<h2\b[^>]*>)/g,
+                                `<div class="my-5 py-2 border-t border-b border-gray-200 dark:border-gray-700">
+                            <Adsense />
+                        </div>$1`
+                            )
+                        )
+                    ),
                 }}
             />
         </>

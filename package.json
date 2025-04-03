@@ -59,6 +59,7 @@
     "fs.promises": "^0.1.2",
     "gray-matter": "^4.0.3",
     "highlight.js": "^11.11.1",
+    "html-react-parser": "^5.2.3",
     "input-otp": "^1.4.2",
     "javascript-obfuscator": "^4.1.1",
     "joi": "^17.13.3",

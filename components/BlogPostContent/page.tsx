@@ -108,9 +108,10 @@ const BlogPostClientContent: React.FC<BlogPostClientContentProps> = ({
 
                 <BlogPostContainer>
                     <article className={`prose max-w-none ${proseClasses}`}>
-                        {initialData.language === 'markdown' ? (
-                            <MarkdownContent sections={Array.isArray(initialData.content) ? initialData.content : [initialData.content]} />
-                        ) : (
+                        {initialData.language === 'markdown' ? (() => {
+                            const sections = initialData.content.split(/(?=^##\s)/m);
+                            return <MarkdownContent sections={sections} />;
+                        })() : (
                             <RC {...initialData} />
                         )}
                         <BlogPostFooter
