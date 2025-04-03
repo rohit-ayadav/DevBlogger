@@ -14,6 +14,7 @@ import { useSession } from 'next-auth/react';
 import LoadingEffect from '@/lib/LoadingEffect';
 import { isAdmin as checkIsAdmin } from '@/action/my-profile-action';
 import Approval from './Approval';
+import UnauthorizedPage from '@/app/(auth-pages)/unauthorized/page';
 
 const PostManagement = lazy(() => import('./PostManagement'));
 const CategoryOverview = lazy(() => import('./CategoryOverview'));
@@ -45,7 +46,11 @@ const OptimizedAdminDashboard = () => {
         if (status === 'authenticated') {
             if (session?.user?.email) {
                 checkIsAdmin(session.user.email).then(isAdmin => {
-                    setIsAdmin(isAdmin);
+                    if (isAdmin) {
+                        setIsAdmin(true);
+                    } else {
+                        return <UnauthorizedPage />;
+                    }
                 });
             }
         }
@@ -53,8 +58,12 @@ const OptimizedAdminDashboard = () => {
 
     if (!isAdmin) {
         return (
-            <div className="flex items-center justify-center h-screen">
+            <div className="flex flex-col items-center justify-center h-screen space-y-4">
+                <Loader2 className="h-8 w-8 animate-spin" />
                 <h1 className="text-2xl font-bold">Access Denied</h1>
+                <p className="mt-2">You do not have permission to access this page.</p>
+                {/* <Button onClick={() => window.location.href = '/'} className="mt-4">Go to Home</Button> */}
+
             </div>
         );
     }

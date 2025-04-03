@@ -41,7 +41,7 @@ const BlogCollectionComponent = () => {
         readingTime: 'all',
         dateRange: 'all',
         page: 1,
-        limit: 9,
+        limit: 6,
         stats: {
             totalLikes: 0,
             totalViews: 0,
