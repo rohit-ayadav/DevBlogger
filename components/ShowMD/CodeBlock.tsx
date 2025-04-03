@@ -113,6 +113,8 @@ const detectLanguage = (className: string | undefined, code: string): string => 
             // Return if it's a supported language
             if (SUPPORTED_LANGUAGES.has(lang)) {
                 return lang;
+            } else {
+                return "plaintext";
             }
         }
     }
@@ -143,9 +145,7 @@ const detectLanguage = (className: string | undefined, code: string): string => 
                 }
             }
 
-            // Remove the first line with backticks and language
             lines.shift();
-            // Remove the last line if it's just closing backticks
             if (lines[lines.length - 1].trim() === '```') {
                 lines.pop();
             }
@@ -276,7 +276,7 @@ const CodeBlock = ({ className, children }: { className?: string; children: Reac
         return () => mediaQuery.removeEventListener("change", handleChange);
     }, [isDarkMode]);
 
-    
+
     const handleCopy = async () => {
         try {
             let textToCopy = codeString;
@@ -301,7 +301,7 @@ const CodeBlock = ({ className, children }: { className?: string; children: Reac
     };
 
     return (
-        <div className="code-block-wrapper rounded-lg overflow-hidden my-3 shadow-lg border border-gray-200 dark:border-gray-700">
+        <div className="code-block-wrapper rounded-lg overflow-hidden m-0 p-0 shadow-lg border border-gray-200 dark:border-gray-700">
             <div className="code-header bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs py-1.5 px-3 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
                 <span className="font-medium">
                     {getDisplayLanguage(language)}
@@ -315,6 +315,7 @@ const CodeBlock = ({ className, children }: { className?: string; children: Reac
                         }`}
                     onClick={handleCopy}
                     aria-label="Copy code to clipboard"
+                    title="Copy code to clipboard"
                 >
                     {copyStatus === "idle" && (
                         <>
@@ -348,11 +349,13 @@ const CodeBlock = ({ className, children }: { className?: string; children: Reac
                 style={theme === "dark" ? atomDark : vs}
                 customStyle={{
                     margin: 0,
-                    padding: '0.75rem',
+                    padding: '1rem',
+                    overflow: 'auto',
                     borderRadius: '0 0 0.5rem 0.5rem',
                     fontSize: '0.9rem',
                     lineHeight: '1.4',
-                    minHeight: '2.5rem'
+                    minHeight: '2.5rem',
+                    scrollbarWidth: 'thin', // For Firefox
                 }}
                 showLineNumbers={codeString.split('\n').length > 1}
                 wrapLines={true}
