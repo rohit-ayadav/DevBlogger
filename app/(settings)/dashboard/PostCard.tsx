@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { BlogPostType, UserType } from '@/types/blogs-types';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import { formatCount } from '@/lib/common-function';
 interface PostCardProps {
     post: BlogPostType;
     showStats?: boolean;
@@ -96,14 +97,14 @@ export const PostCard = ({ post, showStats = false, author }: PostCardProps) => 
                                 title="Total views for this post"
                             >
                                 <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
-                                <span className="text-xs sm:text-sm font-medium">{post.views?.toLocaleString() || 0} views</span>
+                                <span className="text-xs sm:text-sm font-medium">{formatCount(post.views || 0)}{' view' + (post.views !== 1 ? 's' : '')}</span>
                             </div>
                             <div
                                 className="flex items-center gap-1 text-gray-600 dark:text-gray-400"
                                 title="Total likes for this post"
                             >
                                 <ThumbsUp className="h-3 w-3 sm:h-4 sm:w-4" />
-                                <span className="text-xs sm:text-sm font-medium">{post.likes?.toLocaleString() || 0} likes</span>
+                                <span className="text-xs sm:text-sm font-medium">{formatCount(post.likes || 0)}{' like' + (post.likes !== 1 ? 's' : '')}</span>
                             </div>
                         </div>
                     )}

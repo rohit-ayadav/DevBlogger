@@ -15,6 +15,7 @@ import {
 import { useTheme } from '@/context/ThemeContext';
 import { BlogPostType, UserType } from '@/types/blogs-types';
 import UserAvatar from './UserAvatar';
+import { formatCount } from '@/lib/common-function';
 
 interface BlogPostCardProps {
     post: BlogPostType;
@@ -190,17 +191,17 @@ export const PostCard = ({ post, user, showActions = false, author }: BlogPostCa
                         <div className="flex items-center gap-2">
                             <span
                                 className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} flex items-center gap-1`}
-                                title={`${post.views?.toLocaleString() || 0} views`}
+                                title={`${post.views || 0} views`}
                             >
                                 <Eye className="h-3 w-3" />
-                                {post.views?.toLocaleString() || 0}
+                                {formatCount(post.views || 0)?.toLocaleString() || 0}
                             </span>
                             <span
                                 className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} flex items-center gap-1`}
-                                title={`${post.likes?.toLocaleString() || 0} likes`}
+                                title={`${post.likes || 0} likes`}
                             >
                                 <ThumbsUp className="h-3 w-3" />
-                                {post.likes?.toLocaleString() || 0}
+                                {formatCount(post.likes || 0)?.toLocaleString() || 0}
                             </span>
                         </div>
                     </div>
@@ -222,7 +223,7 @@ export const PostCard = ({ post, user, showActions = false, author }: BlogPostCa
                     {user && (
                         <div className="mt-auto pt-2 flex items-center justify-between">
                             <div title='Click to view author profile' className="flex items-center gap-2">
-                            <UserAvatar user={user} isDarkMode={isDarkMode} />
+                                <UserAvatar user={user} isDarkMode={isDarkMode} />
                             </div>
 
                             <div className="flex items-center gap-2">
@@ -247,35 +248,37 @@ export const PostCard = ({ post, user, showActions = false, author }: BlogPostCa
                 </CardContent>
             </Link>
 
-            {showActions && (
-                <CardFooter className={`p-3 border-t ${isDarkMode ? 'border-zinc-800' : 'border-gray-200'} flex items-center justify-between`}>
-                    <div />
+            {
+                showActions && (
+                    <CardFooter className={`p-3 border-t ${isDarkMode ? 'border-zinc-800' : 'border-gray-200'} flex items-center justify-between`}>
+                        <div />
 
-                    <div className="flex items-center gap-2">
-                        <Link
-                            href={`/edit/${post.slug}`}
-                            onClick={(e) => e.stopPropagation()}
-                            className={`text-xs ${isDarkMode ? 'text-blue-400' : 'text-blue-600'} hover:underline`}
-                        >
-                            Edit
-                        </Link>
-                        <button
-                            className={`text-xs ${isDarkMode ? 'text-red-400' : 'text-red-600'} hover:underline`}
-                            onClick={(e) => handleDelete(e, post._id)}
-                        >
-                            Delete
-                        </button>
-                        <Link
-                            href={`/stats/${post.slug}`}
-                            onClick={(e) => e.stopPropagation()}
-                            className={`text-xs ${isDarkMode ? 'text-green-400' : 'text-green-600'} hover:underline`}
-                        >
-                            Stats
-                        </Link>
-                    </div>
-                </CardFooter>
-            )}
-        </Card>
+                        <div className="flex items-center gap-2">
+                            <Link
+                                href={`/edit/${post.slug}`}
+                                onClick={(e) => e.stopPropagation()}
+                                className={`text-xs ${isDarkMode ? 'text-blue-400' : 'text-blue-600'} hover:underline`}
+                            >
+                                Edit
+                            </Link>
+                            <button
+                                className={`text-xs ${isDarkMode ? 'text-red-400' : 'text-red-600'} hover:underline`}
+                                onClick={(e) => handleDelete(e, post._id)}
+                            >
+                                Delete
+                            </button>
+                            <Link
+                                href={`/stats/${post.slug}`}
+                                onClick={(e) => e.stopPropagation()}
+                                className={`text-xs ${isDarkMode ? 'text-green-400' : 'text-green-600'} hover:underline`}
+                            >
+                                Stats
+                            </Link>
+                        </div>
+                    </CardFooter>
+                )
+            }
+        </Card >
     );
 };
 

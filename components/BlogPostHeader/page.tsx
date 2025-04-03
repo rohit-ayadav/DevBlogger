@@ -1,9 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Calendar, Clock, Eye, Heart } from 'lucide-react';
 import { Author, BlogPostType } from '@/types/blogs-types';
 import { formatDate } from '@/utils/date-formatter';
+import { formatCount } from '@/lib/common-function';
 
 interface BlogPostHeaderProps {
   post: BlogPostType;
@@ -83,7 +83,7 @@ const BlogPostHeader: React.FC<BlogPostHeaderProps> = ({
             `}
           >
             <Clock className="h-4 w-4 mr-2 flex-shrink-0" />
-            <span>{readingTime} min read</span>
+            <span>{formatCount(readingTime)} {readingTime > 1 ? 'mins' : 'min'} read</span>
           </div>
 
           <div
@@ -96,7 +96,7 @@ const BlogPostHeader: React.FC<BlogPostHeaderProps> = ({
             `}
           >
             <Heart className="h-4 w-4 mr-2 flex-shrink-0" />
-            <span>{post.likes} Likes</span>
+            <span>{formatCount(post.likes ?? 0)} {post.likes && post.likes > 1 ? 'Likes' : 'Like'}</span>
           </div>
 
           <div
@@ -109,7 +109,7 @@ const BlogPostHeader: React.FC<BlogPostHeaderProps> = ({
             `}
           >
             <Eye className="h-4 w-4 mr-2 flex-shrink-0" />
-            <span>{post.views || 0} Views</span>
+            <span>{formatCount(post.views ?? 0)} {post.views && post.views > 1 ? 'Views' : 'View'}</span>
           </div>
         </div>
 
