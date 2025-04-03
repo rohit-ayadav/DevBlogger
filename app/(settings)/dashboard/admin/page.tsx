@@ -13,6 +13,7 @@ import Overview from './Overview';
 import { useSession } from 'next-auth/react';
 import LoadingEffect from '@/lib/LoadingEffect';
 import { isAdmin as checkIsAdmin } from '@/action/my-profile-action';
+import Approval from './Approval';
 
 const PostManagement = lazy(() => import('./PostManagement'));
 const CategoryOverview = lazy(() => import('./CategoryOverview'));
@@ -92,6 +93,7 @@ const OptimizedAdminDashboard = () => {
             <ErrorBoundary FallbackComponent={ErrorFallback}>
                 <Tabs defaultValue="overview" className="space-y-4">
                     <TabsList className="flex flex-wrap gap-2 mb-4">
+                        <TabsTrigger value='approval'>Approval</TabsTrigger>
                         <TabsTrigger value="overview">Overview</TabsTrigger>
                         <TabsTrigger value="posts">Posts</TabsTrigger>
                         <TabsTrigger value="users">Users</TabsTrigger>
@@ -99,6 +101,12 @@ const OptimizedAdminDashboard = () => {
                         <TabsTrigger value="contact">Contact Form</TabsTrigger>
                         <TabsTrigger value="notification">Notification</TabsTrigger>
                     </TabsList>
+
+                    <TabsContent value="approval">
+                        <Suspense fallback={<LoadingEffect />}>
+                            <Approval />
+                        </Suspense>
+                    </TabsContent>
 
                     <TabsContent value="overview" className="space-y-4">
                         <Overview posts={posts} />
