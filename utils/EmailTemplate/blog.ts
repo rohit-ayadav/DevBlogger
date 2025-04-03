@@ -1,7 +1,7 @@
 const BlogApproved = (name: string, blogTitle: string, blogUrl: string): string => {
     const authorName = name || "Author";
     const BlogTitle = blogTitle || "Your Blog Title";
-    const BlogUrl = blogUrl || "#YOUR_BLOG_URL";
+    const BlogUrl = blogUrl || "https://devblogger.in/blogs";
     const currentYear = new Date().getFullYear();
 
     return `<!DOCTYPE html>
