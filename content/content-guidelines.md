@@ -37,6 +37,7 @@ Welcome to DevBlogger! As a platform dedicated to developers and tech bloggers, 
 - System architecture and design patterns
 - Game development (technical aspects)
 
+<!-- ADSENSE -->
 ## 2. Prohibited Content
 
 To maintain a professional and legal blogging environment, the following types of content are strictly prohibited:
@@ -96,6 +97,7 @@ To maintain a professional and legal blogging environment, the following types o
 - No promoting products or services without disclosing employment relationships.
 - No publishing "independent" comparisons when having a stake in one of the compared options.
 
+<!-- ADSENSE -->
 ## 3. Monetization & AdSense Compliance
 
 Since DevBlogger is an AdSense-approved platform, content must follow ad-friendly guidelines:
@@ -127,6 +129,7 @@ Since DevBlogger is an AdSense-approved platform, content must follow ad-friendl
   - No misleading users to generate ad impressions
   - No placing ads in deceptive or misleading ways
 
+<!-- ADSENSE -->
 ## 4. Content Formats & Presentation
 
 - **Readability:**
@@ -154,6 +157,7 @@ Since DevBlogger is an AdSense-approved platform, content must follow ad-friendl
   - Tutorial content should include complete working examples
   - Series articles should be clearly labeled as part of a sequence
 
+<!-- ADSENSE -->
 ## 5. Community Engagement & Commenting Guidelines
 
 - **Respectful Discussions:**
@@ -181,6 +185,7 @@ Since DevBlogger is an AdSense-approved platform, content must follow ad-friendl
   - Address factual corrections promptly
   - Maintain professional conduct even with critical comments
 
+<!-- ADSENSE -->
 ## 6. Legal & Compliance Considerations
 
 - **Privacy & Data Protection:**
@@ -208,6 +213,7 @@ Since DevBlogger is an AdSense-approved platform, content must follow ad-friendl
   - Do not present yourself as an official representative of a company unless authorized
   - Follow brand guidelines when using company logos or assets
 
+<!-- ADSENSE -->
 ## 7. Specific Technical Content Guidelines
 
 - **Security Content:**
@@ -233,6 +239,7 @@ Since DevBlogger is an AdSense-approved platform, content must follow ad-friendl
   - Balance discussion of strengths and limitations
   - Distinguish between technical analysis and personal preference
 
+<!-- ADSENSE -->
 ## 8. Accessibility & Inclusivity
 
 - **Accessible Content:**
@@ -247,6 +254,7 @@ Since DevBlogger is an AdSense-approved platform, content must follow ad-friendl
   - Consider diverse perspectives in examples and use cases
   - Respect various skill levels and learning approaches
 
+<!-- ADSENSE -->
 ## 9. Moderation & Consequences
 
 - **Warning System:**
@@ -270,6 +278,7 @@ Since DevBlogger is an AdSense-approved platform, content must follow ad-friendl
   - Appeals will be reviewed within 5 business days
   - Decisions after appeal are final
 
+<!-- ADSENSE -->
 ## 10. Final Statement
 
 By using DevBlogger, you agree to these guidelines. Our goal is to create a valuable, respectful, and professional blogging environment for developers worldwide. Let's work together to maintain the highest standards of quality and professionalism on the platform!
