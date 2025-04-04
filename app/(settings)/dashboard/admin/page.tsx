@@ -16,10 +16,10 @@ import { isAdmin as checkIsAdmin } from '@/action/my-profile-action';
 import Approval from './Approval';
 import UnauthorizedPage from '@/app/(auth-pages)/unauthorized/page';
 
+// Lazy loaded components for better initial load performance
 const PostManagement = lazy(() => import('./PostManagement'));
 const CategoryOverview = lazy(() => import('./CategoryOverview'));
 const UserManagement = lazy(() => import('./UserManagement'));
-
 
 const OptimizedAdminDashboard = () => {
     const {
@@ -37,46 +37,46 @@ const OptimizedAdminDashboard = () => {
     const [isAdmin, setIsAdmin] = React.useState(false);
     const [isAdminLoading, setIsAdminLoading] = React.useState(true);
     const { data: session, status } = useSession();
+
     useEffect(() => {
         if (status === 'loading') {
             return;
         }
         if (status === 'unauthenticated') {
             setIsAdmin(false);
+            setIsAdminLoading(false);
         }
-        if (status === 'authenticated') {
-            if (session?.user?.email) {
-                checkIsAdmin(session.user.email).then(isAdmin => {
-                    if (isAdmin) {
-                        setIsAdmin(true);
-                    }
-                    setIsAdminLoading(false);
-                });
-            }
+        if (status === 'authenticated' && session?.user?.email) {
+            checkIsAdmin(session.user.email).then(isAdmin => {
+                setIsAdmin(isAdmin);
+                setIsAdminLoading(false);
+            });
         }
     }, [status, session]);
 
-    if (!isAdmin) {
+    if (isAdminLoading) {
         return (
-            <div className="flex flex-col items-center justify-center h-screen space-y-4">
-                <Loader2 className="h-8 w-8 animate-spin" />
-                <h1 className="text-2xl font-bold">Access Denied</h1>
-                <p className="mt-2">You do not have permission to access this page.</p>
+            <div className="flex flex-col items-center justify-center min-h-screen p-4">
+                <Loader2 className="h-8 w-8 animate-spin mb-4" />
+                <h1 className="text-xl font-semibold text-center">Checking permissions...</h1>
             </div>
         );
     }
-    if(!isAdminLoading && !isAdmin) {
+
+    if (!isAdmin) {
         return <UnauthorizedPage />;
     }
 
     return (
-        <div className="container mx-auto p-6 space-y-8">
-            <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-                <Button onClick={fetchData}>Refresh All Data</Button>
+        <div className="container mx-auto px-4 py-6 space-y-6 lg:space-y-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <h1 className="text-2xl sm:text-3xl font-bold">Admin Dashboard</h1>
+                <Button onClick={fetchData} size="sm" className="w-full sm:w-auto">
+                    Refresh All Data
+                </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatCard
                     title="Total Posts"
                     value={stats.totalPosts}
@@ -102,15 +102,17 @@ const OptimizedAdminDashboard = () => {
 
             <ErrorBoundary FallbackComponent={ErrorFallback}>
                 <Tabs defaultValue="overview" className="space-y-4">
-                    <TabsList className="flex flex-wrap gap-2 mb-4">
-                        <TabsTrigger value='approval'>Approval</TabsTrigger>
-                        <TabsTrigger value="overview">Overview</TabsTrigger>
-                        <TabsTrigger value="posts">Posts</TabsTrigger>
-                        <TabsTrigger value="users">Users</TabsTrigger>
-                        <TabsTrigger value="newsletter">Newsletter</TabsTrigger>
-                        <TabsTrigger value="contact">Contact Form</TabsTrigger>
-                        <TabsTrigger value="notification">Notification</TabsTrigger>
-                    </TabsList>
+                    <div className="w-full overflow-x-auto pb-2">
+                        <TabsList className="flex min-w-max">
+                            <TabsTrigger value="approval">Approval</TabsTrigger>
+                            <TabsTrigger value="overview">Overview</TabsTrigger>
+                            <TabsTrigger value="posts">Posts</TabsTrigger>
+                            <TabsTrigger value="users">Users</TabsTrigger>
+                            <TabsTrigger value="newsletter">Newsletter</TabsTrigger>
+                            <TabsTrigger value="contact">Contact Form</TabsTrigger>
+                            <TabsTrigger value="notification">Notification</TabsTrigger>
+                        </TabsList>
+                    </div>
 
                     <TabsContent value="approval">
                         <Suspense fallback={<LoadingEffect />}>
@@ -123,7 +125,11 @@ const OptimizedAdminDashboard = () => {
                     </TabsContent>
 
                     <TabsContent value="posts">
-                        <Suspense fallback={<div className="flex justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+                        <Suspense fallback={
+                            <div className="flex justify-center p-12">
+                                <Loader2 className="h-8 w-8 animate-spin" />
+                            </div>
+                        }>
                             <PostManagement
                                 posts={filteredPosts}
                                 loading={loading}
@@ -134,13 +140,21 @@ const OptimizedAdminDashboard = () => {
                     </TabsContent>
 
                     <TabsContent value="categories">
-                        <Suspense fallback={<div className="flex justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+                        <Suspense fallback={
+                            <div className="flex justify-center p-12">
+                                <Loader2 className="h-8 w-8 animate-spin" />
+                            </div>
+                        }>
                             <CategoryOverview stats={stats} />
                         </Suspense>
                     </TabsContent>
 
                     <TabsContent value="users">
-                        <Suspense fallback={<div className="flex justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+                        <Suspense fallback={
+                            <div className="flex justify-center p-12">
+                                <Loader2 className="h-8 w-8 animate-spin" />
+                            </div>
+                        }>
                             <UserManagement />
                         </Suspense>
                     </TabsContent>
@@ -152,6 +166,7 @@ const OptimizedAdminDashboard = () => {
                     <TabsContent value="contact">
                         <ContactFormPage data={contactUsDataPage} />
                     </TabsContent>
+
                     <TabsContent value="notification">
                         <NotificationTest />
                     </TabsContent>
