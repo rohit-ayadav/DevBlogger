@@ -229,8 +229,8 @@ const Footer = () => {
                 <Link href="/tos" className="text-sm hover:text-blue-400 transition-colors duration-200">
                   Terms
                 </Link>
-                <Link href="/cookies" className="text-sm hover:text-blue-400 transition-colors duration-200">
-                  Cookies
+                <Link href="/content-guidelines" className="text-sm hover:text-blue-400 transition-colors duration-200">
+                  Content Guidelines
                 </Link>
               </div>
             </div>

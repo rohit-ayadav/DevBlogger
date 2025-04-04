@@ -220,11 +220,14 @@ function CreateBlogComponent() {
                 />
 
                 <div className="text-center py-4">
-                    <p className={cn(
-                        "text-sm",
-                        isDarkMode ? "text-gray-400" : "text-gray-500"
-                    )}>
-                        Need help writing? Check out our <a
+                    <p
+                        className={cn(
+                            "text-sm",
+                            isDarkMode ? "text-gray-400" : "text-gray-500"
+                        )}
+                    >
+                        Need help writing? Check out our{" "}
+                        <a
                             href="/guides/how-to-write"
                             className={cn(
                                 "font-medium hover:underline",
@@ -232,6 +235,16 @@ function CreateBlogComponent() {
                             )}
                         >
                             writing guide
+                        </a>{" "}
+                        and{" "}
+                        <a
+                            href="/content-guidelines"
+                            className={cn(
+                                "font-medium hover:underline",
+                                isDarkMode ? "text-blue-400" : "text-blue-600"
+                            )}
+                        >
+                            content guidelines
                         </a>.
                     </p>
                 </div>
