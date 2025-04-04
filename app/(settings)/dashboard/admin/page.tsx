@@ -65,7 +65,7 @@ const OptimizedAdminDashboard = () => {
             </div>
         );
     }
-    if(!isAdminLoading && isAdmin) {
+    if(!isAdminLoading && !isAdmin) {
         return <UnauthorizedPage />;
     }
 
