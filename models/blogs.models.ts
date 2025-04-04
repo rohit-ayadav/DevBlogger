@@ -19,14 +19,14 @@ const blogSchema = new mongoose.Schema(
       type: String,
       required: true
     },
-    isPublic: {
-      type: Boolean,
-      default: false
-    },
     status: {
       type: String,
-      enum: ["draft", "published"],
+      enum: ["draft", "archived", "private", "pending_review", "rejected", "deleted", "approved"],
       default: "draft"
+    },
+    rejectedReason: {
+      type: String,
+      required: false
     },
     tags: {
       type: [String],

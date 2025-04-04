@@ -35,12 +35,12 @@ export async function POST(request: NextRequest) {
   if (!session) { return NextResponse.json({ message: "You need to be logged in to create a blog post", success: false }, { status: 401 }); }
   if (!session.user.email) { return NextResponse.json({ message: "You need to be logged in to create a blog post", success: false }, { status: 401 }); }
 
-  let { title, content, status, isPublic, tags, language, slug, thumbnail, thumbnailCredit, category } = body;
+  let { title, content, status, tags, language, slug, thumbnail, thumbnailCredit, category } = body;
 
   const { error } = blogSchema.validate({ title, content, status, tags, language });
 
   if (error) return NextResponse.json({ message: error.message, success: false }, { status: 400 });
-  
+
   slug = slug || title;
   slug = slug.trim()
     .toLowerCase()
@@ -61,7 +61,13 @@ export async function POST(request: NextRequest) {
     const existingBlog = await Blog.findOne({ slug });
     if (existingBlog) slug = `${slug}-${Date.now()}`;
 
-    const blogPost = { title: sanitizedTitle, content: sanitizedContent, status, tags: sanitizedTags, isPublic: isPublic ? isPublic : false, language, slug, thumbnail, thumbnailCredit, category: sanitizedCategory, createdBy: session.user.email };
+    const blogPost = {
+      title: sanitizedTitle,
+      content: sanitizedContent,
+      status: isAdmin && status === "pending_review" ? "approved" : status,
+      tags: sanitizedTags,
+      language, slug, thumbnail, thumbnailCredit, category: sanitizedCategory, createdBy: session.user.email
+    };
 
     // Save blog post
     const newBlogPost = new Blog(blogPost);
@@ -70,7 +76,7 @@ export async function POST(request: NextRequest) {
 
     await User.findOneAndUpdate({ email: session.user.email }, { $inc: { noOfBlogs: 1 } });
 
-    if (isAdmin && isPublic && status === "published") {
+    if (isAdmin && status === "pending_review" || status === "approved") {
       // Send notifications to subscribers
       const subscriptions = await Notification.find({});
       if (subscriptions.length) {
@@ -171,7 +177,7 @@ export async function GET(request: NextRequest) {
 
   try {
     if (!category || !email) {
-      const posts = await Blog.find({})
+      const posts = await Blog.find({ status: "approved" })
         .select(projection)
         .sort({ createdAt: -1, totalViews: -1 })
         .lean();
@@ -180,13 +186,13 @@ export async function GET(request: NextRequest) {
 
     const [authorPosts, relatedPosts] = await Promise.all([
       Blog.find({
-        createdBy: email, isPublic: true, status: "published",
+        createdBy: email, status: "approved",
       }, projection)
         .sort({ createdAt: -1, totalViews: -1 })
         .limit(limit + 1)
         .lean(),
       Blog.find({
-        category, isPublic: true, status: "published",
+        category, status: "approved:"
       }, projection)
         .sort({ createdAt: -1, totalViews: -1 })
         .limit(limit + 1)
@@ -194,7 +200,7 @@ export async function GET(request: NextRequest) {
     ]);
     if (!relatedPosts.length) {
       // find trending posts if no related posts found
-      const trendingPosts = await Blog.find({ isPublic: true, status: "published" })
+      const trendingPosts = await Blog.find({ status: "approved" })
         .sort({ totalViews: -1 })
         .limit(limit + 1)
         .lean();

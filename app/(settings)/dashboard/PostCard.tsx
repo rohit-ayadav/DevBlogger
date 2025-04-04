@@ -7,6 +7,7 @@ import { BlogPostType, UserType } from '@/types/blogs-types';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { formatCount } from '@/lib/common-function';
+import { renderStatusBadge } from '@/lib/renderStatusBadge';
 interface PostCardProps {
     post: BlogPostType;
     showStats?: boolean;
@@ -112,33 +113,7 @@ export const PostCard = ({ post, showStats = false, author }: PostCardProps) => 
             </Link>
 
             <div className="px-3 sm:px-5 py-3 border-t flex items-center justify-between">
-                {post.isPublic ? (
-                    <Badge
-                        variant="outline"
-                        className="text-xs sm:text-sm text-green-600 dark:text-green-400"
-                        title="This post is public and visible on the platform."
-                    >
-                        Public
-                    </Badge>
-                ) : (
-                    <Badge
-                        variant="outline"
-                        className="text-xs sm:text-sm text-red-600 dark:text-red-400"
-                        title="This post is private and not visible on the platform. Anyone with the link can view it."
-                    >
-                        Private
-                    </Badge>
-                )}
-                {post.status === 'draft' && (
-                    <Badge
-                        variant="outline"
-                        className="text-xs sm:text-sm text-yellow-600 dark:text-yellow-400"
-                        title="This post is a draft and will be automatically deleted in 7 days if not published."
-                    >
-                        Draft
-                    </Badge>
-                )}
-
+                {renderStatusBadge(post.status)}
                 <div className="flex items-center gap-2">
                     <Link
                         href={`/edit/${post.slug}`}

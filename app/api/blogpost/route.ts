@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     );
   }
   try {
-    const blogs = await Blog.find({ createdBy: id, isPublic: true, status: "published" })
+    const blogs = await Blog.find({ createdBy: id, status: "approved" })
       .select("-__v")
       .sort({ createdAt: -1 })
       .lean()

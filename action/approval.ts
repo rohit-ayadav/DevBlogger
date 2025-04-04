@@ -6,6 +6,8 @@ import serializeDocument from "@/utils/date-formatter";
 import sendEmail from "./email/SendEmail";
 import User from "@/models/users.models";
 import { BlogApproved, BlogRejected } from "@/utils/EmailTemplate/blog";
+import Notification from "@/models/notification.models";
+import webpush from "web-push";
 
 await connectDB();
 
@@ -19,7 +21,7 @@ interface Response {
     error: string | null;
 }
 
-const ApproveBlog = async (blogId: string, sendNotification: boolean): Promise<Response> => {
+const ApproveBlog = async (blogId: string, sendNotification: boolean, status: string, reason: string): Promise<Response> => {
     if (!blogId) {
         return {
             message: "",
@@ -39,19 +41,68 @@ const ApproveBlog = async (blogId: string, sendNotification: boolean): Promise<R
             };
         }
 
-        blog.isPublic = true;
-        await blog.save();
-        const AuthorName = await User.findOne({ email: blog.createdBy }).select("name").exec();
-        await sendEmail({
-            to: blog.createdBy,
-            subject: "Congratulations! Your Blog is Approved | DevBlogger",
-            message: BlogApproved(AuthorName, blog.title, `https://devblogger.com/blog/${blog.slug}`),
-        });
+        const Author = await User.findOne({ email: blog.createdBy }).select("name").exec();
+        const AuthorName = Author ? Author.name : "Author";
+        if (status === "published") {
+            blog.status = 'approved';
+            await blog.save();
+            await sendEmail({
+                to: blog.createdBy,
+                subject: "Congratulations! Your Blog is Approved | DevBlogger",
+                message: BlogApproved(AuthorName, blog.title, `https://devblogger.com/blog/${blog.slug}`),
+            });
 
-        return {
-            message: "Blog approved successfully",
-            error: null,
-        };
+            if (sendNotification) {
+                const subscriptions = await Notification.find({});
+                if (subscriptions.length) {
+                    const payload = {
+                        title: `New Blog Post: ${blog.title}`,
+                        body: `A new blog post "${blog.title}" has been published`,
+                        image: blog.thumbnail,
+                        icon: "/favicon.ico",
+                        tag: "new-blog-post",
+                        data: {
+                            url: `/blogs/${blog.slug}`
+                        },
+                        actions: [
+                            { action: "open", title: "Open" },
+                            { action: "close", title: "Dismiss" }
+                        ]
+                    };
+
+                    // Send notifications to all subscriptions
+                    const notificationPromises = subscriptions.map(({ subscription }) =>
+                        webpush
+                            .sendNotification(subscription, JSON.stringify(payload))
+                            .catch((error) => {
+                                console.error("Error sending notification:", error);
+                            })
+                    );
+                    await Promise.all(notificationPromises);
+                    await Notification.deleteMany({ active: false });
+                }
+            }
+
+            return {
+                message: `Blog approved successfully`,
+                error: null,
+            };
+        }
+        else {
+            blog.status = 'rejected';
+            await blog.save();
+            await sendEmail({
+                to: blog.createdBy,
+                subject: "Blog Rejected | DevBlogger",
+                message: BlogRejected("Author", blog.title, reason, `https://devblogger.com/dashboard`),
+            });
+
+            return {
+                message: "Blog rejected successfully",
+                error: null,
+            };
+        }
+
     } catch (error) {
         console.log("Error approving blog:", error);
         return {
@@ -63,7 +114,7 @@ const ApproveBlog = async (blogId: string, sendNotification: boolean): Promise<R
 
 const getPendingBlogs = async () => {
     try {
-        const blogs = await Blog.find({ isPublic: false, status: "published" });
+        const blogs = await Blog.find({ status: "pending_review" })
         if (!blogs || blogs.length === 0) {
             return {
                 message: "No pending blogs found",
@@ -86,44 +137,3 @@ const getPendingBlogs = async () => {
 }
 
 export { ApproveBlog, getPendingBlogs };
-export default ApproveBlog;
-
-const rejectBlog = async (blogId: string, reason: string): Promise<Response> => {
-    if (!blogId) {
-        return {
-            message: "",
-            error: "Blog ID is required",
-        };
-    }
-    const query: Query = isValidObjectId(blogId)
-        ? { _id: blogId }
-        : { slug: blogId };
-
-    try {
-        const blog = await Blog.findOne(query);
-        if (!blog) {
-            return {
-                message: "",
-                error: "Blog not found",
-            };
-        }
-
-        await sendEmail({
-            to: blog.createdBy,
-            subject: "Blog Rejected | DevBlogger",
-            message: BlogRejected("Author", blog.title, reason, `https://devblogger.com/dashboard`),
-        });
-
-        return {
-            message: "Blog rejected successfully",
-            error: null,
-        };
-    } catch (error) {
-        return {
-            message: "",
-            error: "An error occurred while rejecting the blog",
-        };
-    }
-}
-
-export { rejectBlog };

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ApproveBlog, getPendingBlogs, rejectBlog } from '@/action/approval';
+import { ApproveBlog, getPendingBlogs } from '@/action/approval';
 import { useToast } from '@/hooks/use-toast';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
@@ -70,7 +70,7 @@ const Approval = () => {
     const handleApprove = async (postId: string) => {
         setLoading(true);
         try {
-            const response = await ApproveBlog(postId, sendNotification);
+            const response = await ApproveBlog(postId, sendNotification, 'approved', '');
             if (response.error) {
                 setError(response.error);
                 toast({
@@ -110,7 +110,7 @@ const Approval = () => {
         setLoading(true);
         try {
             // You'll need to implement this backend function
-            const response = await rejectBlog(selectedPostId, rejectReason);
+            const response = await ApproveBlog(selectedPostId, sendNotification, 'rejected', rejectReason);
             if (response.error) {
                 setError(response.error);
                 toast({

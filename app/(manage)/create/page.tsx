@@ -5,7 +5,6 @@ import { toast } from 'react-hot-toast';
 import { useTheme } from '@/context/ThemeContext';
 import { cn } from "@/lib/utils";
 import DOMPurify from 'dompurify';
-import MarkdownIt from 'markdown-it';
 import { BlogState } from '@/types/blogs-types';
 import EditorCard from './component/EditorCard';
 import PageHeader from './component/PageHeader';
@@ -71,6 +70,7 @@ function CreateBlogComponent() {
         tags: [],
         category: '',
         blogId: '',
+        status: 'pending_review',
         tagAutoGen: false,
         editorMode: 'visual'
     }), [titleFromParams]);
@@ -156,8 +156,7 @@ function CreateBlogComponent() {
                     slug: sanitizer.slug(state.slug),
                     tags: state.tags.map(sanitizer.tags),
                     category: state.category,
-                    status: 'published',
-                    isPublic: false,
+                    status: state.status,
                     language: state.editorMode === 'markdown' ? 'markdown' : 'html',
                 };
 

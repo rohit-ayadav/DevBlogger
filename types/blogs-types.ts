@@ -4,8 +4,7 @@ type BlogPostType = {
   createdAt: string;
   updatedAt?: string;
   tags?: string[];
-  isPublic?: boolean;
-  status?: string;
+  status: 'draft' | 'archived' | 'private' | 'pending_review' | 'rejected' | 'deleted' | 'approved';
   content: string;
   createdBy: string;
   thumbnail?: string;
@@ -136,6 +135,7 @@ interface BlogState {
   tags: string[];
   category: string;
   blogId: string;
+  status: 'draft' | 'archived' | 'private' | 'pending_review' | 'rejected' | 'deleted' | 'approved';
   tagAutoGen: boolean;
   editorMode: 'markdown' | 'visual' | 'html';
 }

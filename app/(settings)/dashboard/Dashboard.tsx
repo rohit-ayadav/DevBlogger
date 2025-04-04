@@ -107,11 +107,7 @@ function AuthorDashboard({ user, blogs, monthlyStats }: AuthorDashboardProps) {
                         <TabsList className="grid grid-cols-3 w-full max-w-md">
                             <TabsTrigger value="overview">Overview</TabsTrigger>
                             <TabsTrigger value="analytics">Analytics</TabsTrigger>
-                            <TabsTrigger value="blogs">My Blogs</TabsTrigger>
-                            {/* <TabsTrigger value="author">Author</TabsTrigger> */}
-                            {/* {await isAdmin(session.user.email) && (
-                                <TabsTrigger value="admin">Admin</TabsTrigger>
-                            )} */}
+                            <TabsTrigger value="blogs">Manage Blogs</TabsTrigger>
                         </TabsList>
 
                         <Select value={timeframe} onValueChange={setTimeframe}>
@@ -141,11 +137,6 @@ function AuthorDashboard({ user, blogs, monthlyStats }: AuthorDashboardProps) {
                             />
                         </div>
                     </TabsContent>
-                    {/* <TabsContent value="author" className="mt-4 space-y-4 sm:space-y-6">
-                        <div className="w-full overflow-x-auto">
-                            <AuthorStats posts={blogs} monthlyStats={monthlyStats} />
-                        </div>
-                    </TabsContent> */}
                 </Tabs>
             </div>
         </div>
