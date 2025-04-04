@@ -114,6 +114,7 @@ export const PostCard = ({ post, showStats = false, author }: PostCardProps) => 
 
             <div className="px-3 sm:px-5 py-3 border-t flex items-center justify-between">
                 {renderStatusBadge(post.status)}
+                
                 <div className="flex items-center gap-2">
                     <Link
                         href={`/edit/${post.slug}`}

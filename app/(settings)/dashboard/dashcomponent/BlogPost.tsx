@@ -10,6 +10,10 @@ interface BlogPostProps {
     monthlyStats: { blog: string; month: string; views: number; likes: number }[];
 }
 
+// blog.status can be status: 'draft' | 'archived' | 'private' | 'pending_review' | 'rejected' | 'deleted' | 'approved';
+// future to do : add tabs for each status and user can filter by status
+// user have various option like send request to admin for blog post approval,
+
 const BlogPost = ({ blogs, monthlyStats }: BlogPostProps) => {
     const [search, setSearch] = React.useState('');
     const [category, setCategory] = React.useState('all');
