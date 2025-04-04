@@ -133,7 +133,10 @@ export async function DELETE(request: NextRequest) {
   if (blogPost.createdBy !== session?.user?.email) { return NextResponse.json({ message: "You are not authorized to delete this blog post", success: false }, { status: 403 }); }
 
   try {
-    await Blog.findByIdAndDelete(id);
+    const blog = await Blog.findOne({ _id: id });
+    blog.status = "deleted";
+    blog.deletedOn = new Date();
+    await blog.save();
     await User.findOneAndUpdate({ email: session?.user?.email }, { $inc: { noOfBlogs: -1 } });
 
     return NextResponse.json({ message: "Blog post deleted successfully", success: true }, { status: 200 });

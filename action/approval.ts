@@ -21,6 +21,12 @@ interface Response {
     error: string | null;
 }
 
+webpush.setVapidDetails(
+  "mailto:rohitkuyada@gmail.com",
+  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || "",
+  process.env.VAPID_PRIVATE_KEY || ""
+);
+
 const ApproveBlog = async (blogId: string, sendNotification: boolean, status: string, reason: string): Promise<Response> => {
     if (!blogId) {
         return {

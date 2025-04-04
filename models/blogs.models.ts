@@ -28,6 +28,14 @@ const blogSchema = new mongoose.Schema(
       type: String,
       required: false
     },
+    approvedBy: {
+      type: String,
+      required: false
+    },
+    deletedOn: {
+      type: Date,
+      required: false
+    },
     tags: {
       type: [String],
       required: true
