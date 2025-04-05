@@ -27,16 +27,16 @@ async function getPostData(id: string): Promise<ApiResponse> {
         let post;
 
         if (isValidObjectId(id)) {
-            post = await Blog.findById(id).lean().exec();
+            post = await Blog.findById(id).lean().exec() as BlogPostType;
         } else if (isValidSlug(id)) {
-            post = await Blog.findOne({ slug: id }).lean().exec();
+            post = await Blog.findOne({ slug: id }).lean().exec() as BlogPostType;
         }
 
-        if (!post) {
+        if (!post || Object.keys(post).length === 0 || ['draft', 'archived', 'deleted'].includes(post.status)) {
             return {
-                success: false,
-                statusCode: 404,
-                error: 'Blog post not found'
+            success: false,
+            statusCode: 404,
+            error: 'Blog post not found'
             };
         }
 
