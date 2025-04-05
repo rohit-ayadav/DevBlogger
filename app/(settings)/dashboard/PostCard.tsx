@@ -1,146 +1,199 @@
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Eye, ThumbsUp, Calendar } from 'lucide-react';
+import { Eye, ThumbsUp, Clock, MoreHorizontal, Edit, Trash2, BarChart2 } from 'lucide-react';
 import Link from 'next/link';
-import { BlogPostType, UserType } from '@/types/blogs-types';
+import { BlogPostType } from '@/types/blogs-types';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { formatCount } from '@/lib/common-function';
 import { renderStatusBadge } from '@/lib/renderStatusBadge';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { formatRelativeTime } from '@/utils/date-formatter';
+
 interface PostCardProps {
     post: BlogPostType;
     showStats?: boolean;
-    author?: UserType;
 }
 
-export const PostCard = ({ post, showStats = false, author }: PostCardProps) => {
+export const PostCard = ({ post, showStats = false }: PostCardProps) => {
     const router = useRouter();
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
+    const [isLoading, setIsLoading] = React.useState(false);
 
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-    };
-
-    const deletePost = async (e: React.MouseEvent, id: string) => {
-        e.preventDefault();
-        e.stopPropagation();
-
+    const deletePost = async () => {
+        setIsLoading(true);
         try {
-            if (window.confirm('Are you sure you want to delete this post?')) {
-                const response = await fetch(`/api/blog?id=${id}`, {
-                    method: 'DELETE',
-                });
-                const data = await response.json();
-                if (!response.ok) {
-                    throw new Error(data.message || 'An error occurred.');
-                } else {
-                    toast.success('Post deleted successfully');
-                    router.refresh();
-                }
+            const response = await fetch(`/api/blog?id=${post._id}`, {
+                method: 'DELETE',
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.message || 'An error occurred.');
+            } else {
+                toast.success('Post deleted successfully');
+                router.refresh();
             }
         } catch (error) {
             toast.error('An error occurred. Please try again.');
             console.error(error);
+        } finally {
+            setIsLoading(false);
+            setIsDeleteDialogOpen(false);
         }
     };
 
+    // Calculate read time (rough estimate based on word count)
+    const calculateReadTime = () => {
+        const text = post.content.replace(/<[^>]+>/g, '');
+        const wordCount = text.split(/\s+/).length;
+        const readTime = Math.max(1, Math.ceil(wordCount / 200)); // Assume 200 words per minute
+        return `${readTime} min read`;
+    };
+
+    const readTime = calculateReadTime();
+    const contentPreview = post.content.replace(/<[^>]+>/g, '').slice(0, 120);
+    const timeAgo = formatRelativeTime(new Date(post.createdAt));
+    const postStatus = post.status?.toLowerCase() || 'draft';
+
     return (
-        <Card className="h-full overflow-hidden flex flex-col hover:shadow-lg transition-shadow duration-300 group">
-            <Link href={`/blogs/${post.slug}`} className="flex-1 flex flex-col">
-                <div
-                    className="h-40 sm:h-48 w-full bg-gradient-to-br from-blue-500 to-indigo-600 group-hover:from-blue-600 group-hover:to-indigo-700 transition-all duration-300"
-                    style={{
-                        backgroundImage: post.thumbnail ? `url(${post.thumbnail})` : undefined,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center'
-                    }}
-                    aria-label={post.title}
-                    title='Click to view post'
-                />
-                <CardContent className="flex-1 flex flex-col p-3 sm:p-5">
-                    <div
-                        className="flex items-center justify-between mb-2"
-                    >
-                        <Badge
-                            variant="outline"
-                            className="capitalize text-xs"
-                            title={`Your blog belongs to ${post.category} category`}
+        <Card className="h-full overflow-hidden flex flex-col group transition-all duration-300 hover:border-primary/40 hover:shadow-lg">
+            <Link href={`/blogs/${post.slug}`} className="flex-1 flex flex-col outline-none focus-visible:ring-2 focus-visible:ring-primary">
+                <div className="relative aspect-video w-full overflow-hidden bg-muted">
+                    {post.thumbnail ? (
+                        <img
+                            src={post.thumbnail}
+                            alt={post.title}
+                            className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+                        />
+                    ) : (
+                        <div
+                            className="h-full w-full bg-gradient-to-br from-blue-500 to-indigo-600 group-hover:from-blue-600 group-hover:to-indigo-700 transition-all duration-300 flex items-center justify-center"
+                            aria-label={post.title}
                         >
-                            {post.category}
+                            <span className="text-white font-medium opacity-60">No thumbnail</span>
+                        </div>
+                    )}
+
+                    {/* Category and status badges */}
+                    <div className="absolute top-0 left-0 p-3 w-full flex items-center justify-between">
+                        <Badge
+                            variant="secondary"
+                            className="capitalize text-xs font-medium px-2.5 py-1 bg-opacity-80 backdrop-blur-sm shadow-sm"
+                        >
+                            {post.category || 'Uncategorized'}
                         </Badge>
-                        <span className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1"
-                            title={`Created on ${formatDate(post.createdAt)}`}>
-                            <Calendar className="h-3 w-3" />
-                            {formatDate(post.createdAt)}
-                        </span>
+
+                        {renderStatusBadge(post.status)}
                     </div>
-                    <h3
-                        className="text-base sm:text-lg font-semibold mb-2 text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2"
-                        title="Click to read the full post"
-                    >
+                </div>
+
+                <CardContent className="flex-1 flex flex-col p-4 sm:p-5">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2.5">
+                        <div className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            <span>{timeAgo}</span>
+                        </div>
+                        <span className="text-muted-foreground">•</span>
+                        <div title="Estimated reading time">
+                            <span>{readTime}</span>
+                        </div>
+                    </div>
+
+                    <h3 className="text-lg font-semibold mb-2.5 group-hover:text-primary transition-colors line-clamp-2">
                         {post.title}
                     </h3>
-                    <p
-                        className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 line-clamp-3 mb-2 sm:mb-4 flex-1"
-                        title="This is a preview of the post content"
-                    >
-                        {post.content.replace(/<[^>]+>/g, '').slice(0, 120) + (post.content.length > 120 ? '...' : '')}
+
+                    <p className="text-sm text-muted-foreground line-clamp-3 mb-4 flex-1">
+                        {contentPreview}{contentPreview.length < post.content.length ? '...' : ''}
                     </p>
 
                     {showStats && (
-                        <div
-                            className="grid grid-cols-2 gap-2 mt-auto"
-                            title="Hover over the icons to see the stats"
-                        >
-                            <div
-                                className="flex items-center gap-1 text-gray-600 dark:text-gray-400"
-                                title="Total views for this post"
-                            >
-                                <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
-                                <span className="text-xs sm:text-sm font-medium">{formatCount(post.views || 0)}{' view' + (post.views !== 1 ? 's' : '')}</span>
+                        <div className="flex items-center justify-between mt-auto">
+                            <div className="flex items-center gap-6 mt-auto">
+                                <div className="flex items-center gap-1.5 text-muted-foreground" title="Total views">
+                                    <Eye className="h-4 w-4" />
+                                    <span className="text-sm">{formatCount(post.views || 0)}</span>
+                                </div>
+                                <div className="flex items-center gap-1.5 text-muted-foreground" title="Total likes">
+                                    <ThumbsUp className="h-4 w-4" />
+                                    <span className="text-sm">{formatCount(post.likes || 0)}</span>
+                                </div>
                             </div>
-                            <div
-                                className="flex items-center gap-1 text-gray-600 dark:text-gray-400"
-                                title="Total likes for this post"
-                            >
-                                <ThumbsUp className="h-3 w-3 sm:h-4 sm:w-4" />
-                                <span className="text-xs sm:text-sm font-medium">{formatCount(post.likes || 0)}{' like' + (post.likes !== 1 ? 's' : '')}</span>
-                            </div>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="sm" className="h-8 px-2" aria-label="Post actions">
+                                        <MoreHorizontal className="h-4 w-4" />
+                                        <span className="ml-2 text-sm">Actions</span>
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-48">
+                                    <DropdownMenuItem asChild>
+                                        <Link href={`/edit/${post.slug}`} className="flex items-center cursor-pointer">
+                                            <Edit className="mr-2 h-4 w-4" />
+                                            <span>Edit Post</span>
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem asChild>
+                                        <Link href={`/stats/${post.slug}`} className="flex items-center cursor-pointer">
+                                            <BarChart2 className="mr-2 h-4 w-4" />
+                                            <span>View Statistics</span>
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem
+                                        className="text-destructive focus:text-destructive cursor-pointer"
+                                        onClick={() => setIsDeleteDialogOpen(true)}
+                                    >
+                                        <Trash2 className="mr-2 h-4 w-4" />
+                                        <span>Delete Post</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         </div>
                     )}
                 </CardContent>
             </Link>
 
-            <div className="px-3 sm:px-5 py-3 border-t flex items-center justify-between">
-                {renderStatusBadge(post.status)}
-                
-                <div className="flex items-center gap-2">
-                    <Link
-                        href={`/edit/${post.slug}`}
-                        onClick={(e) => e.stopPropagation()}
-                        className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:underline"
-                        title="Click to edit this post"
-                    >
-                        Edit
-                    </Link>
-                    <button
-                        className="text-xs sm:text-sm text-red-600 dark:text-red-400 hover:underline"
-                        onClick={(e) => deletePost(e, post._id)}
-                        title="Click to delete this post"
-                    >
-                        Delete
-                    </button>
-                    <Link
-                        href={`/stats/${post.slug}`}
-                        onClick={(e) => e.stopPropagation()}
-                        className="text-xs sm:text-sm text-green-600 dark:text-green-400 hover:underline"
-                        title="Click to view stats for this post"
-                    >
-                        Stats
-                    </Link>
-                </div>
-            </div>
-        </Card >
+            {/* Delete Confirmation Dialog */}
+            <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure you want to delete this post?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete the blog post
+                            "{post.title}" and remove all associated data.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={deletePost}
+                            className="bg-destructive hover:bg-destructive/90"
+                            disabled={isLoading}
+                        >
+                            {isLoading ? 'Deleting...' : 'Delete'}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+        </Card>
     );
 };

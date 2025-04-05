@@ -32,7 +32,7 @@ async function getPostData(id: string): Promise<ApiResponse> {
             post = await Blog.findOne({ slug: id }).lean().exec();
         }
 
-        if (!post || (Array.isArray(post) ? post[0]?.status !== 'published' : post.status !== 'published')) {
+        if (!post) {
             return {
                 success: false,
                 statusCode: 404,

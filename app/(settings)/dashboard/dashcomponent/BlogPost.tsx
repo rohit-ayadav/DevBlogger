@@ -1,24 +1,50 @@
-import React, { useEffect, useMemo } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import React, { useEffect, useMemo, useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { BlogPostType } from '@/types/blogs-types';
 import { PostCard } from '../PostCard';
 import { CATEGORIES } from '@/types/blogs-types';
+import { Search, Filter, SortDesc, PlusCircle } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 interface BlogPostProps {
     blogs: BlogPostType[];
     monthlyStats: { blog: string; month: string; views: number; likes: number }[];
 }
 
-// blog.status can be status: 'draft' | 'archived' | 'private' | 'pending_review' | 'rejected' | 'deleted' | 'approved';
-// future to do : add tabs for each status and user can filter by status
-// user have various option like send request to admin for blog post approval,
+const BLOG_STATUSES = [
+    { value: 'all', label: 'All Posts' },
+    { value: 'approved', label: 'Published' },
+    { value: 'draft', label: 'Drafts' },
+    { value: 'pending_review', label: 'Pending Review' },
+    { value: 'rejected', label: 'Rejected' },
+    { value: 'archived', label: 'Archived' },
+    { value: 'private', label: 'Private' },
+    { value: 'deleted', label: 'Trash' }
+];
 
 const BlogPost = ({ blogs, monthlyStats }: BlogPostProps) => {
-    const [search, setSearch] = React.useState('');
-    const [category, setCategory] = React.useState('all');
-    const [sortBlogs, setSortBlogs] = React.useState('recent');
-    const [filteredBlogs, setFilteredBlogs] = React.useState<BlogPostType[]>(blogs);
+    const [search, setSearch] = useState('');
+    const [category, setCategory] = useState('all');
+    const [sortBlogs, setSortBlogs] = useState('recent');
+    const [activeStatus, setActiveStatus] = useState('all');
+    const [filteredBlogs, setFilteredBlogs] = useState<BlogPostType[]>(blogs);
+    const [isFilterExpanded, setIsFilterExpanded] = useState(false);
+
+    // Count blogs by status for badge counters
+    const statusCounts = useMemo(() => {
+        const counts: Record<string, number> = { all: blogs.length };
+
+        blogs.forEach(blog => {
+            const status = blog.status || 'draft';
+            counts[status] = (counts[status] || 0) + 1;
+        });
+
+        return counts;
+    }, [blogs]);
 
     const sortedBlogs = useMemo(() => {
         return [...blogs].sort((a, b) => {
@@ -35,87 +61,156 @@ const BlogPost = ({ blogs, monthlyStats }: BlogPostProps) => {
 
     useEffect(() => {
         const filtered = sortedBlogs.filter(post => {
-            const matchesSearch = post.title.toLowerCase().includes(search.toLowerCase());
+            const matchesSearch = post.title.toLowerCase().includes(search.toLowerCase()) ||
+                (post.content && post.content.toLowerCase().includes(search.toLowerCase()));
             const matchesCategory = category === 'all' || post.category === category;
-            return matchesSearch && matchesCategory;
+            const matchesStatus = activeStatus === 'all' || post.status === activeStatus;
+            return matchesSearch && matchesCategory && matchesStatus;
         });
 
         setFilteredBlogs(filtered);
-    }, [search, category, sortBlogs]);
+    }, [search, category, sortBlogs, activeStatus, sortedBlogs]);
 
     return (
         <div className="w-full">
-            <Card className="border-0 shadow-lg">
-                <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between space-y-2 sm:space-y-0">
-                    <div>
-                        <CardTitle>My Blog Posts</CardTitle>
-                        <CardDescription>
-                            All your published blog posts
-                        </CardDescription>
-                    </div>
-                    {/* Search bar */}
-                    <input
-                        type="text"
-                        placeholder="Search posts"
-                        className="w-full sm:w-[300px] px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-200"
-                        value={search}
-                        onChange={e => setSearch(e.target.value)}
-                    />
+            <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight">Blog Dashboard</h1>
+                    <p className="text-muted-foreground mt-1">Manage and monitor all your blog posts</p>
+                </div>
+                <Button className="flex items-center gap-2" onClick={() => window.location.href = '/create'}>
+                    <PlusCircle size={16} />
+                    <span>Create New Post</span>
+                </Button>
+            </div>
 
-                    {/* Filter by category */}
-                    <Select value="all" onValueChange={setCategory}>
-                        <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Filter by category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {CATEGORIES.map(category => (
-                                <SelectItem key={category.value} value={category.value}>{category.label}</SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+            <Card className="border shadow-sm">
+                <CardHeader className="pb-0">
+                    <Tabs defaultValue="all" value={activeStatus} onValueChange={setActiveStatus} className="w-full">
+                        <div className="overflow-x-auto pb-2">
+                            <TabsList className="h-auto p-1">
+                                {BLOG_STATUSES.map(status => (
+                                    <TabsTrigger key={status.value} value={status.value} className="flex items-center gap-2 py-2">
+                                        {status.label}
+                                        <Badge variant="secondary" className="ml-1 px-1.5 py-0.5 text-xs">
+                                            {statusCounts[status.value] || 0}
+                                        </Badge>
+                                    </TabsTrigger>
+                                ))}
+                            </TabsList>
+                        </div>
 
-                    {/* Sort by */}
-                    <Select value={sortBlogs} onValueChange={setSortBlogs}>
-                        <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Sort by" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="recent">Most Recent</SelectItem>
-                            <SelectItem value="popular">Most Popular</SelectItem>
-                            <SelectItem value="liked">Most Liked</SelectItem>
-                        </SelectContent>
-                    </Select>
+                        <div className="mt-4 flex flex-col md:flex-row justify-between gap-3">
+                            <div className="relative">
+                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                <Input
+                                    type="text"
+                                    placeholder="Search posts by title or content..."
+                                    className="pl-9 w-full md:w-80"
+                                    value={search}
+                                    onChange={e => setSearch(e.target.value)}
+                                />
+                            </div>
+
+                            <div className="flex flex-col sm:flex-row gap-3">
+                                <Button
+                                    variant="outline"
+                                    className="flex items-center gap-2"
+                                    onClick={() => setIsFilterExpanded(!isFilterExpanded)}
+                                >
+                                    <Filter size={16} />
+                                    <span>Filters</span>
+                                </Button>
+
+                                <Select value={sortBlogs} onValueChange={setSortBlogs}>
+                                    <SelectTrigger className="w-full sm:w-[180px]">
+                                        <div className="flex items-center gap-2">
+                                            <SortDesc size={16} />
+                                            <SelectValue placeholder="Sort by" />
+                                        </div>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="recent">Most Recent</SelectItem>
+                                        <SelectItem value="popular">Most Popular</SelectItem>
+                                        <SelectItem value="liked">Most Liked</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+
+                        {isFilterExpanded && (
+                            <div className="mt-4 p-4 bg-muted/30 rounded-md">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="text-sm font-medium mb-1 block">Category</label>
+                                        <Select value={category} onValueChange={setCategory}>
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Filter by category" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {CATEGORIES.map(category => (
+                                                    <SelectItem key={category.value} value={category.value}>{category.label}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div>
+                                        <label className="text-sm font-medium mb-1 block">Date Range</label>
+                                        <Select defaultValue="all-time">
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select time range" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="all-time">All Time</SelectItem>
+                                                <SelectItem value="this-month">This Month</SelectItem>
+                                                <SelectItem value="last-month">Last Month</SelectItem>
+                                                <SelectItem value="this-year">This Year</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {BLOG_STATUSES.map(status => (
+                            <TabsContent key={status.value} value={status.value} className="mt-6">
+                                {filteredBlogs.length === 0 ? (
+                                    <div className="text-center py-12 bg-muted/30 rounded-lg">
+                                        <h3 className="text-lg font-medium mb-2">No blog posts found</h3>
+                                        <p className="text-muted-foreground mb-4">
+                                            {search ? 'No posts match your search criteria.' : `You don't have any ${status.label.toLowerCase()} yet.`}
+                                        </p>
+                                        {status.value === 'draft' && (
+                                            <Button variant="outline" onClick={() => window.location.href = '/create'} className="flex items-center gap-2">
+                                                <PlusCircle size={16} className="mr-2" />
+                                                Create a new draft
+                                            </Button>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+                                        {filteredBlogs.map((post: BlogPostType) => {
+                                            const postStats = monthlyStats.filter(stat => stat.blog === post._id);
+                                            const totalViews = postStats.reduce((sum, stat) => sum + stat.views, 0);
+                                            const totalLikes = postStats.reduce((sum, stat) => sum + stat.likes, 0);
+
+                                            const enhancedPost = {
+                                                ...post,
+                                                views: totalViews,
+                                                likes: totalLikes
+                                            };
+
+                                            return <PostCard key={post._id} post={enhancedPost} showStats={true} />;
+                                        })}
+                                    </div>
+                                )}
+                            </TabsContent>
+                        ))}
+                    </Tabs>
                 </CardHeader>
-                <CardContent>
-                    {filteredBlogs.length === 0 ? (
-                        <div className="text-center py-8">
-                            <p className="text-gray-500 dark:text-gray-400">You haven't published any blog posts yet.</p>
-                        </div>
-                    ) : filteredBlogs.length === 0 ? (
-                        <div className="text-center py-8">
-                            <p className="text-gray-500 dark:text-gray-400">No blogs match your current filter. Try changing your sort option.</p>
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-                            {filteredBlogs.map((post: BlogPostType) => {
-                                const postStats = monthlyStats.filter(stat => stat.blog === post._id);
-                                const totalViews = postStats.reduce((sum, stat) => sum + stat.views, 0);
-                                const totalLikes = postStats.reduce((sum, stat) => sum + stat.likes, 0);
-
-                                const enhancedPost = {
-                                    ...post,
-                                    views: totalViews,
-                                    likes: totalLikes
-                                };
-
-                                return <PostCard key={post._id} post={enhancedPost} showStats={true} />;
-                            })}
-                        </div>
-                    )}
-                </CardContent>
             </Card>
         </div>
-    )
-}
+    );
+};
 
-export default BlogPost
+export default BlogPost;
