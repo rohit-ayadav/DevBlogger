@@ -5,6 +5,9 @@ type BlogPostType = {
   updatedAt?: string;
   tags?: string[];
   status: 'draft' | 'archived' | 'private' | 'pending_review' | 'rejected' | 'deleted' | 'approved';
+  rejectedReason?: string;
+  approvedBy?: string;
+  deletedOn?: string;
   content: string;
   createdBy: string;
   thumbnail?: string;
