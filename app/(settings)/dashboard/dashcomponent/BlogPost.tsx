@@ -211,6 +211,16 @@ const BlogPost = () => {
                                 </div>
                             </div>
                         )}
+                        {/* {loading && (
+                            <div className="flex items-center justify-center py-4">
+                                <div className="animate-spin h-5 w-5 border-4 border-blue-500 rounded-full border-t-transparent"></div>
+                            </div>
+                        )} */}
+                        {error && (
+                            <div className="text-red-500 text-center py-4">
+                                {error}
+                            </div>
+                        )}
 
                         {BLOG_STATUSES.map(status => (
                             <TabsContent key={status.value} value={status.value} className={`mt-6 ${loading || refreshing ? 'opacity-50 pointer-events-none' : ''}`}>

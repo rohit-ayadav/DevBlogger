@@ -109,7 +109,6 @@ const Approval = () => {
 
         setLoading(true);
         try {
-            // You'll need to implement this backend function
             const response = await ApproveBlog(selectedPostId, sendNotification, 'rejected', rejectReason);
             if (response.error) {
                 setError(response.error);

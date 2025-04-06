@@ -131,10 +131,7 @@ function AuthorDashboard({ user, blogs, monthlyStats }: AuthorDashboardProps) {
 
                     <TabsContent value="blogs" className="mt-4 space-y-4 sm:space-y-6">
                         <div className="w-full overflow-x-auto">
-                            <BlogPost
-                                blogs={blogs}
-                                monthlyStats={monthlyStats}
-                            />
+                            <BlogPost />
                         </div>
                     </TabsContent>
                 </Tabs>
