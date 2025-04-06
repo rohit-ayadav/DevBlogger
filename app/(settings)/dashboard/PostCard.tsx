@@ -35,6 +35,7 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { formatRelativeTime } from '@/utils/date-formatter';
+import { handleFromUserDashboard } from '@/action/approval';
 
 interface PostCardProps {
     post: BlogPostType;
@@ -67,25 +68,16 @@ export const PostCard = ({ post, showStats = false }: PostCardProps) => {
         setActionType(action);
 
         try {
-            const response = await fetch(`/api/blog/${action}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ id: post._id }),
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || 'An error occurred.');
-            } else {
-                toast.success(successMessage);
-                router.refresh();
+            const { message, error } = await handleFromUserDashboard(action, post._id || post.slug);
+            if (error) {
+                toast.error(error);
+                return;
             }
+            toast.success(successMessage);
+            router.refresh();
         } catch (error) {
-            toast.error('An error occurred. Please try again.');
-            console.error(error);
+            const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+            toast.error(errorMessage);
         } finally {
             setIsLoading(false);
             closeAllDialogs();
@@ -141,7 +133,7 @@ export const PostCard = ({ post, showStats = false }: PostCardProps) => {
     const calculateReadTime = () => {
         const text = post.content.replace(/<[^>]+>/g, '');
         const wordCount = text.split(/\s+/).length;
-        const readTime = Math.max(1, Math.ceil(wordCount / 200)); 
+        const readTime = Math.max(1, Math.ceil(wordCount / 200));
         return `${readTime} min read`;
     };
 
@@ -228,12 +220,12 @@ export const PostCard = ({ post, showStats = false }: PostCardProps) => {
                     ) : (
                         <div
                             className={`h-full w-full bg-gradient-to-br ${isDeleted ? 'from-gray-500 to-gray-700' :
-                                    isRejected ? 'from-red-500/50 to-red-700/50' :
-                                        isArchived ? 'from-blue-400/50 to-blue-600/50' :
-                                            isDraft ? 'from-amber-300 to-amber-500' :
-                                                isPrivate ? 'from-purple-400 to-purple-600' :
-                                                    isPendingApproval ? 'from-yellow-400 to-yellow-600' :
-                                                        'from-blue-500 to-indigo-600 group-hover:from-blue-600 group-hover:to-indigo-700'
+                                isRejected ? 'from-red-500/50 to-red-700/50' :
+                                    isArchived ? 'from-blue-400/50 to-blue-600/50' :
+                                        isDraft ? 'from-amber-300 to-amber-500' :
+                                            isPrivate ? 'from-purple-400 to-purple-600' :
+                                                isPendingApproval ? 'from-yellow-400 to-yellow-600' :
+                                                    'from-blue-500 to-indigo-600 group-hover:from-blue-600 group-hover:to-indigo-700'
                                 } transition-all duration-300 flex items-center justify-center`}
                             aria-label={post.title}
                         >
@@ -294,8 +286,8 @@ export const PostCard = ({ post, showStats = false }: PostCardProps) => {
                     </div>
 
                     <h3 className={`text-lg font-semibold mb-2.5 ${!isDeleted && !isRejected && !isArchived ? 'group-hover:text-primary' :
-                            isDeleted ? 'text-muted-foreground' :
-                                isArchived ? 'text-blue-700' : ''
+                        isDeleted ? 'text-muted-foreground' :
+                            isArchived ? 'text-blue-700' : ''
                         } transition-colors line-clamp-2`}>
                         {post.title}
                     </h3>
