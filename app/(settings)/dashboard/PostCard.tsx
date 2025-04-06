@@ -150,12 +150,12 @@ export const PostCard = ({ post, showStats = false }: PostCardProps) => {
             <div className="absolute inset-0 bg-black/70 backdrop-blur-sm flex flex-col items-center justify-center p-4 z-10">
                 {isRejected && (
                     <>
-                        <AlertCircle className="h-10 w-10 text-destructive mb-3" />
-                        <h4 className="text-white font-semibold text-lg mb-2">Post Rejected</h4>
+                        <AlertCircle className="h-10 w-10 text-red-500 mb-3" />
+                        <h4 className="text-gray-100 font-semibold text-lg mb-2">Post Rejected</h4>
                         <Button
-                            variant="outline"
+                            variant="link"
                             size="sm"
-                            className="text-white border-white hover:bg-white/20"
+                            className="text-red-400 hover:text-red-300 hover:underline"
                             onClick={() => setIsRejectionDetailsOpen(true)}
                         >
                             View Rejection Details
