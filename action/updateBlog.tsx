@@ -100,6 +100,7 @@ export async function updateBlog(Post: UpdatePostType) {
                 error: "Slug is already taken"
             }
         }
+        
         blog.title = Post.title;
         blog.content = Post.content;
         blog.thumbnail = Post.thumbnail;

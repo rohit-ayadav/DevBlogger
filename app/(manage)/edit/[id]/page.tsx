@@ -2,27 +2,11 @@ import { connectDB } from "@/utils/db";
 import Blog from "@/models/blogs.models";
 import { isValidObjectId } from "mongoose";
 import { isValidSlug } from "@/lib/common-function";
-import EditBlogComponent from "./editBlog";
 import { ErrorMessage } from "@/lib/ErrorMessage";
+import EditBlogComponent from "./EditComponent";
+import { EditBlogState } from "@/types/blogs-types";
 
 await connectDB();
-interface EditBlogState {
-    success: boolean;
-    error: string;
-    isInitializing: boolean;
-    isLoading: boolean;
-    title: string;
-    thumbnail: string | null;
-    thumbnailCredit: string | null;
-    htmlContent: string;
-    markdownContent: string;
-    tags: string[];
-    category: string;
-    blogId: string;
-    createdBy: string;
-    editorMode: 'markdown' | 'visual' | 'html';
-    slug: string;
-}
 
 async function getBlogData(id: string): Promise<EditBlogState> {
     const nullresponse = {
@@ -37,13 +21,16 @@ async function getBlogData(id: string): Promise<EditBlogState> {
         markdownContent: "",
         tags: [],
         category: "",
+        status: "draft",
         blogId: "",
         createdBy: "",
         editorMode: "markdown" as 'markdown' | 'visual' | 'html',
         slug: "",
+        tagAutoGen: false,
     };
+
     if (!id) {
-        return { ...nullresponse, error: "Blog id required to edit the blog..." }
+        return { ...nullresponse, error: "Blog id required to edit the blog...", status: "draft" as 'draft' }
     }
 
     try {
@@ -53,7 +40,7 @@ async function getBlogData(id: string): Promise<EditBlogState> {
                 ? await Blog.findOne({ slug: id })
                 : null;
 
-        if (!post) return { ...nullresponse, error: "Blog post not found, please check the id..." };
+        if (!post) return { ...nullresponse, error: "Blog post not found, please check the id...", status: "draft" as 'draft' };
 
         return {
             success: true,
@@ -67,14 +54,16 @@ async function getBlogData(id: string): Promise<EditBlogState> {
             markdownContent: post.language === "markdown" ? post.content : "",
             tags: post.tags,
             category: post.category,
+            status: post.status,
             blogId: post._id.toString(),
             createdBy: post.createdBy,
             editorMode: post.language as 'markdown' | 'visual' | 'html',
             slug: post.slug,
+            tagAutoGen: post.tagAutoGen,
         };
     } catch (error) {
         console.error("Error fetching blog post data:", error);
-        return nullresponse;
+        return { ...nullresponse, status: "draft" };
     }
 }
 
@@ -93,5 +82,5 @@ export default async function EditPost({ params }: { params: { id: string } }) {
     if (!blogData.success) {
         return <ErrorMessage message={blogData.error || "Something went wrong"} />;
     }
-    return <EditBlogComponent {...blogData} />;
+    return <EditBlogComponent BlogData={blogData} />;
 }

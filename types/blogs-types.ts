@@ -1,3 +1,5 @@
+import DOMPurify from 'dompurify';
+
 type BlogPostType = {
   _id: string;
   title: string;
@@ -144,20 +146,23 @@ interface BlogState {
 }
 
 export interface EditBlogState {
+  success: boolean;
+  error: string | null;
   isInitializing: boolean;
   isLoading: boolean;
-  error: string | null;
   title: string;
   thumbnail: string | null;
   thumbnailCredit: string | null;
   htmlContent: string;
   markdownContent: string;
   tags: string[];
+  status: 'draft' | 'archived' | 'private' | 'pending_review' | 'rejected' | 'deleted' | 'approved';
   category: string;
   blogId: string;
   createdBy: string;
   editorMode: 'markdown' | 'visual' | 'html';
   slug: string;
+  tagAutoGen: boolean;
 }
 
 export interface stateType {

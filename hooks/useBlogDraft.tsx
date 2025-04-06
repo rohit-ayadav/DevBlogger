@@ -1,7 +1,5 @@
 import { BlogState } from "@/types/blogs-types";
 import React from "react";
-
-
 interface DraftData {
     title: string;
     thumbnail: string | null;
@@ -25,7 +23,6 @@ const DRAFT_STORAGE_KEY = 'blogDraft';
 
 const useBlogDraft = (initialState: BlogState) => {
     const [state, setState] = React.useState<BlogState>(initialState);
-    const [loading, setLoading] = React.useState(false);
 
     const updateState = React.useCallback((updates: Partial<BlogState>) => {
         setState(prev => ({ ...prev, ...updates }));
@@ -82,6 +79,5 @@ const useBlogDraft = (initialState: BlogState) => {
 
     return { state, updateState, loadDraft, saveDraft };
 };
-
 
 export default useBlogDraft;

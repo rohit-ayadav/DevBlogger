@@ -20,6 +20,7 @@ interface EditorCardProps {
     clearForm: () => void;
     className?: string;
     isCompact?: boolean;
+    isEdit?: boolean;
 }
 interface EditorMode {
     editorMode: 'markdown' | 'visual' | 'html';
@@ -33,7 +34,8 @@ const EditorCard: React.FC<EditorCardProps> = ({
     isDarkMode,
     clearForm,
     className,
-    isCompact = false
+    isCompact = false,
+    isEdit = false
 }) => {
     const getContent = useCallback(() =>
         state.editorMode === 'markdown' ? state.markdownContent : state.htmlContent,
@@ -49,7 +51,6 @@ const EditorCard: React.FC<EditorCardProps> = ({
         updateState({ editorMode });
     }, [updateState]);
 
-    // Improved dynamic spacing with more responsive breakpoints
     const sectionSpacing = isCompact ? "space-y-3 sm:space-y-4" : "space-y-4 sm:space-y-6 md:space-y-8";
     const padding = isCompact
         ? "p-3 sm:p-4"
@@ -139,7 +140,7 @@ const EditorCard: React.FC<EditorCardProps> = ({
                         handleSubmit={handleSubmit}
                         isDarkMode={isDarkMode}
                         clearDraft={clearForm}
-                        mode="create"
+                        mode={isEdit ? "edit" : "create"}
                     />
                 </div>
             </CardContent>
