@@ -8,7 +8,6 @@ import Header from './dashcomponent/Header';
 import Overview from './dashcomponent/Overview';
 import Analytics from './dashcomponent/Analytics';
 import BlogPost from './dashcomponent/BlogPost';
-import { isAdmin } from '@/action/my-profile-action';
 interface AuthorDashboardProps {
     user: UserType;
     blogs: BlogPostType[];

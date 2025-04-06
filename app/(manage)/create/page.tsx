@@ -173,7 +173,10 @@ function CreateBlogComponent() {
                 localStorage.removeItem(DRAFT_STORAGE_KEY);
                 toast.success('Blog post created successfully');
                 clearForm();
-                router.push(`/blogs/${data.data.id}`);
+                if (state.status === 'draft')
+                    router.push(`/dashboard?tab=posts`);
+                else
+                    router.push(`/blogs/${data.data.id}`);
             } catch (error) {
                 const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
                 updateState({ error: errorMessage });
