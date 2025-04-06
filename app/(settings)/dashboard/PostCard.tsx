@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Eye, ThumbsUp, Clock, MoreHorizontal, Edit, Trash2, BarChart2, AlertCircle, Info, Archive, Globe, Lock, Send, Undo2, AlertTriangle } from 'lucide-react';
@@ -36,13 +36,15 @@ import {
 } from '@/components/ui/tooltip';
 import { formatRelativeTime } from '@/utils/date-formatter';
 import { handleFromUserDashboard } from '@/action/approval';
+import { fetchAuthorData } from '@/action/personalDashboardData';
 
 interface PostCardProps {
     post: BlogPostType;
     showStats?: boolean;
+    refreshData?: () => void;
 }
 
-export const PostCard = ({ post, showStats = false }: PostCardProps) => {
+export const PostCard = ({ post, showStats = false, refreshData }: PostCardProps) => {
     const router = useRouter();
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
     const [isPermanentDeleteDialogOpen, setIsPermanentDeleteDialogOpen] = React.useState(false);
@@ -51,6 +53,7 @@ export const PostCard = ({ post, showStats = false }: PostCardProps) => {
     const [isArchiveDialogOpen, setIsArchiveDialogOpen] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
     const [actionType, setActionType] = React.useState<string>('');
+
 
     // Status checks
     const postStatus = post.status?.toLowerCase() || 'draft';
@@ -61,6 +64,7 @@ export const PostCard = ({ post, showStats = false }: PostCardProps) => {
     const isPublished = postStatus === 'published';
     const isArchived = postStatus === 'archived';
     const isPendingApproval = postStatus === 'pending';
+
 
     // API requests
     const handlePostAction = async (action: string, successMessage: string) => {
@@ -81,6 +85,7 @@ export const PostCard = ({ post, showStats = false }: PostCardProps) => {
         } finally {
             setIsLoading(false);
             closeAllDialogs();
+            refreshData && refreshData();
         }
     };
 

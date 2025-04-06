@@ -49,7 +49,7 @@ const ApproveBlog = async (blogId: string, sendNotification: boolean, status: st
 
         const Author = await User.findOne({ email: blog.createdBy }).select("name").exec();
         const AuthorName = Author ? Author.name : "Author";
-        if (status === "published") {
+        if (status === "approved") {
             blog.status = 'approved';
             await blog.save();
             await sendEmail({

@@ -7,13 +7,9 @@ import { Button } from '@/components/ui/button';
 import { BlogPostType } from '@/types/blogs-types';
 import { PostCard } from '../PostCard';
 import { CATEGORIES } from '@/types/blogs-types';
-import { Search, Filter, SortDesc, PlusCircle } from 'lucide-react';
+import { Search, Filter, SortDesc, PlusCircle, RefreshCcw } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-
-interface BlogPostProps {
-    blogs: BlogPostType[];
-    monthlyStats: { blog: string; month: string; views: number; likes: number }[];
-}
+import { fetchAuthorData } from '@/action/personalDashboardData';
 
 const BLOG_STATUSES = [
     { value: 'all', label: 'All Posts' },
@@ -26,13 +22,21 @@ const BLOG_STATUSES = [
     { value: 'deleted', label: 'Trash' }
 ];
 
-const BlogPost = ({ blogs, monthlyStats }: BlogPostProps) => {
+const BlogPost = () => {
     const [search, setSearch] = useState('');
     const [category, setCategory] = useState('all');
     const [sortBlogs, setSortBlogs] = useState('recent');
     const [activeStatus, setActiveStatus] = useState('all');
-    const [filteredBlogs, setFilteredBlogs] = useState<BlogPostType[]>(blogs);
+    const [filteredBlogs, setFilteredBlogs] = useState<BlogPostType[]>([]);
     const [isFilterExpanded, setIsFilterExpanded] = useState(false);
+    // Blogs and user data
+    const [blogs, setBlogs] = React.useState<BlogPostType[]>([]);
+    const [monthlyStats, setMonthlyStats] = React.useState<{
+        blog: string; month: string; views: number; likes: number
+    }[]>([]);
+    const [error, setError] = React.useState<string | null>(null);
+    const [loading, setLoading] = React.useState(true);
+    const [refreshing, setRefreshing] = React.useState(false);
 
     // Count blogs by status for badge counters
     const statusCounts = useMemo(() => {
@@ -46,6 +50,28 @@ const BlogPost = ({ blogs, monthlyStats }: BlogPostProps) => {
         return counts;
     }, [blogs]);
 
+    const fetchData = async () => {
+        setLoading(true);
+        setError(null);
+        setRefreshing(true);
+        const result = await fetchAuthorData();
+        if (result?.error) {
+            setError(result.error);
+            setLoading(false);
+        } else {
+            // setUser(result.user); no use
+            setBlogs(result.blogs || []);
+            setFilteredBlogs(result.blogs || []);
+            setMonthlyStats(result.monthlyStats || []);
+            setLoading(false);
+        }
+        setRefreshing(false);
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
     const sortedBlogs = useMemo(() => {
         return [...blogs].sort((a, b) => {
             switch (sortBlogs) {
@@ -53,6 +79,12 @@ const BlogPost = ({ blogs, monthlyStats }: BlogPostProps) => {
                     return (b.views || 0) - (a.views || 0);
                 case 'liked':
                     return (b.likes || 0) - (a.likes || 0);
+                case 'oldest':
+                    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+                case 'a-z':
+                    return a.title.localeCompare(b.title);
+                case 'z-a':
+                    return b.title.localeCompare(a.title);
                 default: // recent
                     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
             }
@@ -113,6 +145,11 @@ const BlogPost = ({ blogs, monthlyStats }: BlogPostProps) => {
                             </div>
 
                             <div className="flex flex-col sm:flex-row gap-3">
+                                {/* // refresh button */}
+                                <Button variant="outline" className="flex items-center gap-2" onClick={fetchData} disabled={refreshing}>
+                                    <RefreshCcw size={16} className={refreshing ? 'animate-spin' : ''} />
+                                    <span>Refresh</span>
+                                </Button>
                                 <Button
                                     variant="outline"
                                     className="flex items-center gap-2"
@@ -133,6 +170,9 @@ const BlogPost = ({ blogs, monthlyStats }: BlogPostProps) => {
                                         <SelectItem value="recent">Most Recent</SelectItem>
                                         <SelectItem value="popular">Most Popular</SelectItem>
                                         <SelectItem value="liked">Most Liked</SelectItem>
+                                        <SelectItem value="oldest">Oldest</SelectItem>
+                                        <SelectItem value="a-z">A - Z</SelectItem>
+                                        <SelectItem value="z-a">Z - A</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -173,7 +213,7 @@ const BlogPost = ({ blogs, monthlyStats }: BlogPostProps) => {
                         )}
 
                         {BLOG_STATUSES.map(status => (
-                            <TabsContent key={status.value} value={status.value} className="mt-6">
+                            <TabsContent key={status.value} value={status.value} className={`mt-6 ${loading || refreshing ? 'opacity-50 pointer-events-none' : ''}`}>
                                 {filteredBlogs.length === 0 ? (
                                     <div className="text-center py-12 bg-muted/30 rounded-lg">
                                         <h3 className="text-lg font-medium mb-2">No blog posts found</h3>
@@ -200,7 +240,7 @@ const BlogPost = ({ blogs, monthlyStats }: BlogPostProps) => {
                                                 likes: totalLikes
                                             };
 
-                                            return <PostCard key={post._id} post={enhancedPost} showStats={true} />;
+                                            return <PostCard key={post._id} post={enhancedPost} showStats={true} refreshData={fetchData} />;
                                         })}
                                     </div>
                                 )}
