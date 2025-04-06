@@ -5,6 +5,8 @@ import { isValidSlug } from "@/lib/common-function";
 import { ErrorMessage } from "@/lib/ErrorMessage";
 import EditBlogComponent from "./EditComponent";
 import { EditBlogState } from "@/types/blogs-types";
+import { Suspense } from "react";
+import LoadingEffect from "@/lib/LoadingEffect";
 
 await connectDB();
 
@@ -77,10 +79,18 @@ export async function generateStaticParams() {
     ]);
 }
 
-export default async function EditPost({ params }: { params: { id: string } }) {
-    const blogData = await getBlogData(params.id);
+async function EditPost({ id }: { id: string }) {
+    const blogData = await getBlogData(id);
     if (!blogData.success) {
         return <ErrorMessage message={blogData.error || "Something went wrong"} />;
     }
     return <EditBlogComponent BlogData={blogData} />;
 }
+
+const EditBlog = ({ params }: { params: { id: string } }) => (
+    <Suspense fallback={<LoadingEffect />}>
+        <EditPost id={params.id} />
+    </Suspense>
+);
+
+export default EditBlog;
