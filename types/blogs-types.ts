@@ -1,4 +1,4 @@
-import DOMPurify from 'dompurify';
+// This file contains the types and interfaces used in the blog application.
 
 type BlogPostType = {
   _id: string;
