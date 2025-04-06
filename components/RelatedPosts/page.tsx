@@ -110,7 +110,7 @@ const RelatedPosts = ({ posts, isDarkMode, error, loading }: RelatedPostsProps) 
 
       {posts.length > 5 && (
         <Link
-          href="/blogs"
+          href={`/blogs?category=${encodeURIComponent(posts[0].category.toString())}`}
           className={`
             inline-flex items-center text-sm transition-colors
             ${isDarkMode

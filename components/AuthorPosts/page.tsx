@@ -26,7 +26,10 @@ const AuthorPosts = ({ author, posts, isDarkMode, error, loading }: AuthorPostsP
         <div className={`space-y-4 ${isDarkMode ? 'dark' : ''}`}>
             {/* Author Header */}
             <div className="flex items-center gap-3 mb-4">
-                <div className="flex-shrink-0">
+                <div 
+                    className="flex-shrink-0 cursor-pointer" 
+                    onClick={() => window.location.href = `/author/${author?.username}`}
+                >
                     {author?.image ? (
                         <ShowProfileImage src={author.image} className="w-10 h-10 rounded-full" />
                     ) : (
