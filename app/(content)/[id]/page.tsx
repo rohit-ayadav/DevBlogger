@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation';
 import fs from 'fs/promises';
 import path from 'path';
 import MarkdownPage from '@/components/ShowMD/MarkdownPage';
-import incrementViewInDB from '@/action/incrementView';
 import { incrementView } from '@/lib/viewIncrement';
 
 // Metadata
@@ -21,8 +20,8 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
         const thumbnailPath = path.join(process.cwd(), 'public/content', `${id}.png`);
         // check if thumbnail exists
         const thumbnailExists = await fs.access(thumbnailPath).then(() => true).catch(() => false);
-        const thumbnailUrl = thumbnailExists ? `https://www.devblogger.in/content/${id}.png` : 'default-thumbnail.png';
-
+        // const thumbnailUrl = thumbnailExists ? `https://www.devblogger.in/content/${id}.png` : 'default-thumbnail.png';
+        const thumbnailUrl = thumbnailExists ? `https://www.devblogger.in/content/${id}.png` : 'https://www.devblogger.in/default-thumbnail.png';
         return {
             title,
             description: `Read the ${title} document - ${id}`,
