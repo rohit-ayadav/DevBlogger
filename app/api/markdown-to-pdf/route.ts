@@ -6,39 +6,39 @@ import { NextRequest, NextResponse } from 'next/server';
 
 // Define the API handler for Next.js
 export async function POST(req: NextRequest, res: NextResponse) {
-    // Get the filename and optional directory from the query parameters
-    const { filename, directory = 'content/cheatsheets' } = await req.json() as { filename: string; directory?: string };
+  // Get the filename and optional directory from the query parameters
+  const { filename, directory = 'content/cheatsheets' } = await req.json() as { filename: string; directory?: string };
 
-    // Validate input
-    if (!filename || typeof filename !== 'string') {
-        return NextResponse.json({
-            error: 'Invalid filename provided. Please provide a valid filename.'
-        }, { status: 400 });
+  // Validate input
+  if (!filename || typeof filename !== 'string') {
+    return NextResponse.json({
+      error: 'Invalid filename provided. Please provide a valid filename.'
+    }, { status: 400 });
+  }
+
+  try {
+    // Generate the PDF
+    const pdfBuffer = await generatePDF(filename, directory as string);
+
+    if (!pdfBuffer) {
+      return NextResponse.json({
+        error: 'Failed to generate PDF. Please check the filename and try again.'
+      }, { status: 500 });
     }
-
-    try {
-        // Generate the PDF
-        const pdfBuffer = await generatePDF(filename, directory as string);
-
-        if (!pdfBuffer) {
-            return NextResponse.json({
-                error: 'Failed to generate PDF. Please check the filename and try again.'
-            }, { status: 500 });
-        }
-        // set the response headers for PDF download
-        const headers = new Headers();
-        headers.set('Content-Type', 'application/pdf');
-        headers.set('Content-Disposition', `attachment; filename=${filename}.pdf`);
-        headers.set('Content-Length', pdfBuffer.length.toString());
-        headers.set('Cache-Control', 'no-cache, no-store, must-revalidate'); // Prevent caching
-        // Send the PDF
-        return new NextResponse(pdfBuffer, { headers });
-    } catch (error) {
-        console.error('Error generating PDF:', error);
-        return NextResponse.json({
-            error: 'An error occurred while generating the PDF. Please try again later.'
-        }, { status: 500 });
-    }
+    // set the response headers for PDF download
+    const headers = new Headers();
+    headers.set('Content-Type', 'application/pdf');
+    headers.set('Content-Disposition', `attachment; filename=${filename}.pdf`);
+    headers.set('Content-Length', pdfBuffer.length.toString());
+    headers.set('Cache-Control', 'no-cache, no-store, must-revalidate'); // Prevent caching
+    // Send the PDF
+    return new NextResponse(pdfBuffer, { headers });
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    return NextResponse.json({
+      error: 'An error occurred while generating the PDF. Please try again later.'
+    }, { status: 500 });
+  }
 }
 
 /**
@@ -47,33 +47,30 @@ export async function POST(req: NextRequest, res: NextResponse) {
  * @param directory - Directory containing the markdown file
  * @returns Buffer containing the PDF data
  */
-export async function generatePDF(filename: string, directory: string = 'content/cheatsheets'): Promise<Buffer> {
-    // Construct the file path
-    const filePath = path.join(process.cwd(), directory, `${filename}.md`);
+const generatePDF = async (filename: string, directory: string = 'content/cheatsheets'): Promise<Buffer> => {
+  const filePath = path.join(process.cwd(), directory, `${filename}.md`);
+  const markdownContent = await fs.readFile(filePath, 'utf-8');
 
-    // Check if file exists and read the markdown file
-    const markdownContent = await fs.readFile(filePath, 'utf-8');
+  // Configure marked for better code block handling
+  const renderer = new marked.Renderer();
+  renderer.code = ({ text, lang }) => {
+    return `<pre><code class="hljs ${lang}">${text}</code></pre>`;
+  };
 
-    // Configure marked for better code block handling
-    const renderer = new marked.Renderer();
-    renderer.code = ({ text, lang }) => {
-        return `<pre><code class="hljs ${lang}">${text}</code></pre>`;
-    };
+  marked.use({ renderer });
 
-    marked.use({ renderer });
+  // Convert markdown to HTML
+  const htmlContent = marked.parse(markdownContent);
 
-    // Convert markdown to HTML
-    const htmlContent = marked.parse(markdownContent);
+  // Format the current date for the footer
+  const currentDate = new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
 
-    // Format the current date for the footer
-    const currentDate = new Date().toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
-
-    // Create a full HTML document with styling and headers/footers for PDF
-    const fullHtml = `
+  // Create a full HTML document with styling and headers/footers for PDF
+  const fullHtml = `
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -342,36 +339,36 @@ export async function generatePDF(filename: string, directory: string = 'content
     </html>
   `;
 
-    // Launch puppeteer to generate PDF
-    const browser = await puppeteer.launch({
-        headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox'] // Helpful for deployment environments
-    });
+  // Launch puppeteer to generate PDF
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox'] // Helpful for deployment environments
+  });
 
-    const page = await browser.newPage();
+  const page = await browser.newPage();
 
-    // Set content directly instead of loading from file
-    await page.setContent(fullHtml, { waitUntil: 'networkidle0' });
+  // Set content directly instead of loading from file
+  await page.setContent(fullHtml, { waitUntil: 'networkidle0' });
 
-    // Wait for JavaScript to execute (for syntax highlighting)
-    await page.evaluateHandle('document.fonts.ready');
-    await new Promise(resolve => setTimeout(resolve, 500)); // Give a little time for JS to execute
+  // Wait for JavaScript to execute (for syntax highlighting)
+  await page.evaluateHandle('document.fonts.ready');
+  await new Promise(resolve => setTimeout(resolve, 500)); // Give a little time for JS to execute
 
-    // Generate PDF as buffer with more PDF-specific options
-    const pdfBuffer = await page.pdf({
-        format: 'A4',
-        printBackground: true,
-        displayHeaderFooter: false, // We're using our own headers and footers
-        margin: {
-            top: '25mm',
-            right: '15mm',
-            bottom: '25mm',
-            left: '15mm'
-        }
-    });
+  // Generate PDF as buffer with more PDF-specific options
+  const pdfBuffer = await page.pdf({
+    format: 'A4',
+    printBackground: true,
+    displayHeaderFooter: false, // We're using our own headers and footers
+    margin: {
+      top: '25mm',
+      right: '15mm',
+      bottom: '25mm',
+      left: '15mm'
+    }
+  });
 
-    // Close the browser
-    await browser.close();
+  // Close the browser
+  await browser.close();
 
-    return Buffer.from(pdfBuffer);
+  return Buffer.from(pdfBuffer);
 }
