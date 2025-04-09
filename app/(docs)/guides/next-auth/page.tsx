@@ -3,7 +3,7 @@ import React from 'react'
 
 const NEXTAUTH = () => {
     return (
-        <MarkdownPage filename='nextauth-guide' />
+        <MarkdownPage filename='nextauth-guide.md' />
     )
 }
 

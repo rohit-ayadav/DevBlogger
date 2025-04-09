@@ -4,7 +4,7 @@ import React from 'react'
 const DynamicRoutes = () => {
   return (
     <div>
-      <MarkdownPage filename='dynamic-route' />
+      <MarkdownPage filename='dynamic-route.md' />
     </div>
   )
 }

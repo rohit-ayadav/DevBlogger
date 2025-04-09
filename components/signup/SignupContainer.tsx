@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import SignupForm from './SignupForm';
 import { Check } from 'lucide-react';
+import { useTheme } from '@/context/ThemeContext';
 
 const BrandFeature: FC<{ text: string }> = ({ text }) => (
     <div className="flex items-center space-x-2">
@@ -10,6 +11,7 @@ const BrandFeature: FC<{ text: string }> = ({ text }) => (
 );
 
 const SignupContainer: FC = () => {
+    const { isDarkMode } = useTheme();
     return (
         <div className="min-h-screen grid place-items-center bg-gray-50 p-4">
             <div className="w-full max-w-4xl">

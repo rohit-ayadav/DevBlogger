@@ -11,6 +11,7 @@ import { isValidEmail } from '@/lib/common-function';
 import { ArrowBigLeft, Home, Loader2 } from 'lucide-react';
 import SocialLogin from '@/components/signup/SocialLogin';
 import Link from 'next/link';
+import { useTheme } from '@/context/ThemeContext';
 
 interface AuthError {
     message: string;
@@ -25,6 +26,7 @@ export default function Auth() {
     const [error, setError] = useState<AuthError | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const { isDarkMode } = useTheme();
 
     const router = useRouter();
     const { data: session } = useSession();
@@ -105,15 +107,6 @@ export default function Auth() {
         <div className="min-h-screen flex items-center justify-center bg-gray-50 py-5 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8">
                 <div className="flex items-center space-x-4">
-                    <Link href="/">
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            aria-label="Home"
-                        >
-                            <Home className="h-6 w-6" />
-                        </Button>
-                    </Link>
                     <h2 className="text-3xl font-extrabold text-gray-900">
                         Sign in to your account
                     </h2>

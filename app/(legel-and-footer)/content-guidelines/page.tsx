@@ -2,11 +2,7 @@ import MarkdownPage from '@/components/ShowMD/MarkdownPage'
 import React from 'react'
 
 const DynamicRoutes = () => {
-    return (
-        <div>
-            <MarkdownPage filename='content-guidelines' />
-        </div>
-    )
+    return <MarkdownPage filename='content-guidelines.md' />
 }
 
-export default DynamicRoutes
+export default DynamicRoutes;

@@ -20,6 +20,7 @@ import RecentActivityFeed from '@/app/(manage)/author/RecentActivityFeed';
 import ContentToolsSection from './ContentToolsSection';
 import PostCard from '@/app/_component/Post/PostCard';
 import LazyAdSense from '../LazyAds';
+import TopCheatsheetsSection from './TopCheatSheets';
 
 const FeatureCard = ({ icon, title, description, action, link }: any) => {
     const { isDarkMode } = useTheme();
@@ -228,11 +229,9 @@ const HomePage = ({ posts, users, totalLikes, totalViews, totalBlogs, totalUsers
                 </div>
             </section>
 
-            <LazyAdSense
-                adSlot='9353510750'
-                style={{ display: 'block', textAlign: 'center' }}
-                className="my-8"
-            />
+
+            <TopCheatsheetsSection />
+
             {/* Featured Authors Section */}
             <FeaturedAuthors />
 
