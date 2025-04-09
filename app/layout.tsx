@@ -33,7 +33,7 @@ export async function generateMetadata({
   title = "DevBlogger - The Ultimate Blogging Platform for Developers",
   description = "Write, publish & grow your tech blog with DevBlogger. 🚀 A feature-rich, customizable blogging platform built for developers using Next.js & TypeScript.",
   slug = "",
-  imageUrl = "/default-thumbnail.png",
+  imageUrl = "https://www.devblogger.in/default-thumbnail.png",
   canonicalUrl = "https://www.devblogger.in",
 }: {
   title?: string;
@@ -210,7 +210,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <Script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"/>
+        <Script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js" />
         <Script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8778160378200057" />
         <meta name="google-adsense-account" content="ca-pub-8778160378200057"></meta>
         <Script
