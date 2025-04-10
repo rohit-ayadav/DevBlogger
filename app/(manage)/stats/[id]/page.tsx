@@ -63,15 +63,15 @@ async function getPostResults(blogid: string) {
     }
 }
 
-export async function generateStaticParams() {
-    await connectDB();
-    const posts = await Blog.find({}, { slug: 1, _id: 1 });
+// export async function generateStaticParams() {
+//     await connectDB();
+//     const posts = await Blog.find({}, { slug: 1, _id: 1 });
 
-    return posts.flatMap(post => [
-        { id: post._id.toString() },
-        { id: post.slug }
-    ]);
-}
+//     return posts.flatMap(post => [
+//         { id: post._id.toString() },
+//         { id: post.slug }
+//     ]);
+// }
 
 export default async function BlogStats({ params }: { params: { id: string } }) {
     const response = await getPostResults(params.id);

@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from 'react';
 import { Search, Code, ChevronRight, Filter, Star, BookOpen, Download, ExternalLink } from 'lucide-react';
-import DownloadPDFButton from '@/components/DownloadPDFButton';
 
 const CheatSheets = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -206,15 +205,9 @@ const CheatSheets = () => {
                 Quick reference guides for all popular programming languages and frameworks.
               </p>
               <div className="flex flex-wrap gap-3">
-                {/* <button className="bg-white text-blue-600 hover:bg-blue-50 px-6 py-2 rounded-lg font-medium flex items-center transition-colors">
+                <button className="bg-white text-blue-600 hover:bg-blue-50 px-6 py-2 rounded-lg font-medium flex items-center transition-colors">
                   <Download size={18} className="mr-2" /> Download All
-                </button> */}
-                <DownloadPDFButton
-                  filename={`c`}
-                  directory="content/cheatsheets"
-                  buttonText="Download as PDF"
-                  className="flex items-center gap-2"
-                />
+                </button>
                 <button className="bg-blue-500 hover:bg-blue-400 text-white px-6 py-2 rounded-lg font-medium flex items-center transition-colors">
                   <Star size={18} className="mr-2" /> Popular Sheets
                 </button>
@@ -286,16 +279,16 @@ const CheatSheets = () => {
             <div className="flex items-center gap-2 overflow-x-auto pb-2 w-full md:w-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 scrollbar-thumb-rounded-full scrollbar-track-rounded-full">
               <Filter size={16} className="text-gray-500" />
               {categories.map((category) => (
-              <button
-              key={category.id}
-              className={`px-3 py-1.5 text-sm rounded-full whitespace-nowrap transition-colors ${activeFilter === category.id
-              ? 'bg-blue-100 text-blue-700 font-medium'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-              onClick={() => setActiveFilter(category.id)}
-              >
-              {category.name}
-              </button>
+                <button
+                  key={category.id}
+                  className={`px-3 py-1.5 text-sm rounded-full whitespace-nowrap transition-colors ${activeFilter === category.id
+                    ? 'bg-blue-100 text-blue-700 font-medium'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  onClick={() => setActiveFilter(category.id)}
+                >
+                  {category.name}
+                </button>
               ))}
             </div>
           </div>

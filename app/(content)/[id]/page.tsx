@@ -48,15 +48,15 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 }
 
 // getStaticPaths
-export async function generateStaticParams() {
-    const contentDir = path.join(process.cwd(), 'content');
-    const files = await fs.readdir(contentDir);
-    const paths = files.map((file) => ({
-        id: file.replace(/\.md$/, ''),
-    }));
+// export async function generateStaticParams() {
+//     const contentDir = path.join(process.cwd(), 'content');
+//     const files = await fs.readdir(contentDir);
+//     const paths = files.map((file) => ({
+//         id: file.replace(/\.md$/, ''),
+//     }));
 
-    return paths;
-}
+//     return paths;
+// }
 
 export default async function MDPage({ params }: { params: { id: string } }) {
     const { id } = params;

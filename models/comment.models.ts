@@ -1,4 +1,3 @@
-import { create } from "lodash";
 import mongoose from "mongoose";
 
 const CommentSchema = new mongoose.Schema({
