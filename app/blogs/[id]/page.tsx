@@ -27,9 +27,9 @@ async function getPostData(id: string): Promise<ApiResponse> {
         let post;
 
         if (isValidObjectId(id)) {
-            post = await Blog.findById(id).lean().exec() as BlogPostType;
+            post = await Blog.findById(id).lean().exec() as unknown as BlogPostType;
         } else if (isValidSlug(id)) {
-            post = await Blog.findOne({ slug: id }).lean().exec() as BlogPostType;
+            post = await Blog.findOne({ slug: id }).lean().exec() as unknown as BlogPostType;
         }
 
         if (!post || Object.keys(post).length === 0 || ['draft', 'archived', 'deleted'].includes(post.status)) {
