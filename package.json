@@ -48,7 +48,7 @@
     "axios": "^1.7.7",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
-    "chrome-aws-lambda": "^10.1.0",
+    "chrome-aws-lambda": "10.0.0",
     "class-variance-authority": "^0.7.0",
     "classnames": "^2.5.1",
     "cloudinary": "^2.6.0",

@@ -117,8 +117,8 @@ importers:
         specifier: ^2.4.3
         version: 2.4.3
       chrome-aws-lambda:
-        specifier: ^10.1.0
-        version: 10.1.0(puppeteer-core@24.6.1)
+        specifier: 10.0.0
+        version: 10.0.0(puppeteer-core@24.6.1)
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.1
@@ -2060,11 +2060,11 @@ packages:
     resolution: {integrity: sha512-bIomtDF5KGpdogkLd9VspvFzk9KfpyyGlS8YFVZl7TGPBHL5snIOnxeshwVgPteQ9b4Eydl+pVbIyE1DcvCWgQ==, tarball: https://registry.npmjs.org/chownr/-/chownr-2.0.0.tgz}
     engines: {node: '>=10'}
 
-  chrome-aws-lambda@10.1.0:
-    resolution: {integrity: sha512-NZQVf+J4kqG4sVhRm3WNmOfzY0OtTSm+S8rg77pwePa9RCYHzhnzRs8YvNI6L9tALIW6RpmefWiPURt3vURXcw==, tarball: https://registry.npmjs.org/chrome-aws-lambda/-/chrome-aws-lambda-10.1.0.tgz}
+  chrome-aws-lambda@10.0.0:
+    resolution: {integrity: sha512-zer0p8IYw0PPTKzws638x3GvPzZXASMvwi6d7RYEiRfP98wmx0rPgON0czfFGPEwe3XmPC2Wn7F9vckhlb6ydA==, tarball: https://registry.npmjs.org/chrome-aws-lambda/-/chrome-aws-lambda-10.0.0.tgz}
     engines: {node: '>= 10.16'}
     peerDependencies:
-      puppeteer-core: ^10.1.0
+      puppeteer-core: ^10.0.0
 
   chromium-bidi@3.0.0:
     resolution: {integrity: sha512-ZOGRDAhBMX1uxL2Cm2TDuhImbrsEz5A/tTcVU6RpXEWaTNUNwsHW6njUXizh51Ir6iqHbKAfhA2XK33uBcLo5A==, tarball: https://registry.npmjs.org/chromium-bidi/-/chromium-bidi-3.0.0.tgz}
@@ -6569,7 +6569,7 @@ snapshots:
 
   chownr@2.0.0: {}
 
-  chrome-aws-lambda@10.1.0(puppeteer-core@24.6.1):
+  chrome-aws-lambda@10.0.0(puppeteer-core@24.6.1):
     dependencies:
       lambdafs: 2.1.1
       puppeteer-core: 24.6.1
