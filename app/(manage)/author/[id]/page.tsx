@@ -6,7 +6,7 @@ import { Metadata } from "next";
 import { ErrorMessage } from "@/lib/ErrorMessage";
 import { isValidObjectId } from "mongoose";
 import serializeDocument from "@/utils/date-formatter";
-import AuthorPage, { Author } from "@/app/(settings)/profile/id-omponent/Profile";
+import { Author } from "@/app/(settings)/profile/id-omponent/Profile";
 import ProfileNEW from "@/app/(manage)/author/[id]/ProfileComponent/ProfileNew";
 import { isValidUrl } from "@/lib/common-function";
 
