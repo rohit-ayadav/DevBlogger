@@ -15,9 +15,9 @@ async function getPostResults(blogid: string) {
         // Get blog data
         let blog: BlogPostType;
         if (isValidObjectId(blogid)) {
-            blog = await Blog.findById(blogid).lean().exec() as BlogPostType;
+            blog = await Blog.findById(blogid).lean().exec() as unknown as BlogPostType;
         } else {
-            blog = await Blog.findOne({ slug: blogid }).lean().exec() as BlogPostType;
+            blog = await Blog.findOne({ slug: blogid }).lean().exec() as unknown as BlogPostType;
         }
         if (!blog) {
             return {
@@ -27,7 +27,7 @@ async function getPostResults(blogid: string) {
             };
         }
         let user: UserType;
-        user = await User.findOne({ email: blog.createdBy }).lean().exec() as UserType;
+        user = await User.findOne({ email: blog.createdBy }).lean().exec() as unknown as UserType;
         if (!user) {
             return {
                 success: false,

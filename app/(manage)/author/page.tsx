@@ -38,14 +38,14 @@ async function getAuthorData() {
         }).lean();
 
         authors.forEach((author) => {
-            const user = author as UserType;
+            const user = author as unknown as UserType;
             user.createdAt = user.createdAt.toString();
             user._id = user._id.toString();
         });
 
         return {
             success: true,
-            authors: authors as UserType[],
+            authors: authors as unknown as UserType[],
             totalAuthors: authors.length,
             message: ''
         };

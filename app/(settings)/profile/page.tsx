@@ -17,7 +17,7 @@ async function getPostData() {
         }
 
         // Convert Mongoose document to plain JSON object
-        let user = await User.findOne({ email }).lean() as UserType;
+        let user = await User.findOne({ email }).lean() as unknown as UserType;
         if (!user) {
             return { success: false, statusCode: 404 };
         }
