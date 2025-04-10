@@ -1,7 +1,10 @@
 import fs from 'fs/promises';
 import path from 'path';
-import puppeteer from 'puppeteer';
+// import puppeteer from 'puppeteer';
 import { marked } from 'marked';
+import chromium from 'chrome-aws-lambda';
+import puppeteer from 'puppeteer-core';
+
 
 /**
  * Generates a PDF from a Markdown file
@@ -285,10 +288,17 @@ const generatePDF = async (filename: string, directory: string = 'content/cheats
         `;
 
     // Launch puppeteer to generate PDF
-    const browser = await puppeteer.launch({
-        headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox'] // Helpful for deployment environments
-    });
+    // const browser = await puppeteer.launch({
+    //     headless: true,
+    //     args: ['--no-sandbox', '--disable-setuid-sandbox'] // Helpful for deployment environments
+    // });
+
+  const browser = await puppeteer.launch({
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath,
+    headless: chromium.headless,
+  });
 
     const page = await browser.newPage();
 
