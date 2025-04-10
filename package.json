@@ -7,6 +7,11 @@
     "build": "next build",
     "start": "next start"
   },
+  "pnpm": {
+    "overrides": {
+      "canvas": "../_EXCLUDED_"
+    }
+  },
   "dependencies": {
     "@auth/core": "^0.34.2",
     "@auth/prisma-adapter": "^2.6.0",
