@@ -1,5 +1,4 @@
 // app/[id]/page.tsx
-import { notFound } from 'next/navigation';
 import fs from 'fs/promises';
 import path from 'path';
 import MarkdownPage from '@/components/ShowMD/MarkdownPage';
@@ -47,36 +46,16 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
     }
 }
 
-// getStaticPaths
-export async function generateStaticParams() {
-    const contentDir = path.join(process.cwd(), 'content');
-    const files = await fs.readdir(contentDir);
-    const paths = files.map((file) => ({
-        id: file.replace(/\.md$/, ''),
-    }));
-
-    return paths;
-}
-
 export default async function MDPage({ params }: { params: { id: string } }) {
     const { id } = params;
     try {
         const filePath = path.join(process.cwd(), 'content/cheatsheets', `${id}.md`);
         await fs.access(filePath);
         await incrementView(id, false, true);
-        return (<>
-            {/* // breadcrumbs */}
-            {/* <nav className="flex items-center space-x-2 mb-4" aria-label="Breadcrumbs">
-                <a href="/" className="text-indigo-600 hover:text-indigo-500">Home</a>
-                <span className="text-gray-500 dark:text-gray-400">/Cheatsheets/</span>
-            </nav>
-            <h1 className='text-2xl font-bold text-center mt-4 mb-8'>
-                <span className='text-gray-800 dark:text-gray-200'>Cheat Sheet</span>
-                <span className='text-indigo-600 dark:text-indigo-400'> - {id}</span>
-            </h1> */}
-
-            <MarkdownPage filename={`${id}.md`} directory='content/cheatsheets' />
-        </>
+        return (
+            <>
+                <MarkdownPage filename={`${id}.md`} directory='content/cheatsheets' />
+            </>
         );
     } catch (error) {
         return (
