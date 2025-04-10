@@ -69,15 +69,15 @@ async function getBlogData(id: string): Promise<EditBlogState> {
     }
 }
 
-export async function generateStaticParams() {
-    await connectDB();
-    const posts = await Blog.find({}, { slug: 1, _id: 1 });
+// export async function generateStaticParams() {
+//     await connectDB();
+//     const posts = await Blog.find({}, { slug: 1, _id: 1 });
 
-    return posts.flatMap(post => [
-        { id: post._id.toString() },
-        { id: post.slug }
-    ]);
-}
+//     return posts.flatMap(post => [
+//         { id: post._id.toString() },
+//         { id: post.slug }
+//     ]);
+// }
 
 async function EditPost({ id }: { id: string }) {
     const blogData = await getBlogData(id);

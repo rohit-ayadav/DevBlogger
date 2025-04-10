@@ -16,9 +16,9 @@ async function getPostData(id: string) {
         let user: Author | null = null;
         if (!isValidObjectId(id)) {
             const username = decodeURIComponent(id);
-            user = await User.findOne({ username }).lean() as Author;
+            user = await User.findOne({ username }).lean() as unknown as Author;
         } else {
-            user = await User.findById(id).lean() as Author;
+            user = await User.findById(id).lean() as unknown as Author;
         }
         // console.log(`User: ${JSON.stringify(user)}`);
         if (!user) {
@@ -27,7 +27,7 @@ async function getPostData(id: string) {
         let postData = await Blog.find({
             createdBy: user.email,
             status: "approved"
-        }).lean() as BlogPostType[];
+        }).lean() as unknown as BlogPostType[];
         if (!postData || postData.length === 0) {
             return { success: false, statusCode: 404 };
         }
