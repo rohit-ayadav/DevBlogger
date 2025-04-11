@@ -5,46 +5,46 @@ import MarkdownPage from '@/components/ShowMD/MarkdownPage';
 import { incrementView } from '@/lib/viewIncrement';
 
 // Metadata
-export async function generateMetadata({ params }: { params: { id: string } }) {
-    const { id } = params;
+// export async function generateMetadata({ params }: { params: { id: string } }) {
+//     const { id } = params;
 
-    try {
-        const filePath = path.join(process.cwd(), 'content/cheatsheets', `${id}.md`);
-        await fs.access(filePath);
+//     try {
+//         const filePath = path.join(process.cwd(), 'content/cheatsheets', `${id}.md`);
+//         await fs.access(filePath);
 
-        const fileContent = await fs.readFile(filePath, 'utf8');
-        const titleMatch = fileContent.match(/#\s*(.*)/);
-        const title = titleMatch ? titleMatch[1] : 'Document';
-        // thumbnail in public folder
-        const thumbnailPath = path.join(process.cwd(), 'public/content', `${id}.png`);
-        const thumbnailExists = await fs.access(thumbnailPath).then(() => true).catch(() => false);
-        const thumbnailUrl = thumbnailExists ? `https://www.devblogger.in/content/${id}.png` : 'https://www.devblogger.in/default-thumbnail.png';
-        return {
-            title,
-            description: `Read the ${title} document - ${id}`,
-            openGraph: {
-                title,
-                description: `Read the ${title} document - ${id}`,
-                images: [thumbnailUrl],
-            },
-            twitter: {
-                title,
-                description: `Read the ${title} document - ${id}`,
-                images: [thumbnailUrl],
-            },
-            icons: {
-                icon: '/favicon.ico',
-                shortcut: '/favicon.ico',
-                apple: '/favicon.ico',
-            },
-        };
-    } catch (error) {
-        return {
-            title: 'Page Not Found',
-            description: 'The requested page could not be found',
-        };
-    }
-}
+//         const fileContent = await fs.readFile(filePath, 'utf8');
+//         const titleMatch = fileContent.match(/#\s*(.*)/);
+//         const title = titleMatch ? titleMatch[1] : 'Document';
+//         // thumbnail in public folder
+//         const thumbnailPath = path.join(process.cwd(), 'public/content', `${id}.png`);
+//         const thumbnailExists = await fs.access(thumbnailPath).then(() => true).catch(() => false);
+//         const thumbnailUrl = thumbnailExists ? `https://www.devblogger.in/content/${id}.png` : 'https://www.devblogger.in/default-thumbnail.png';
+//         return {
+//             title,
+//             description: `Read the ${title} document - ${id}`,
+//             openGraph: {
+//                 title,
+//                 description: `Read the ${title} document - ${id}`,
+//                 images: [thumbnailUrl],
+//             },
+//             twitter: {
+//                 title,
+//                 description: `Read the ${title} document - ${id}`,
+//                 images: [thumbnailUrl],
+//             },
+//             icons: {
+//                 icon: '/favicon.ico',
+//                 shortcut: '/favicon.ico',
+//                 apple: '/favicon.ico',
+//             },
+//         };
+//     } catch (error) {
+//         return {
+//             title: 'Page Not Found',
+//             description: 'The requested page could not be found',
+//         };
+//     }
+// }
 
 export default async function MDPage({ params }: { params: { id: string } }) {
     const { id } = params;
