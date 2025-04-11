@@ -53,9 +53,7 @@ export default async function MDPage({ params }: { params: { id: string } }) {
         await fs.access(filePath);
         await incrementView(id, false, true);
         return (
-            <>
-                <MarkdownPage filename={`${id}.md`} directory='content/cheatsheets' />
-            </>
+            <MarkdownPage filename={`${id}.md`} directory='content/cheatsheets' />
         );
     } catch (error) {
         return (
